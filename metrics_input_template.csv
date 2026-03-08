@@ -1,0 +1,3 @@
+date,platform,content_id,title,impressions,views,likes,comments,favorites,shares,follows,profile_clicks,product_clicks,revenue,avg_watch_sec,read_complete_rate
+2026-03-08,知乎,zhihu_001,示例标题,1000,820,45,12,38,6,9,30,12,56,0,0.42
+2026-03-08,小红书,xhs_001,示例标题,1500,1200,96,18,140,22,20,60,8,18,0,0

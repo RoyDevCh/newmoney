@@ -18,6 +18,7 @@ ROOT = Path.home() / ".openclaw"
 WS = ROOT / "workspace"
 WS_CONTENT = ROOT / "workspace-content"
 REPORT_DIR = WS / "reports"
+METRICS_LATEST = WS_CONTENT / "metrics_analysis_latest.json"
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 OPENCLAW = str(Path.home() / "AppData" / "Roaming" / "npm" / "openclaw.cmd")
 
@@ -78,6 +79,20 @@ def run_agent(agent: str, message: str, timeout_sec: int = 240) -> Dict:
 
 def load_json(path: Path) -> Dict:
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def load_metrics_context(path: Path) -> Dict:
+    if not path.exists():
+        return {"available": False, "platform_summary": {}, "suggestions": []}
+    try:
+        data = load_json(path)
+        return {
+            "available": True,
+            "platform_summary": data.get("platform_summary", {}),
+            "suggestions": data.get("suggestions", []),
+        }
+    except Exception as e:
+        return {"available": False, "error": str(e), "platform_summary": {}, "suggestions": []}
 
 
 def better_quality(candidate: Dict, baseline: Dict) -> bool:
@@ -144,6 +159,7 @@ def main() -> None:
         "topic": {},
         "matrix_strategy": {},
         "readiness_strategy": {},
+        "metrics_feedback": {},
         "main_brain": {},
         "autotune": {},
         "final_refine": {},
@@ -154,6 +170,7 @@ def main() -> None:
         "quality_recheck": {},
         "tts_render": {},
         "asset_render": {},
+        "manual_publish_queue": {},
         "publisher": {},
     }
 
@@ -163,11 +180,14 @@ def main() -> None:
 
     matrix = build_full_platform_matrix()
     readiness = build_readiness_summary(list(matrix.keys()))
+    metrics_feedback = load_metrics_context(METRICS_LATEST)
     report["matrix_strategy"] = matrix
     report["readiness_strategy"] = readiness
+    report["metrics_feedback"] = metrics_feedback
     mb_prompt = (
         f"基于选题“{topic}”、以下平台变现矩阵{json.dumps(matrix, ensure_ascii=False)}"
-        f"以及当前阶段分组{json.dumps(readiness, ensure_ascii=False)}，"
+        f"以及当前阶段分组{json.dumps(readiness, ensure_ascii=False)}、"
+        f"最近一轮平台数据反馈{json.dumps(metrics_feedback, ensure_ascii=False)}，"
         "给出今日分发策略：目标受众、平台优先级、转化动作、平台分工。"
         "只输出简洁JSON，字段: audience,platform_priority,conversion_goal,platform_roles"
     )
@@ -320,6 +340,35 @@ def main() -> None:
         ]
         report["asset_render"] = run_cmd(asset_cmd, timeout=2400)
 
+    queue_json = WS_CONTENT / f"manual_publish_queue_{now}.json"
+    queue_md = WS_CONTENT / f"manual_publish_queue_{now}.md"
+    latest_queue_json = WS_CONTENT / "manual_publish_queue_latest.json"
+    latest_queue_md = WS_CONTENT / "manual_publish_queue_latest.md"
+    queue_cmd = [
+        "py",
+        "-3",
+        str(WS / "manual_publish_queue_builder.py"),
+        "--input-pack",
+        str(out_file),
+        "--input-quality",
+        str(q_recheck_report),
+        "--input-assets",
+        str(WS_CONTENT / f"asset_manifest_daily_{now}.json") if not args.skip_assets else str(WS_CONTENT / f"asset_manifest_daily_20260308_205355.json"),
+        "--tts-dir",
+        str(tts_dir),
+        "--output-json",
+        str(queue_json),
+        "--output-md",
+        str(queue_md),
+        "--latest-json",
+        str(latest_queue_json),
+        "--latest-md",
+        str(latest_queue_md),
+        "--generated-at",
+        now,
+    ]
+    report["manual_publish_queue"] = run_cmd(queue_cmd, timeout=300)
+
     if args.skip_publisher:
         report["publisher"] = {"ok": True, "skipped": True, "reason": "skip_publisher"}
     else:
@@ -339,6 +388,8 @@ def main() -> None:
                 "pack": str(out_file),
                 "quality": str(q_report),
                 "quality_recheck": str(q_recheck_report),
+                "manual_publish_queue": str(queue_md),
+                "manual_publish_queue_latest": str(latest_queue_md),
             },
             ensure_ascii=False,
             indent=2,
