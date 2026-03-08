@@ -13,7 +13,7 @@ CONTENT_WS = Path.home() / ".openclaw" / "workspace-content"
 if str(CONTENT_WS) not in sys.path:
     sys.path.insert(0, str(CONTENT_WS))
 
-from content_autotune_runner import (
+from content_autotune_runner import (  # type: ignore
     PLATFORM_BRIEFS,
     build_publisher_review_prompt,
     extract_json,
@@ -22,7 +22,10 @@ from content_autotune_runner import (
     run_agent,
     sanitize_draft,
 )
-from content_quality_gate import score_one
+from content_quality_gate import score_one  # type: ignore
+from platform_monetization_mapper import attach_monetization_plans
+from publish_appendix_builder import build_appendices
+from video_publish_pack_builder import build_video_publish_pack
 
 
 def load_pack(path: Path) -> Dict[str, Any]:
@@ -52,11 +55,11 @@ def build_final_refine_prompt(topic: str, draft: Dict[str, Any], review: Dict[st
         "目标：让文案更像真人写的专业内容，而不是提示词拼装。"
         "硬要求："
         "1) 保留转化力，但去掉模板味；"
-        "2) 少用重复的'按实测环境/按公开评测'，改成更自然的证据表达；"
+        "2) 少用重复的“按实测环境”“按公开评测”，改成更自然的证据表述；"
         "3) 严禁收益承诺、虚假社会背书、伪官方语气；"
         "4) 结论必须明确，执行动作必须具体；"
-        f"5) 语气={brief.get('voice','')}; CTA={brief.get('conversion','')};"
-        f"6) 正文长度保持在{brief.get('body_range','平台要求')}；"
+        f"5) 语气={brief.get('voice', '')}; CTA={brief.get('conversion', '')};"
+        f"6) 正文长度保持在{brief.get('body_range', '平台要求')}；"
         "7) 输出字段platform,title,hook,body,cta,tags。"
     )
 
@@ -64,17 +67,40 @@ def build_final_refine_prompt(topic: str, draft: Dict[str, Any], review: Dict[st
 def rescore(drafts: List[Dict[str, Any]], min_score: float) -> List[Dict[str, Any]]:
     rows = []
     for draft in drafts:
-        s = score_one(draft, min_score)
+        score = score_one(draft, min_score)
         rows.append(
             {
                 "platform": draft.get("platform", ""),
-                "score": s.total_score,
-                "pass": s.pass_gate,
-                "issues": s.issues,
-                "subscores": s.subscores,
+                "score": score.total_score,
+                "pass": score.pass_gate,
+                "issues": score.issues,
+                "subscores": score.subscores,
             }
         )
     return rows
+
+
+def polish_short_form(draft: Dict[str, Any]) -> Dict[str, Any]:
+    current = dict(draft)
+    platform = str(current.get("platform", "")).strip()
+    body = str(current.get("body", "")).strip()
+    hook = str(current.get("hook", "")).strip()
+    if platform == "小红书":
+        body = body.replace("，", "，\n")
+        lines = [line.strip() for line in body.splitlines() if line.strip()]
+        body = "\n".join(lines)
+        if hook and "先看结论" not in hook and len(hook) < 28:
+            current["hook"] = f"先看结论：{hook}"
+    elif platform == "抖音":
+        body = body.replace("。", "。 ").replace("；", "。 ")
+        pieces = [x.strip() for x in body.split("。") if x.strip()]
+        pieces = pieces[:6]
+        current["body"] = "。".join(pieces) + ("。" if pieces else "")
+        if hook and not hook.startswith("别再"):
+            current["hook"] = f"别再踩坑了，{hook}"
+    if platform != "抖音":
+        current["body"] = body
+    return current
 
 
 def main() -> None:
@@ -102,11 +128,13 @@ def main() -> None:
                     current = obj
             except Exception:
                 current = draft
-        refined.append(sanitize_draft(topic, current))
+        refined.append(sanitize_draft(topic, polish_short_form(current)))
 
     scores = rescore(refined, args.min_score)
     try:
-        publisher_review = extract_json(run_agent("publisher", build_publisher_review_prompt(topic, refined), timeout=240))
+        publisher_review = extract_json(
+            run_agent("publisher", build_publisher_review_prompt(topic, refined), timeout=240)
+        )
     except Exception:
         publisher_review = fallback_review(refined, args.min_score)
     assets = generate_asset_prompts(topic, refined)
@@ -117,8 +145,11 @@ def main() -> None:
         "scores": scores,
         "publisher_review": publisher_review,
         "assets": assets,
+        "appendices": build_appendices({"topic": topic, "drafts": refined}),
         "final_review_applied": True,
     }
+    out_payload = attach_monetization_plans(out_payload)
+    out_payload["video_publish_kits"] = build_video_publish_pack(out_payload)
     Path(args.output).write_text(json.dumps(out_payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"output": args.output, "scores": scores}, ensure_ascii=False, indent=2))
 

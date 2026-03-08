@@ -1,5 +1,7 @@
 # Monetization Platform Blueprints
 
+See also: `PLATFORM_MONETIZATION_RESEARCH_20260308.md` for research-backed strategy notes and current platform rail checks.
+
 ## Core Rule
 
 Content is not "good" because it reads smoothly.

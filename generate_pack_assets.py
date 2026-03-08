@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate cover assets from a monetization pack via ComfyUI."""
+"""Generate platform cover assets from a monetization pack via ComfyUI."""
 
 from __future__ import annotations
 
@@ -26,6 +26,17 @@ SIZE_BY_PLATFORM = {
     "B站": (1536, 864),
 }
 
+QUALITY_PRESETS = {
+    "low": {"steps": 26, "cfg": 5.2, "suffix": "low"},
+    "balanced": {"steps": 32, "cfg": 5.8, "suffix": "std"},
+    "high": {"steps": 40, "cfg": 6.2, "suffix": "hq"},
+}
+
+DEFAULT_NEGATIVE = (
+    "text, watermark, logo, lowres, blurry, extra fingers, deformed hands, "
+    "duplicate subject, broken perspective, cluttered background"
+)
+
 
 def parse_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser()
@@ -34,8 +45,10 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--max-images", type=int, default=4)
     ap.add_argument("--boot-comfy", action="store_true")
     ap.add_argument("--low-memory", action="store_true")
-    ap.add_argument("--steps", type=int, default=32)
-    ap.add_argument("--cfg", type=float, default=5.8)
+    ap.add_argument("--steps", type=int, default=0)
+    ap.add_argument("--cfg", type=float, default=0.0)
+    ap.add_argument("--quality-preset", choices=sorted(QUALITY_PRESETS.keys()), default="balanced")
+    ap.add_argument("--manifest-out", default="")
     return ap.parse_args()
 
 
@@ -64,16 +77,24 @@ def load_pack(path: Path) -> Dict[str, Any]:
 def select_assets(pack: Dict[str, Any], platforms: List[str], max_images: int) -> List[Dict[str, Any]]:
     assets = [x for x in pack.get("assets", []) if isinstance(x, dict) and x.get("prompt")]
     if platforms:
-        want = set(platforms)
-        assets = [x for x in assets if str(x.get("platform", "")).strip() in want]
+        wanted = set(platforms)
+        assets = [x for x in assets if str(x.get("platform", "")).strip() in wanted]
     return assets[:max_images]
 
 
-def build_workflow(asset: Dict[str, Any], steps: int, cfg: float) -> Tuple[Dict[str, Any], str]:
+def resolve_quality(args: argparse.Namespace) -> Tuple[int, float, str]:
+    preset = QUALITY_PRESETS[args.quality_preset]
+    steps = args.steps if args.steps > 0 else int(preset["steps"])
+    cfg = args.cfg if args.cfg > 0 else float(preset["cfg"])
+    return steps, cfg, str(preset["suffix"])
+
+
+def build_workflow(asset: Dict[str, Any], steps: int, cfg: float, suffix: str) -> Tuple[Dict[str, Any], str]:
     platform = str(asset.get("platform", "")).strip()
     width, height = SIZE_BY_PLATFORM.get(platform, (1024, 1024))
     seed = int(time.time() * 1000) % 2147483647
-    prefix = f"oc_{platform}_{uuid.uuid4().hex[:8]}"
+    prefix = f"oc_{platform}_{suffix}_{uuid.uuid4().hex[:8]}"
+    negative_prompt = str(asset.get("negative_prompt", "")).strip() or DEFAULT_NEGATIVE
     workflow = {
         "1": {
             "class_type": "CheckpointLoaderSimple",
@@ -89,7 +110,7 @@ def build_workflow(asset: Dict[str, Any], steps: int, cfg: float) -> Tuple[Dict[
         "3": {
             "class_type": "CLIPTextEncode",
             "inputs": {
-                "text": str(asset.get("negative_prompt", "")),
+                "text": negative_prompt,
                 "clip": ["1", 1],
             },
         },
@@ -167,6 +188,8 @@ def resolve_output(task_data: Dict[str, Any]) -> Path:
 
 def main() -> None:
     args = parse_args()
+    steps, cfg, suffix = resolve_quality(args)
+
     if not comfy_online():
         if not args.boot_comfy:
             raise SystemExit("ComfyUI offline. Re-run with --boot-comfy.")
@@ -181,7 +204,7 @@ def main() -> None:
 
     results = []
     for asset in assets:
-        workflow, prefix = build_workflow(asset, steps=args.steps, cfg=args.cfg)
+        workflow, prefix = build_workflow(asset, steps=steps, cfg=cfg, suffix=suffix)
         prompt_id = submit_prompt(workflow)
         history = wait_for_history(prompt_id)
         out_path = resolve_output(history)
@@ -193,10 +216,20 @@ def main() -> None:
                 "output_file": str(out_path),
                 "exists": out_path.exists(),
                 "size_mb": round(out_path.stat().st_size / (1024 * 1024), 2) if out_path.exists() else 0.0,
+                "quality_preset": args.quality_preset,
+                "steps": steps,
+                "cfg": cfg,
             }
         )
 
-    print(json.dumps({"results": results}, ensure_ascii=False, indent=2))
+    payload = {
+        "source_pack": args.input,
+        "quality_preset": args.quality_preset,
+        "results": results,
+    }
+    if args.manifest_out:
+        Path(args.manifest_out).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
