@@ -24,6 +24,9 @@ SIZE_BY_PLATFORM = {
     "小红书": (832, 1216),
     "抖音": (864, 1536),
     "B站": (1536, 864),
+    "微博": (1440, 1080),
+    "公众号": (900, 383),
+    "头条": (1200, 800),
 }
 
 QUALITY_PRESETS = {
@@ -42,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True, help="Path to monetization pack JSON.")
     ap.add_argument("--platforms", nargs="*", default=[], help="Optional platform filter.")
-    ap.add_argument("--max-images", type=int, default=4)
+    ap.add_argument("--max-images", type=int, default=8)
     ap.add_argument("--boot-comfy", action="store_true")
     ap.add_argument("--low-memory", action="store_true")
     ap.add_argument("--steps", type=int, default=0)
@@ -89,39 +92,48 @@ def resolve_quality(args: argparse.Namespace) -> Tuple[int, float, str]:
     return steps, cfg, str(preset["suffix"])
 
 
-def build_workflow(asset: Dict[str, Any], steps: int, cfg: float, suffix: str) -> Tuple[Dict[str, Any], str]:
+def enrich_prompt_with_template(asset: Dict[str, Any], visual_templates: Dict[str, Any]) -> Tuple[str, str]:
+    platform = str(asset.get("platform", "")).strip()
+    prompt = str(asset.get("prompt", "")).strip()
+    negative_prompt = str(asset.get("negative_prompt", "")).strip() or DEFAULT_NEGATIVE
+    template = visual_templates.get(platform, {})
+    if template:
+        prompt = ", ".join(
+            [
+                prompt,
+                str(template.get("composition", "")).strip(),
+                str(template.get("color_direction", "")).strip(),
+                str(template.get("typography_direction", "")).strip(),
+            ]
+        )
+        negative_prompt = ", ".join(
+            [
+                negative_prompt,
+                "busy text blocks",
+                "cheap poster layout",
+                "misaligned title area",
+            ]
+        )
+    return prompt, negative_prompt
+
+
+def build_workflow(
+    asset: Dict[str, Any],
+    visual_templates: Dict[str, Any],
+    steps: int,
+    cfg: float,
+    suffix: str,
+) -> Tuple[Dict[str, Any], str]:
     platform = str(asset.get("platform", "")).strip()
     width, height = SIZE_BY_PLATFORM.get(platform, (1024, 1024))
     seed = int(time.time() * 1000) % 2147483647
     prefix = f"oc_{platform}_{suffix}_{uuid.uuid4().hex[:8]}"
-    negative_prompt = str(asset.get("negative_prompt", "")).strip() or DEFAULT_NEGATIVE
+    prompt, negative_prompt = enrich_prompt_with_template(asset, visual_templates)
     workflow = {
-        "1": {
-            "class_type": "CheckpointLoaderSimple",
-            "inputs": {"ckpt_name": CHECKPOINT},
-        },
-        "2": {
-            "class_type": "CLIPTextEncode",
-            "inputs": {
-                "text": str(asset.get("prompt", "")),
-                "clip": ["1", 1],
-            },
-        },
-        "3": {
-            "class_type": "CLIPTextEncode",
-            "inputs": {
-                "text": negative_prompt,
-                "clip": ["1", 1],
-            },
-        },
-        "4": {
-            "class_type": "EmptyLatentImage",
-            "inputs": {
-                "width": width,
-                "height": height,
-                "batch_size": 1,
-            },
-        },
+        "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": CHECKPOINT}},
+        "2": {"class_type": "CLIPTextEncode", "inputs": {"text": prompt, "clip": ["1", 1]}},
+        "3": {"class_type": "CLIPTextEncode", "inputs": {"text": negative_prompt, "clip": ["1", 1]}},
+        "4": {"class_type": "EmptyLatentImage", "inputs": {"width": width, "height": height, "batch_size": 1}},
         "5": {
             "class_type": "KSampler",
             "inputs": {
@@ -137,20 +149,8 @@ def build_workflow(asset: Dict[str, Any], steps: int, cfg: float, suffix: str) -
                 "latent_image": ["4", 0],
             },
         },
-        "6": {
-            "class_type": "VAEDecode",
-            "inputs": {
-                "samples": ["5", 0],
-                "vae": ["1", 2],
-            },
-        },
-        "7": {
-            "class_type": "SaveImage",
-            "inputs": {
-                "filename_prefix": prefix,
-                "images": ["6", 0],
-            },
-        },
+        "6": {"class_type": "VAEDecode", "inputs": {"samples": ["5", 0], "vae": ["1", 2]}},
+        "7": {"class_type": "SaveImage", "inputs": {"filename_prefix": prefix, "images": ["6", 0]}},
     }
     return workflow, prefix
 
@@ -199,12 +199,19 @@ def main() -> None:
 
     pack = load_pack(Path(args.input))
     assets = select_assets(pack, args.platforms, args.max_images)
+    visual_templates = pack.get("visual_templates", {})
     if not assets:
         raise SystemExit("No eligible assets found.")
 
     results = []
     for asset in assets:
-        workflow, prefix = build_workflow(asset, steps=steps, cfg=cfg, suffix=suffix)
+        workflow, prefix = build_workflow(
+            asset,
+            visual_templates=visual_templates,
+            steps=steps,
+            cfg=cfg,
+            suffix=suffix,
+        )
         prompt_id = submit_prompt(workflow)
         history = wait_for_history(prompt_id)
         out_path = resolve_output(history)
@@ -222,11 +229,7 @@ def main() -> None:
             }
         )
 
-    payload = {
-        "source_pack": args.input,
-        "quality_preset": args.quality_preset,
-        "results": results,
-    }
+    payload = {"source_pack": args.input, "quality_preset": args.quality_preset, "results": results}
     if args.manifest_out:
         Path(args.manifest_out).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(payload, ensure_ascii=False, indent=2))

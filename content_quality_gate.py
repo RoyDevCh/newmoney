@@ -36,6 +36,9 @@ PLATFORM_RULES = {
     "抖音": {"body_min": 120, "body_max": 520, "emoji_max": 12},
     "B站": {"body_min": 280, "body_max": 1400, "emoji_max": 10},
     "bilibili": {"body_min": 280, "body_max": 1400, "emoji_max": 10},
+    "微博": {"body_min": 120, "body_max": 420, "emoji_max": 12},
+    "公众号": {"body_min": 550, "body_max": 2600, "emoji_max": 6},
+    "头条": {"body_min": 800, "body_max": 2600, "emoji_max": 8},
 }
 
 MONETIZATION_BLOCKERS = {
@@ -70,8 +73,24 @@ def monetization_ready(total_score: float, issues: List[str], min_score: float) 
     return not any(issue in MONETIZATION_BLOCKERS for issue in issues)
 
 
+def _is_emoji(ch: str) -> bool:
+    cp = ord(ch)
+    return (
+        0x1F300 <= cp <= 0x1F5FF
+        or 0x1F600 <= cp <= 0x1F64F
+        or 0x1F680 <= cp <= 0x1F6FF
+        or 0x1F700 <= cp <= 0x1F77F
+        or 0x1F780 <= cp <= 0x1F7FF
+        or 0x1F800 <= cp <= 0x1F8FF
+        or 0x1F900 <= cp <= 0x1F9FF
+        or 0x1FA70 <= cp <= 0x1FAFF
+        or 0x2600 <= cp <= 0x26FF
+        or 0x2700 <= cp <= 0x27BF
+    )
+
+
 def _count_emoji(s: str) -> int:
-    return sum(1 for ch in s if ord(ch) > 10000)
+    return sum(1 for ch in s if _is_emoji(ch))
 
 
 def _contains_risk(s: str) -> List[str]:
@@ -213,6 +232,12 @@ def score_one(item: Dict, min_score: float) -> DraftScore:
     if platform == "小红书" and ("收藏" not in cta and "关注" not in cta):
         conv -= 2
     if platform == "抖音" and ("主页" not in cta and "关注" not in cta):
+        conv -= 2
+    if platform == "微博" and ("评论" not in cta and "链接" not in cta):
+        conv -= 2
+    if platform == "公众号" and ("资料" not in cta and "领取" not in cta and "查看" not in cta):
+        conv -= 2
+    if platform == "头条" and ("收藏" not in cta and "关注" not in cta and "查看" not in cta):
         conv -= 2
     subs["conversion"] = max(conv, 0.0)
 

@@ -24,6 +24,7 @@ from content_autotune_runner import (  # type: ignore
 )
 from content_quality_gate import score_one  # type: ignore
 from platform_monetization_mapper import attach_monetization_plans
+from platform_visual_templates import attach_visual_templates
 from publish_appendix_builder import build_appendices
 from video_publish_pack_builder import build_video_publish_pack
 
@@ -49,18 +50,18 @@ def build_final_refine_prompt(topic: str, draft: Dict[str, Any], review: Dict[st
     weak_point = review.get("weak_point", "")
     fix_now = review.get("fix_now", "")
     return (
-        "只输出JSON对象。你是平台主编，负责发布前最后一轮精修。"
+        "只输出 JSON 对象。你是平台主编，负责发布前最后一轮精修。"
         f"主题={topic}，平台={platform}，当前稿件={json.dumps(draft, ensure_ascii=False)}。"
-        f"编辑部意见：weak_point={weak_point}；fix_now={fix_now}。"
+        f"编辑意见：weak_point={weak_point}；fix_now={fix_now}。"
         "目标：让文案更像真人写的专业内容，而不是提示词拼装。"
         "硬要求："
         "1) 保留转化力，但去掉模板味；"
         "2) 少用重复的“按实测环境”“按公开评测”，改成更自然的证据表述；"
         "3) 严禁收益承诺、虚假社会背书、伪官方语气；"
         "4) 结论必须明确，执行动作必须具体；"
-        f"5) 语气={brief.get('voice', '')}; CTA={brief.get('conversion', '')};"
-        f"6) 正文长度保持在{brief.get('body_range', '平台要求')}；"
-        "7) 输出字段platform,title,hook,body,cta,tags。"
+        f"5) 语气={brief.get('voice', '')}；CTA={brief.get('conversion', '')}；"
+        f"6) 正文长度保持在 {brief.get('body_range', '平台要求')}；"
+        "7) 输出字段 platform,title,hook,body,cta,tags。"
     )
 
 
@@ -85,21 +86,19 @@ def polish_short_form(draft: Dict[str, Any]) -> Dict[str, Any]:
     platform = str(current.get("platform", "")).strip()
     body = str(current.get("body", "")).strip()
     hook = str(current.get("hook", "")).strip()
+
     if platform == "小红书":
-        body = body.replace("，", "，\n")
         lines = [line.strip() for line in body.splitlines() if line.strip()]
-        body = "\n".join(lines)
+        current["body"] = "\n".join(lines)
         if hook and "先看结论" not in hook and len(hook) < 28:
             current["hook"] = f"先看结论：{hook}"
     elif platform == "抖音":
-        body = body.replace("。", "。 ").replace("；", "。 ")
-        pieces = [x.strip() for x in body.split("。") if x.strip()]
+        pieces = [x.strip() for x in body.replace("！", "。").split("。") if x.strip()]
         pieces = pieces[:6]
         current["body"] = "。".join(pieces) + ("。" if pieces else "")
         if hook and not hook.startswith("别再"):
             current["hook"] = f"别再踩坑了，{hook}"
-    if platform != "抖音":
-        current["body"] = body
+
     return current
 
 
@@ -149,6 +148,7 @@ def main() -> None:
         "final_review_applied": True,
     }
     out_payload = attach_monetization_plans(out_payload)
+    out_payload = attach_visual_templates(out_payload)
     out_payload["video_publish_kits"] = build_video_publish_pack(out_payload)
     Path(args.output).write_text(json.dumps(out_payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"output": args.output, "scores": scores}, ensure_ascii=False, indent=2))

@@ -15,7 +15,7 @@ AI_TOOL_CATALOG = [
         "best_for": "中文写作、提纲整理、基础办公问答",
         "strength": "中文理解和通用办公表达较稳",
         "watch_out": "复杂长任务时需要人工拆解需求",
-        "pricing_note": "可先从免费能力试用",
+        "pricing_note": "先从免费能力试用",
     },
     {
         "tool": "Kimi",
@@ -32,7 +32,7 @@ AI_TOOL_CATALOG = [
         "pricing_note": "先跑固定模板流程更稳",
     },
     {
-        "tool": "秘塔AI",
+        "tool": "秘塔 AI",
         "best_for": "检索、资料收集、网页信息整合",
         "strength": "搜集和归纳效率较高",
         "watch_out": "引用内容要回到原来源复核",
@@ -43,7 +43,7 @@ AI_TOOL_CATALOG = [
         "best_for": "语音转写、会议纪要、口语整理",
         "strength": "音频转文字场景适配度高",
         "watch_out": "专有名词与数字信息要二次检查",
-        "pricing_note": "优先用在会议和访谈整理",
+        "pricing_note": "优先用于会议和访谈整理",
     },
 ]
 
@@ -54,7 +54,7 @@ def load_pack(path: Path) -> Dict[str, Any]:
 
 def tool_rows_for_topic(topic: str) -> List[Dict[str, str]]:
     topic = topic.strip()
-    if any(key in topic for key in ["AI办公", "AI工具", "办公自动化", "效率"]):
+    if any(key in topic for key in ["AI办公", "AI工具", "办公自动化", "效率", "内容创作"]):
         return AI_TOOL_CATALOG
     if len(topic) < 4 or "?" in topic or "？" in topic:
         return AI_TOOL_CATALOG
@@ -74,7 +74,7 @@ def ensure_rows(rows: List[Dict[str, str]], minimum: int = 2) -> List[Dict[str, 
         rows = AI_TOOL_CATALOG[:]
     while len(rows) < minimum:
         rows = rows + AI_TOOL_CATALOG[: minimum - len(rows)]
-    return rows
+    return rows[: max(minimum, len(rows))]
 
 
 def zhihu_appendix(topic: str) -> Dict[str, Any]:
@@ -98,7 +98,7 @@ def zhihu_appendix(topic: str) -> Dict[str, Any]:
             "没有明确适用场景却直接卖年费套餐的工具",
             "输出看起来顺滑但事实错误率高的工具",
         ],
-        "save_cta": "如果你要完整工具清单，可以在评论区留“清单”，再按需补充细分场景版。",
+        "save_cta": "如果你要完整版清单，可在评论区留“清单”，再按需补充细分场景版。",
     }
 
 
@@ -126,7 +126,7 @@ def xiaohongshu_appendix(topic: str) -> Dict[str, Any]:
         "title": f"{topic}收藏型清单",
         "usage_note": "适合做图二、图三文案或评论区补充。",
         "quick_list": [f"{row['tool']}：{row['best_for']}" for row in rows[:4]],
-        "save_reason": "让读者一眼知道先试哪个，不需要看完长文才行动。",
+        "save_reason": "让读者一眼知道先试哪一个，不需要看完长文才行动。",
     }
 
 
@@ -144,6 +144,47 @@ def douyin_appendix(topic: str) -> Dict[str, Any]:
     }
 
 
+def weibo_appendix(topic: str) -> Dict[str, Any]:
+    rows = ensure_rows(tool_rows_for_topic(topic), minimum=2)
+    return {
+        "title": f"{topic}微博快反补充卡",
+        "usage_note": "适合置顶评论或单条长图文补充说明。",
+        "fast_points": [
+            f"{rows[0]['tool']}适合{rows[0]['best_for']}",
+            f"{rows[1]['tool']}更适合{rows[1]['strength']}",
+        ],
+        "comment_cta": "评论区留“表格”，可继续领取完整版清单。",
+    }
+
+
+def wechat_appendix(topic: str) -> Dict[str, Any]:
+    rows = ensure_rows(tool_rows_for_topic(topic), minimum=3)
+    return {
+        "title": f"{topic}公众号延伸阅读附件",
+        "usage_note": "适合放在正文末尾，作为领取资料或系列阅读的承接。",
+        "sections": [
+            "本期适合谁",
+            "推荐工具对照",
+            "执行顺序建议",
+            "不适合直接照抄的人群提醒",
+        ],
+        "resource_pack": [row["tool"] for row in rows],
+        "article_cta": "回复“资料”领取清单版附件。",
+    }
+
+
+def toutiao_appendix(topic: str) -> Dict[str, Any]:
+    rows = ensure_rows(tool_rows_for_topic(topic), minimum=3)
+    return {
+        "title": f"{topic}头条长图文附录",
+        "usage_note": "适合放在正文末尾，承接收藏、关注和下一篇阅读。",
+        "list_points": [
+            f"{row['tool']}：适合{row['best_for']}，注意{row['watch_out']}" for row in rows
+        ],
+        "follow_cta": "先收藏这篇，下一篇继续拆具体场景。",
+    }
+
+
 def build_appendices(pack: Dict[str, Any]) -> Dict[str, Any]:
     topic = str(pack.get("topic", "")).strip()
     return {
@@ -151,6 +192,9 @@ def build_appendices(pack: Dict[str, Any]) -> Dict[str, Any]:
         "bilibili": bilibili_appendix(topic),
         "xiaohongshu": xiaohongshu_appendix(topic),
         "douyin": douyin_appendix(topic),
+        "weibo": weibo_appendix(topic),
+        "wechat_official": wechat_appendix(topic),
+        "toutiao": toutiao_appendix(topic),
     }
 
 
