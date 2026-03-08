@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>登录 | OpenClaw 控制台</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+  <div class="login-shell">
+    <section class="login-card">
+      <div class="eyebrow">Protected Console</div>
+      <h1>OpenClaw 控制台登录</h1>
+      <p class="subtitle">局域网可访问，但需要口令登录。</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" class="login-form">
+        <input type="hidden" name="next" value="{{ next_url }}">
+        <label>访问口令<input type="password" name="password" autofocus></label>
+        <button class="button primary" type="submit">登录</button>
+      </form>
+    </section>
+  </div>
+</body>
+</html>

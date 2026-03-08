@@ -24,29 +24,44 @@ OPENCLAW = str(Path.home() / "AppData" / "Roaming" / "npm" / "openclaw.cmd")
 
 STABLE_TOPICS = [
     {
-        "query": "AI办公自动化",
+        "query": "数码装备避坑与选购建议 2026",
         "priority": 1.0,
-        "fit_platforms": ["知乎", "小红书", "抖音", "B站", "公众号"],
+        "fit_platforms": ["知乎", "抖音", "西瓜视频", "B站", "微博", "头条"],
+    },
+    {
+        "query": "办公效率工具清单与信息管理工作流",
+        "priority": 0.99,
+        "fit_platforms": ["知乎", "小红书", "抖音", "西瓜视频", "B站", "公众号", "头条"],
+    },
+    {
+        "query": "家用小电器真实使用场景与避坑清单",
+        "priority": 0.97,
+        "fit_platforms": ["知乎", "小红书", "抖音", "西瓜视频", "B站", "头条"],
+    },
+    {
+        "query": "内容生产提效与变现流程拆解",
+        "priority": 0.95,
+        "fit_platforms": ["知乎", "小红书", "抖音", "西瓜视频", "B站", "公众号"],
+    },
+    {
+        "query": "商业案例拆解与品牌增长复盘",
+        "priority": 0.94,
+        "fit_platforms": ["知乎", "抖音", "西瓜视频", "B站", "微博", "公众号", "头条"],
+    },
+    {
+        "query": "知识管理与个人系统搭建",
+        "priority": 0.93,
+        "fit_platforms": ["知乎", "小红书", "抖音", "西瓜视频", "B站", "公众号"],
+    },
+    {
+        "query": "历史事件里的商业与认知启发",
+        "priority": 0.91,
+        "fit_platforms": ["知乎", "西瓜视频", "B站", "微博", "公众号", "头条"],
     },
     {
         "query": "AI工具清单与效率工作流",
-        "priority": 0.98,
-        "fit_platforms": ["知乎", "小红书", "抖音", "B站", "微博", "公众号", "头条"],
-    },
-    {
-        "query": "数码装备避坑与选购建议 2026",
-        "priority": 0.95,
-        "fit_platforms": ["知乎", "抖音", "B站", "微博", "头条"],
-    },
-    {
-        "query": "内容创作提效与变现",
-        "priority": 0.92,
-        "fit_platforms": ["知乎", "小红书", "抖音", "B站", "公众号"],
-    },
-    {
-        "query": "AI内容创作工作流拆解",
         "priority": 0.9,
-        "fit_platforms": ["知乎", "小红书", "抖音", "B站", "公众号", "头条"],
+        "fit_platforms": ["知乎", "小红书", "抖音", "西瓜视频", "B站", "微博", "公众号", "头条"],
     },
 ]
 
@@ -195,12 +210,14 @@ def main() -> None:
 
     raw_out_file = WS_CONTENT / f"daily_pack_raw_{now}.json"
     out_file = WS_CONTENT / f"daily_pack_{now}.json"
+    topic_file = WS_CONTENT / f"topic_{now}.txt"
+    topic_file.write_text(topic, encoding="utf-8")
     tune_cmd = [
         "py",
         "-3",
         str(WS_CONTENT / "content_autotune_runner.py"),
-        "--topic",
-        topic.replace(" ", "_"),
+        "--topic-file",
+        str(topic_file),
         "--min-score",
         "85",
         "--max-rewrite-rounds",

@@ -1,4 +1,7 @@
-﻿#!/usr/bin/env python3
+﻿from pathlib import Path
+import textwrap
+root = Path(r'C:\Users\Roy\Documents\New project')
+content = '''#!/usr/bin/env python3
 """Expand a monetization pack with additional platform drafts."""
 
 from __future__ import annotations
@@ -154,7 +157,7 @@ def fallback_extra_drafts(topic: str) -> List[Dict[str, Any]]:
             "title": f"{topic}别再凭感觉做了，这里给你一份快用版结论",
             "hook": f"做{topic}最容易踩坑的，不是工具不够多，而是动作顺序错了。",
             "body": f"先给结论：围绕{topic}做内容时，先做一份能直接照着用的清单，比空谈趋势更容易转化。常见误区就三个：先买工具、后找场景；先堆观点、后给动作；先做复杂系统、后验证最小结果。更稳的顺序是先定一个场景，再做一张对照表，最后只保留一个领取动作。",
-            "cta": "评论区留‘清单’，我把快用版结构发你。",
+            "cta": "评论区留“清单”，我把快用版结构发你。",
             "tags": ["微博运营", "内容变现", "清单"],
         }),
         normalize_draft(topic, {
@@ -162,7 +165,7 @@ def fallback_extra_drafts(topic: str) -> List[Dict[str, Any]]:
             "title": f"{topic}怎么做成可持续变现内容：一份能直接套用的结构",
             "hook": f"如果你做{topic}只看爆款标题，最后大概率是流量有了，转化却接不住。",
             "body": f"做{topic}最容易忽略的是承接层。真正能长期赚钱的内容，不是单篇情绪爆发，而是每篇文章都能沉淀一份可复用资料。按公开高赞长文的常见结构，前200字先给结论，中段给3个执行节点，尾段再给资料入口。这样读者读完能立刻拿走方法，你后续再承接商品、清单或咨询，转化才会稳。建议固定四段：结论、适用场景、执行顺序、资料领取。",
-            "cta": "文末回复‘资料’，领取这套文章结构和清单模板。",
+            "cta": "文末回复“资料”，领取这套文章结构和清单模板。",
             "tags": ["公众号运营", "内容策略", "资料包"],
         }),
         normalize_draft(topic, {
@@ -235,3 +238,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+'''
+(root / 'matrix_pack_expander.py').write_text(textwrap.dedent(content), encoding='utf-8')

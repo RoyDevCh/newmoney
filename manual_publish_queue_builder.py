@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Build a manual publish queue and notification pack from a content pack."""
 
 from __future__ import annotations
@@ -45,17 +45,14 @@ def tts_map(tts_dir: Path) -> Dict[str, str]:
         name = file.name.lower()
         if "douyin" in name:
             result["抖音"] = str(file)
+        elif "xigua" in name:
+            result["西瓜视频"] = str(file)
         elif "bilibili" in name:
             result["B站"] = str(file)
     return result
 
 
-def pick_manual_publish_items(
-    pack: Dict[str, Any],
-    quality: Dict[str, Any],
-    manifest: Dict[str, Any],
-    tts_files: Dict[str, str],
-) -> List[Dict[str, Any]]:
+def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], manifest: Dict[str, Any], tts_files: Dict[str, str]) -> List[Dict[str, Any]]:
     strategies = build_strategy_matrix()
     qmap = quality_map(quality)
     amap = asset_map(manifest)
@@ -67,26 +64,27 @@ def pick_manual_publish_items(
         strategy = strategies.get(platform, {})
         q = qmap.get(platform, {})
         a = amap.get(platform, {})
-        score = float(q.get("total_score", q.get("score", 0.0)) or 0.0)
-        passed = bool(q.get("pass_gate", q.get("pass", False)))
-        item = {
-            "platform": platform,
-            "title": draft.get("title", ""),
-            "hook": draft.get("hook", ""),
-            "cta": draft.get("cta", ""),
-            "score": score,
-            "pass": passed,
-            "publish_windows": strategy.get("publish_windows", []),
-            "recommended_publish_per_day": strategy.get("recommended_publish_per_day", 1),
-            "recommended_produce_per_day": strategy.get("recommended_produce_per_day", 1),
-            "primary_goal": strategy.get("primary_goal", ""),
-            "post_type": strategy.get("post_type", ""),
-            "manual_publish_priority": strategy.get("manual_publish_priority", 9),
-            "notes": strategy.get("notes", ""),
-            "cover_file": a.get("output_file", ""),
-            "tts_file": tts_files.get(platform, ""),
-        }
-        items.append(item)
+        items.append(
+            {
+                "platform": platform,
+                "title": draft.get("title", ""),
+                "hook": draft.get("hook", ""),
+                "body": draft.get("body", draft.get("content", "")),
+                "cta": draft.get("cta", ""),
+                "tags": draft.get("tags", []),
+                "score": float(q.get("total_score", q.get("score", 0.0)) or 0.0),
+                "pass": bool(q.get("pass_gate", q.get("pass", False))),
+                "publish_windows": strategy.get("publish_windows", []),
+                "recommended_publish_per_day": strategy.get("recommended_publish_per_day", 1),
+                "recommended_produce_per_day": strategy.get("recommended_produce_per_day", 1),
+                "primary_goal": strategy.get("primary_goal", ""),
+                "post_type": strategy.get("post_type", ""),
+                "manual_publish_priority": strategy.get("manual_publish_priority", 9),
+                "notes": strategy.get("notes", ""),
+                "cover_file": a.get("output_file", ""),
+                "tts_file": tts_files.get(platform, ""),
+            }
+        )
     items.sort(key=lambda x: (x["manual_publish_priority"], -x["score"]))
     return items
 
@@ -121,9 +119,9 @@ def build_markdown(queue: Dict[str, Any]) -> str:
                 f"- 建议发布时间段：{', '.join(item.get('publish_windows', []))}",
                 f"- 建议日发布量：{item.get('recommended_publish_per_day')}",
                 f"- 封面：`{item.get('cover_file', '')}`",
-                f"- TTS：`{item.get('tts_file', '')}`" if item.get("tts_file") else "- TTS：`N/A`",
+                f"- TTS：`{item.get('tts_file', 'N/A')}`",
                 f"- 操作提示：{item.get('notes', '')}",
-                f"- 手动发布动作：打开对应平台 -> 复制标题/正文/标签 -> 上传封面/视频 -> 发布后回填数据",
+                "- 手动发布动作：打开对应平台 -> 复制标题/正文/标签 -> 上传封面/视频 -> 发布后回填数据",
                 "",
             ]
         )
@@ -157,12 +155,7 @@ def main() -> None:
     quality = load_json(Path(args.input_quality))
     assets = load_json(Path(args.input_assets))
     items = pick_manual_publish_items(pack, quality, assets, tts_map(Path(args.tts_dir)))
-    queue = {
-        "generated_at": args.generated_at,
-        "source_pack": args.input_pack,
-        "summary": queue_summary(items),
-        "items": items,
-    }
+    queue = {"generated_at": args.generated_at, "source_pack": args.input_pack, "summary": queue_summary(items), "items": items}
     output_json = Path(args.output_json)
     output_md = Path(args.output_md)
     output_json.write_text(json.dumps(queue, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -12,8 +12,11 @@ from typing import Any, Dict, List
 
 VOICE_BY_PLATFORM = {
     "douyin": "Microsoft Yunxi Desktop",
+    "xigua": "Microsoft Xiaoxiao Desktop",
     "bilibili": "Microsoft Yunyang Desktop",
 }
+
+RATE_BY_PLATFORM = {"douyin": 1, "xigua": -1, "bilibili": -1}
 
 
 def load_pack(path: Path) -> Dict[str, Any]:
@@ -36,11 +39,7 @@ try {{
   $synth.Dispose()
 }}
 """
-    subprocess.run(
-        ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", ps],
-        check=True,
-        timeout=300,
-    )
+    subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", ps], check=True, timeout=300)
 
 
 def main() -> None:
@@ -55,23 +54,14 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     results: List[Dict[str, Any]] = []
-    for key in ["douyin", "bilibili"]:
+    for key in ["douyin", "xigua", "bilibili"]:
         kit = kits.get(key, {})
         script = str(kit.get("tts_script", "")).strip()
         if not script:
             continue
         out_path = out_dir / f"{key}_tts.wav"
-        voice = VOICE_BY_PLATFORM.get(key, "")
-        rate = 1 if key == "douyin" else -1
-        render_one(script, out_path, voice_name=voice, rate=rate)
-        results.append(
-            {
-                "platform": key,
-                "output_file": str(out_path),
-                "exists": out_path.exists(),
-                "size_mb": round(out_path.stat().st_size / (1024 * 1024), 2) if out_path.exists() else 0.0,
-            }
-        )
+        render_one(script, out_path, voice_name=VOICE_BY_PLATFORM.get(key, ""), rate=RATE_BY_PLATFORM.get(key, 0))
+        results.append({"platform": key, "output_file": str(out_path), "exists": out_path.exists(), "size_mb": round(out_path.stat().st_size / (1024 * 1024), 2) if out_path.exists() else 0.0})
 
     print(json.dumps({"results": results}, ensure_ascii=False, indent=2))
 

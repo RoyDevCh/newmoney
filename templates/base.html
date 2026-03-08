@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}OpenClaw 控制台{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">OC</div>
+        <div>
+          <div class="brand-title">OpenClaw Studio</div>
+          <div class="brand-subtitle">内容生产控制台</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">总览</a>
+        <a href="{{ url_for('content_board') }}" class="nav-link {% if request.endpoint == 'content_board' %}active{% endif %}">发布台</a>
+        <a href="{{ url_for('metrics_board') }}" class="nav-link {% if request.endpoint == 'metrics_board' %}active{% endif %}">数据回灌</a>
+        <a href="{{ url_for('monitor_board') }}" class="nav-link {% if request.endpoint == 'monitor_board' %}active{% endif %}">系统监控</a>
+      </nav>
+
+      <section class="panel compact">
+        <div class="panel-title">远端主机</div>
+        <div class="kv"><span>Host</span><strong>{{ remote_config.host }}</strong></div>
+        <div class="kv"><span>User</span><strong>{{ remote_config.username }}</strong></div>
+        <div class="kv"><span>状态</span><strong class="{{ 'good' if remote_ready else 'warn' }}">{{ '已连接配置' if remote_ready else '待填密码' }}</strong></div>
+      </section>
+
+      <section class="panel compact">
+        <div class="panel-title">生产任务</div>
+        <div class="kv"><span>运行中</span><strong class="{{ 'warn' if pipeline_job.running else 'good' }}">{{ '是' if pipeline_job.running else '否' }}</strong></div>
+        <div class="kv"><span>开始</span><strong>{{ pipeline_job.started_at or '-' }}</strong></div>
+        <div class="kv"><span>结束</span><strong>{{ pipeline_job.finished_at or '-' }}</strong></div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1>{% block page_title %}OpenClaw 控制台{% endblock %}</h1>
+          <p class="subtitle">{% block page_subtitle %}生产、发布、反馈、监控一体化视图{% endblock %}</p>
+        </div>
+        <div class="inline-form">
+          <form method="post" action="{{ url_for('trigger_pipeline') }}">
+            <input type="hidden" name="skip_assets" value="0">
+            <button class="button primary" type="submit" {% if not remote_ready or pipeline_job.running %}disabled{% endif %}>运行今日生产</button>
+          </form>
+          {% if auth_enabled %}
+            <form method="post" action="{{ url_for('logout') }}">
+              <button class="button" type="submit">退出登录</button>
+            </form>
+          {% endif %}
+        </div>
+      </header>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

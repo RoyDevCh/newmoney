@@ -34,6 +34,7 @@ PLATFORM_RULES = {
     "知乎": {"body_min": 450, "body_max": 1800, "emoji_max": 5},
     "小红书": {"body_min": 120, "body_max": 550, "emoji_max": 35},
     "抖音": {"body_min": 120, "body_max": 520, "emoji_max": 12},
+    "西瓜视频": {"body_min": 360, "body_max": 2200, "emoji_max": 8},
     "B站": {"body_min": 280, "body_max": 1400, "emoji_max": 10},
     "bilibili": {"body_min": 280, "body_max": 1400, "emoji_max": 10},
     "微博": {"body_min": 120, "body_max": 420, "emoji_max": 12},
@@ -217,6 +218,9 @@ def score_one(item: Dict, min_score: float) -> DraftScore:
     if platform in {"抖音"} and _sentence_count(body) < 5:
         pf -= 4
         issues.append("douyin_rhythm_weak")
+    if platform in {"西瓜视频"} and _sentence_count(body) < 8:
+        pf -= 4
+        issues.append("xigua_depth_weak")
     subs["platform_fit"] = max(pf, 0.0)
 
     # 5) Conversion 15
@@ -232,6 +236,8 @@ def score_one(item: Dict, min_score: float) -> DraftScore:
     if platform == "小红书" and ("收藏" not in cta and "关注" not in cta):
         conv -= 2
     if platform == "抖音" and ("主页" not in cta and "关注" not in cta):
+        conv -= 2
+    if platform == "西瓜视频" and ("收藏" not in cta and "简介" not in cta and "完整" not in cta):
         conv -= 2
     if platform == "微博" and ("评论" not in cta and "链接" not in cta):
         conv -= 2

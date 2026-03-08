@@ -381,28 +381,36 @@ def fallback_review(drafts: List[Dict[str, Any]], min_score: float) -> Dict[str,
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--topic", required=True)
+    ap.add_argument("--topic")
+    ap.add_argument("--topic-file")
     ap.add_argument("--platforms", nargs="+", default=["知乎", "小红书", "抖音", "B站"])
     ap.add_argument("--min-score", type=float, default=85.0)
     ap.add_argument("--max-rewrite-rounds", type=int, default=3)
     ap.add_argument("--out", default="autotuned_drafts.json")
     args = ap.parse_args()
 
-    strategy = extract_json(run_agent("main-brain", build_strategy_prompt(args.topic, args.platforms), timeout=220))
-    raw = run_agent("content", build_init_prompt(args.topic, args.platforms, strategy), timeout=360)
+    if args.topic_file:
+        topic = Path(args.topic_file).read_text(encoding="utf-8-sig").strip()
+    else:
+        topic = (args.topic or "").strip()
+    if not topic:
+        raise SystemExit("missing topic: use --topic or --topic-file")
+
+    strategy = extract_json(run_agent("main-brain", build_strategy_prompt(topic, args.platforms), timeout=220))
+    raw = run_agent("content", build_init_prompt(topic, args.platforms, strategy), timeout=360)
     drafts = select_best_drafts(normalize_list(extract_json(raw)), args.platforms, args.min_score)
 
     final_drafts: List[Dict[str, Any]] = []
     score_log: List[Dict[str, Any]] = []
     for draft in drafts:
         final, score_row = optimize_draft(
-            topic=args.topic,
+            topic=topic,
             draft=draft,
             strategy=strategy,
             min_score=args.min_score,
             max_rewrite_rounds=args.max_rewrite_rounds,
         )
-        final = sanitize_draft(args.topic, final)
+        final = sanitize_draft(topic, final)
         rescored = score_one(final, args.min_score)
         score_row = {
             "platform": final.get("platform", ""),
@@ -416,14 +424,14 @@ def main() -> None:
         score_log.append(score_row)
 
     try:
-        publisher_review = extract_json(run_agent("publisher", build_publisher_review_prompt(args.topic, final_drafts), timeout=240))
+        publisher_review = extract_json(run_agent("publisher", build_publisher_review_prompt(topic, final_drafts), timeout=240))
     except Exception:
         publisher_review = fallback_review(final_drafts, args.min_score)
 
-    assets = generate_asset_prompts(args.topic, final_drafts)
+    assets = generate_asset_prompts(topic, final_drafts)
 
     payload = {
-        "topic": args.topic,
+        "topic": topic,
         "strategy": strategy,
         "drafts": final_drafts,
         "scores": score_log,

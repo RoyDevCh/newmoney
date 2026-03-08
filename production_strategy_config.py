@@ -14,7 +14,7 @@ PLATFORM_STRATEGY: Dict[str, Dict[str, Any]] = {
         "primary_goal": "high-trust conversion",
         "post_type": "long-form answer/article",
         "manual_publish_priority": 1,
-        "notes": "优先发高证据感稿件。不要同一天连发多篇近似选题。",
+        "notes": "优先发高证据感稿件，同一天不要连续发多个高度相似选题。",
     },
     "小红书": {
         "recommended_publish_per_day": 2,
@@ -23,7 +23,7 @@ PLATFORM_STRATEGY: Dict[str, Dict[str, Any]] = {
         "primary_goal": "save-driven growth",
         "post_type": "visual note",
         "manual_publish_priority": 2,
-        "notes": "优先发收藏型清单和模板展示。图比字更重要。",
+        "notes": "优先发收藏型清单和模板展示，图比字更重要。",
     },
     "抖音": {
         "recommended_publish_per_day": 2,
@@ -34,6 +34,15 @@ PLATFORM_STRATEGY: Dict[str, Dict[str, Any]] = {
         "manual_publish_priority": 2,
         "notes": "先保稳定节奏，不建议一开始堆太多条。",
     },
+    "西瓜视频": {
+        "recommended_publish_per_day": 1,
+        "recommended_produce_per_day": 1,
+        "publish_windows": ["12:00-14:00", "19:30-22:00"],
+        "primary_goal": "watch time and compound traffic",
+        "post_type": "horizontal mid-length video",
+        "manual_publish_priority": 1,
+        "notes": "西瓜更适合3到8分钟横屏母体视频，优先做完整信息密度，不要短平快硬塞。",
+    },
     "B站": {
         "recommended_publish_per_day": 1,
         "recommended_produce_per_day": 1,
@@ -41,7 +50,7 @@ PLATFORM_STRATEGY: Dict[str, Dict[str, Any]] = {
         "primary_goal": "trust and watch time",
         "post_type": "video",
         "manual_publish_priority": 1,
-        "notes": "B站更看单条价值，不适合高频堆量。",
+        "notes": "B站看单条价值，不适合高频堆量。",
     },
     "微博": {
         "recommended_publish_per_day": 2,
@@ -74,4 +83,4 @@ PLATFORM_STRATEGY: Dict[str, Dict[str, Any]] = {
 
 
 def build_strategy_matrix() -> Dict[str, Dict[str, Any]]:
-    return PLATFORM_STRATEGY.copy()
+    return {key: value.copy() for key, value in PLATFORM_STRATEGY.items()}

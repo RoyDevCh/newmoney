@@ -1,0 +1,216 @@
+﻿{% extends "base.html" %}
+
+{% block title %}发布台 | OpenClaw 控制台{% endblock %}
+{% block page_title %}内容发布台{% endblock %}
+{% block page_subtitle %}浏览最新和历史内容包，查看图文稿、视频稿、封面与TTS素材{% endblock %}
+
+{% block content %}
+{% if error %}
+  <section class="panel error-panel">{{ error }}</section>
+{% elif snapshot %}
+  <section class="grid two">
+    <article class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Pack Library</div>
+          <h2>内容包历史</h2>
+        </div>
+        <div class="soft-note">当前：{{ snapshot.pack_path }}</div>
+      </div>
+      {% if snapshot.pack_history %}
+        <div class="queue-list">
+          {% for row in snapshot.pack_history %}
+            <a class="queue-item pack-link {% if row.path == snapshot.pack_path %}active-pack{% endif %}" href="{{ url_for('content_board', pack=row.path) }}">
+              <div class="queue-rank">{{ loop.index }}</div>
+              <div class="queue-main">
+                <div class="queue-title">{{ row.name }}</div>
+                <div class="queue-meta">
+                  <span>{{ row.path }}</span>
+                  <span>{{ row.size }} bytes</span>
+                  <span>{{ row.mtime | int }}</span>
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">还没有可浏览的历史内容包。</div>
+      {% endif %}
+    </article>
+
+    <article class="panel accent">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Video Chain</div>
+          <h2>视频生产链路</h2>
+        </div>
+      </div>
+      {% set kits = snapshot.pack.video_publish_kits if snapshot.pack and snapshot.pack.video_publish_kits else {} %}
+      {% if kits %}
+        <div class="suggestion-grid">
+          {% for key, kit in kits.items() %}
+            <article class="suggestion-card">
+              <div class="queue-title">{{ kit.platform }}</div>
+              <div class="soft-note">{{ kit.cover_text }}</div>
+              <div class="divider"></div>
+              <div class="kv"><span>镜头数</span><strong>{{ kit.shot_list | length }}</strong></div>
+              <div class="kv"><span>TTS段落</span><strong>{{ kit.voice_segments | length }}</strong></div>
+              <div class="kv"><span>开场Hook</span><strong>{{ kit.opening_hook }}</strong></div>
+              <div class="soft-note">{{ kit.edit_notes | join(' / ') }}</div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty">当前内容包没有视频稿包。</div>
+      {% endif %}
+    </article>
+  </section>
+
+  {% if snapshot.merged_queue_items %}
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="eyebrow">Manual Publish Queue</div>
+          <h2>当前内容包发布稿</h2>
+        </div>
+        <div class="soft-note">质量文件：{{ snapshot.quality_path or 'N/A' }}</div>
+      </div>
+
+      <div class="content-stack">
+        {% for item in snapshot.merged_queue_items %}
+          {% set kit = none %}
+          {% if item.platform == '抖音' %}{% set kit = snapshot.pack.video_publish_kits.douyin if snapshot.pack and snapshot.pack.video_publish_kits else none %}{% endif %}
+          {% if item.platform == '西瓜视频' %}{% set kit = snapshot.pack.video_publish_kits.xigua if snapshot.pack and snapshot.pack.video_publish_kits else none %}{% endif %}
+          {% if item.platform == 'B站' %}{% set kit = snapshot.pack.video_publish_kits.bilibili if snapshot.pack and snapshot.pack.video_publish_kits else none %}{% endif %}
+          <article class="content-card">
+            <div class="content-top">
+              <div>
+                <div class="pill-row">
+                  <span class="pill platform">{{ item.platform }}</span>
+                  <span class="pill {{ 'ready' if item.pass else 'hold' }}">{{ 'READY' if item.pass else 'HOLD' }}</span>
+                  <span class="pill muted">分数 {{ item.score }}</span>
+                  {% if item.publish_status.published %}
+                    <span class="pill ready">已发布</span>
+                  {% endif %}
+                </div>
+                <h2>{{ item.title }}</h2>
+                <p class="meta-line">
+                  <span>{{ item.primary_goal }}</span>
+                  <span>建议日发 {{ item.recommended_publish_per_day }}</span>
+                  <span>{{ item.publish_windows | join(' / ') }}</span>
+                </p>
+              </div>
+              {% if item.cover_file %}
+                <img class="cover-preview" src="{{ url_for('media', path=item.cover_file) }}" alt="{{ item.platform }} cover">
+              {% endif %}
+            </div>
+
+            <div class="content-grid">
+              <section>
+                <div class="section-head"><h3>Hook</h3><button class="button small copy-btn" type="button" data-copy="{{ item.hook|e }}">复制</button></div>
+                <textarea readonly>{{ item.hook }}</textarea>
+              </section>
+              <section>
+                <div class="section-head"><h3>CTA</h3><button class="button small copy-btn" type="button" data-copy="{{ item.cta|e }}">复制</button></div>
+                <textarea readonly>{{ item.cta }}</textarea>
+              </section>
+            </div>
+
+            <section>
+              <div class="section-head"><h3>正文</h3><button class="button small copy-btn" type="button" data-copy="{{ item.body|e }}">复制正文</button></div>
+              <textarea class="body-box" readonly>{{ item.body }}</textarea>
+            </section>
+
+            <div class="content-grid">
+              <section>
+                <div class="section-head"><h3>标签</h3><button class="button small copy-btn" type="button" data-copy="{% if item.tags is string %}{{ item.tags|e }}{% else %}{{ (item.tags | join(', '))|e }}{% endif %}">复制</button></div>
+                <textarea readonly>{% if item.tags is string %}{{ item.tags }}{% else %}{{ item.tags | join(', ') }}{% endif %}</textarea>
+              </section>
+              <section>
+                <h3>发布提示</h3>
+                <textarea readonly>{{ item.notes }}</textarea>
+              </section>
+            </div>
+
+            {% if kit %}
+              <section class="publish-status-box">
+                <h3>视频稿包</h3>
+                <div class="content-grid">
+                  <label>封面文案<textarea readonly>{{ kit.cover_text }}</textarea></label>
+                  <label>开场Hook<textarea readonly>{{ kit.opening_hook }}</textarea></label>
+                </div>
+                <div class="content-grid">
+                  <label>镜头计划<textarea readonly>{% for shot in kit.shot_list %}{{ shot.shot }}. {{ shot.visual }} | {{ shot.voiceover }}
+{% endfor %}</textarea></label>
+                  <label>TTS稿<textarea readonly>{{ kit.tts_script }}</textarea></label>
+                </div>
+              </section>
+            {% endif %}
+
+            <div class="resource-row">
+              <button class="button small copy-btn" type="button" data-copy="{{ item.title|e }}">复制标题</button>
+              <button class="button small copy-btn" type="button" data-copy="{{ (item.title ~ '\n\n' ~ item.body ~ '\n\nCTA: ' ~ item.cta)|e }}">复制整稿</button>
+              {% if item.cover_file %}
+                <a class="button" href="{{ url_for('media', path=item.cover_file) }}" target="_blank">打开封面</a>
+              {% endif %}
+              {% if item.tts_file %}
+                <audio controls preload="none" src="{{ url_for('media', path=item.tts_file) }}"></audio>
+              {% endif %}
+            </div>
+
+            <section class="publish-status-box">
+              <h3>发布状态回填</h3>
+              <form method="post" action="{{ url_for('update_publish_status_view') }}" class="publish-form">
+                <input type="hidden" name="pack_path" value="{{ snapshot.pack_path }}">
+                <input type="hidden" name="platform" value="{{ item.platform }}">
+                <label class="checkbox-row">
+                  <input type="checkbox" name="published" value="1" {% if item.publish_status.published %}checked{% endif %}>
+                  <span>已手动发布</span>
+                </label>
+                <div class="content-grid">
+                  <label>内容 ID<input name="content_id" value="{{ item.publish_status.content_id or '' }}"></label>
+                  <label>发布链接<input name="publish_url" value="{{ item.publish_status.publish_url or '' }}"></label>
+                </div>
+                <label>备注<textarea name="operator_note">{{ item.publish_status.operator_note or '' }}</textarea></label>
+                <div class="resource-row">
+                  <button class="button" type="submit">保存状态</button>
+                  {% if item.publish_status.updated_at %}
+                    <span class="soft-note">最近更新：{{ item.publish_status.updated_at }}</span>
+                  {% endif %}
+                </div>
+              </form>
+            </section>
+
+            {% if item.issues %}
+              <div class="issues">
+                {% for issue in item.issues %}
+                  <span class="issue">{{ issue }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% else %}
+    <section class="panel empty">当前内容包没有可展示的发布稿。</section>
+  {% endif %}
+{% else %}
+  <section class="panel empty">还没有可展示的内容包。先运行一次安全生产。</section>
+{% endif %}
+<script>
+document.querySelectorAll('.copy-btn').forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    const text = btn.dataset.copy || '';
+    try {
+      await navigator.clipboard.writeText(text);
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(() => { btn.textContent = old; }, 1200);
+    } catch (err) {
+      alert('复制失败，请手动复制。');
+    }
+  });
+});
+</script>
+{% endblock %}

@@ -31,6 +31,14 @@ VISUAL_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "typography_direction": "short punchy hook, high contrast",
         "cover_text_style": "冲突纠错型",
     },
+    "西瓜视频": {
+        "aspect_ratio": "16:9",
+        "safe_area": "left-center",
+        "composition": "horizontal creator frame with layered evidence props",
+        "color_direction": "deep amber, slate blue, warm tungsten",
+        "typography_direction": "documentary headline and one proof cue",
+        "cover_text_style": "母体内容长视频型",
+    },
     "B站": {
         "aspect_ratio": "16:9",
         "safe_area": "right-title",

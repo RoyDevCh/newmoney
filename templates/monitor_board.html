@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}系统监控 | OpenClaw 控制台{% endblock %}
+{% block page_title %}系统监控{% endblock %}
+{% block page_subtitle %}看 agent 状态、流水线阶段结果和最新生产信号{% endblock %}
+
+{% block content %}
+<section class="grid two">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Agent Health</div>
+        <h2>实时状态</h2>
+      </div>
+      <form method="post">
+        <button class="button" type="submit" {% if not remote_ready %}disabled{% endif %}>刷新 Agent 状态</button>
+      </form>
+    </div>
+
+    {% if error %}
+      <div class="error-panel">{{ error }}</div>
+    {% elif snapshot and snapshot.health_rows %}
+      <div class="agent-grid">
+        {% for row in snapshot.health_rows %}
+          <article class="agent-card {{ 'ok' if row.ok else 'bad' }}">
+            <div class="agent-head">
+              <strong>{{ row.agent }}</strong>
+              <span>{{ 'OK' if row.ok else 'FAIL' }}</span>
+            </div>
+            <div class="agent-meta">
+              <span>{{ row.duration_sec }}s</span>
+              <span>rc {{ row.rc }}</span>
+            </div>
+            <pre>{{ row.stdout or row.stderr }}</pre>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">还没有 agent 健康检查结果。</div>
+    {% endif %}
+  </article>
+
+  <article class="panel accent">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Pipeline Status</div>
+        <h2>最新流水线状态</h2>
+      </div>
+    </div>
+    {% if snapshot %}
+      <div class="step-grid">
+        {% for step in snapshot.pipeline_steps %}
+          <div class="step-card {{ 'ok' if step.ok else ('skip' if step.skipped else 'bad') }}">
+            <div class="step-name">{{ step.step }}</div>
+            <div class="step-state">
+              {% if step.skipped %}SKIP{% elif step.ok %}OK{% else %}FAIL{% endif %}
+            </div>
+            <div class="step-time">{{ step.duration_sec or '-' }}s</div>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="divider"></div>
+      <div class="kv"><span>报告文件</span><strong>{{ snapshot.report_path or '-' }}</strong></div>
+      <div class="kv"><span>发布队列</span><strong>{{ snapshot.queue_path or '-' }}</strong></div>
+      <div class="kv"><span>内容包</span><strong>{{ snapshot.pack_path or '-' }}</strong></div>
+    {% else %}
+      <div class="empty">还没有最新流水线状态。</div>
+    {% endif %}
+  </article>
+</section>
+
+<script>
+setInterval(async () => {
+  try {
+    const res = await fetch("{{ url_for('api_status') }}");
+    const data = await res.json();
+    const bar = document.getElementById("live-status");
+    if (!bar) return;
+    bar.textContent = data.pipeline_job.running ? "生产任务运行中" : "生产任务空闲";
+  } catch (err) {
+  }
+}, 30000);
+</script>
+
+<section class="panel compact">
+  <div class="panel-header">
+    <div>
+      <div class="eyebrow">Live</div>
+      <h2 id="live-status">{{ '生产任务运行中' if pipeline_job.running else '生产任务空闲' }}</h2>
+    </div>
+  </div>
+</section>
+{% endblock %}

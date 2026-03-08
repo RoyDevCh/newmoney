@@ -1,0 +1,5 @@
+Generated at: 2026-03-09 01:38:58
+Dashboard URL: http://192.168.3.120:8787
+Dashboard Password: __OoJ-ra_xJNz5as
+Auth: password-only login
+Tasks: OpenClawDashboardServer, OpenClawDailyPipeline

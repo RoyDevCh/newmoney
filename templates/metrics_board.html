@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}数据回灌 | OpenClaw 控制台{% endblock %}
+{% block page_title %}数据回灌{% endblock %}
+{% block page_subtitle %}上传各平台的 CSV 或 JSON 数据，让系统更新下一轮策略{% endblock %}
+
+{% block content %}
+<section class="grid two">
+  <article class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Upload</div>
+        <h2>上传平台数据</h2>
+      </div>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+      <label class="upload-box">
+        <span>选择 CSV 或 JSON</span>
+        <input type="file" name="metrics_file" accept=".csv,.json">
+      </label>
+      <button class="button primary" type="submit" {% if not remote_ready %}disabled{% endif %}>上传并分析</button>
+    </form>
+    <p class="soft-note">模板文件：`metrics_input_template.csv`。建议当天晚间和次日 24 小时各回填一次。</p>
+    {% if ingest_result %}
+      <div class="callout success">
+        <div>分析已生成。</div>
+        <div>{{ ingest_result.paths.output_md }}</div>
+      </div>
+    {% endif %}
+    {% if adapter_summary %}
+      <div class="callout">
+        <div>已自动适配输入格式。</div>
+        <div>输入 {{ adapter_summary.rows_in }} 行，输出 {{ adapter_summary.rows_out }} 行。</div>
+      </div>
+    {% endif %}
+    <div class="template-links">
+      <a class="button small" href="{{ url_for('download_template', platform_key='zhihu') }}">知乎模板</a>
+      <a class="button small" href="{{ url_for('download_template', platform_key='xiaohongshu') }}">小红书模板</a>
+      <a class="button small" href="{{ url_for('download_template', platform_key='douyin') }}">抖音模板</a>
+      <a class="button small" href="{{ url_for('download_template', platform_key='bilibili') }}">B站模板</a>
+      <a class="button small" href="{{ url_for('download_template', platform_key='weibo') }}">微博模板</a>
+      <a class="button small" href="{{ url_for('download_template', platform_key='wechat') }}">公众号模板</a>
+      <a class="button small" href="{{ url_for('download_template', platform_key='toutiao') }}">头条模板</a>
+    </div>
+  </article>
+
+  <article class="panel accent">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Feedback Loop</div>
+        <h2>系统如何利用这些数据</h2>
+      </div>
+    </div>
+    <ul class="bullet-list">
+      <li>主脑会读取 `metrics_analysis_latest.json`，下轮策略直接吃到平台反馈。</li>
+      <li>曝光低先改标题、封面、开头，不先乱改正文。</li>
+      <li>互动高但带货弱，优先改 CTA、落地页和资料包承接。</li>
+      <li>收藏显著高于点赞，说明清单/模板型内容值得继续加量。</li>
+    </ul>
+  </article>
+</section>
+
+{% if error %}
+  <section class="panel error-panel">{{ error }}</section>
+{% elif snapshot and snapshot.metrics and snapshot.metrics.platform_summary %}
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Latest Analysis</div>
+        <h2>最新平台数据</h2>
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>平台</th>
+          <th>发布数</th>
+          <th>播放/阅读</th>
+          <th>互动率</th>
+          <th>涨粉率</th>
+          <th>主页 CTR</th>
+          <th>商品 CTR</th>
+          <th>收益</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for platform, row in snapshot.metrics.platform_summary.items() %}
+          <tr>
+            <td>{{ platform }}</td>
+            <td>{{ row.posts }}</td>
+            <td>{{ row.views|int }}</td>
+            <td>{{ row.engagement_rate }}</td>
+            <td>{{ row.follow_rate }}</td>
+            <td>{{ row.profile_ctr }}</td>
+            <td>{{ row.product_ctr }}</td>
+            <td>{{ row.revenue }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Suggestions</div>
+        <h2>优化建议</h2>
+      </div>
+    </div>
+    <div class="suggestion-grid">
+      {% for row in snapshot.metrics.suggestions %}
+        <article class="suggestion-card">
+          <h3>{{ row.platform }}</h3>
+          <ul class="bullet-list">
+            {% for note in row.notes %}
+              <li>{{ note }}</li>
+            {% endfor %}
+          </ul>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="eyebrow">Trend</div>
+        <h2>多日平台趋势</h2>
+      </div>
+    </div>
+    {% if snapshot.trend_rows %}
+      <div class="trend-grid">
+        {% for row in snapshot.trend_rows %}
+          <article class="trend-card">
+            <div class="trend-head">
+              <strong>{{ row.platform }}</strong>
+              <span>最新流量 {{ row.latest_views|int }}</span>
+            </div>
+            <div class="trend-metrics">
+              <span>收益 {{ row.latest_revenue }}</span>
+              <span>互动率 {{ row.latest_engagement_rate }}</span>
+            </div>
+            <div class="trend-metrics">
+              <span class="{{ 'good' if row.views_delta >= 0 else 'bad' }}">流量变化 {{ row.views_delta|int }}</span>
+              <span class="{{ 'good' if row.revenue_delta >= 0 else 'bad' }}">收益变化 {{ row.revenue_delta }}</span>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">当前只有少量分析样本，趋势图还不够稳定。</div>
+    {% endif %}
+  </section>
+{% else %}
+  <section class="panel empty">还没有数据分析结果。上传第一份平台数据后，这里会变成你的优化面板。</section>
+{% endif %}
+{% endblock %}
