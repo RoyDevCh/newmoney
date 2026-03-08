@@ -72,7 +72,7 @@ def load_agent_keys() -> dict:
         if not cfg.exists():
             continue
         try:
-            data = json.loads(cfg.read_text(encoding="utf-8"))
+            data = json.loads(cfg.read_text(encoding="utf-8-sig"))
             api_key = str(data.get("api_key", "")).strip()
             if api_key:
                 keys[agent] = api_key
@@ -188,7 +188,7 @@ def run_agent_task(agent: str, message: str):
     cmd = [
         "cmd",
         "/c",
-        "openclaw",
+        str(Path.home() / "AppData" / "Roaming" / "npm" / "openclaw.cmd"),
         "agent",
         "--agent",
         agent,
@@ -311,3 +311,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
