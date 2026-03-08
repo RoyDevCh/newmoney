@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Quality-gated pipeline: main-brain -> content -> refine -> expand -> repair -> assets."""
+"""Quality-gated pipeline: main-brain -> content -> refine -> expand -> repair -> recheck."""
 
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import time
 from datetime import datetime
@@ -75,6 +76,20 @@ def run_agent(agent: str, message: str, timeout_sec: int = 240) -> Dict:
     )
 
 
+def load_json(path: Path) -> Dict:
+    return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def better_quality(candidate: Dict, baseline: Dict) -> bool:
+    c = candidate.get("summary", {})
+    b = baseline.get("summary", {})
+    candidate_pass = int(c.get("pass_count", 0))
+    baseline_pass = int(b.get("pass_count", 0))
+    if candidate_pass != baseline_pass:
+        return candidate_pass > baseline_pass
+    return float(c.get("avg_score", 0.0)) >= float(b.get("avg_score", 0.0))
+
+
 def select_topic() -> Dict:
     best = None
     for candidate in STABLE_TOPICS:
@@ -135,6 +150,8 @@ def main() -> None:
         "matrix_expand": {},
         "repair": {},
         "quality_gate": {},
+        "specificity_boost": {},
+        "quality_recheck": {},
         "tts_render": {},
         "asset_render": {},
         "publisher": {},
@@ -226,6 +243,50 @@ def main() -> None:
     ]
     report["quality_gate"] = run_cmd(q_cmd, timeout=300)
 
+    boosted_out_file = WS_CONTENT / f"daily_pack_{now}_boosted.json"
+    shutil.copyfile(out_file, boosted_out_file)
+    boost_cmd = [
+        "py",
+        "-3",
+        str(WS / "specificity_boost_runner.py"),
+        "--input",
+        str(boosted_out_file),
+        "--output",
+        str(boosted_out_file),
+        "--min-score",
+        "85",
+    ]
+    report["specificity_boost"] = run_cmd(boost_cmd, timeout=300)
+
+    q_recheck_report = WS_CONTENT / f"quality_{now}_recheck.json"
+    q_recheck_cmd = [
+        "py",
+        "-3",
+        str(WS_CONTENT / "content_quality_gate.py"),
+        "--input",
+        str(boosted_out_file),
+        "--output",
+        str(q_recheck_report),
+        "--min-score",
+        "85",
+    ]
+    report["quality_recheck"] = run_cmd(q_recheck_cmd, timeout=300)
+    try:
+        base_quality = load_json(q_report)
+        candidate_quality = load_json(q_recheck_report)
+        if better_quality(candidate_quality, base_quality):
+            shutil.copyfile(boosted_out_file, out_file)
+            report["specificity_boost"]["promoted"] = True
+            report["specificity_boost"]["reason"] = "candidate_not_worse"
+        else:
+            report["specificity_boost"]["promoted"] = False
+            report["specificity_boost"]["reason"] = "candidate_worse_than_baseline"
+            shutil.copyfile(q_report, q_recheck_report)
+    except Exception as e:
+        report["specificity_boost"]["promoted"] = False
+        report["specificity_boost"]["reason"] = f"comparison_failed:{e}"
+        shutil.copyfile(q_report, q_recheck_report)
+
     tts_dir = WS_CONTENT / f"tts_{now}"
     tts_cmd = [
         "py",
@@ -270,7 +331,19 @@ def main() -> None:
 
     rpt = REPORT_DIR / f"pipeline_autorun_{now}.json"
     rpt.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({"report": str(rpt), "topic": topic, "pack": str(out_file), "quality": str(q_report)}, ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {
+                "report": str(rpt),
+                "topic": topic,
+                "pack": str(out_file),
+                "quality": str(q_report),
+                "quality_recheck": str(q_recheck_report),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 if __name__ == "__main__":
