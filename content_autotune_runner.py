@@ -1,9 +1,5 @@
-#!/usr/bin/env python3
-"""Generate monetization-grade content packs with strategy, QA, and asset prompts.
-
-Example:
-  py -3 content_autotune_runner.py --topic "AI办公自动化提效" --platforms 知乎 小红书 抖音 B站
-"""
+﻿#!/usr/bin/env python3
+"""Generate monetization-ready content drafts with rewrite and quality loop."""
 
 from __future__ import annotations
 
@@ -20,50 +16,87 @@ OPENCLAW_CMD = Path.home() / "AppData" / "Roaming" / "npm" / "openclaw.cmd"
 NODE_BIN = Path("C:/Program Files/nodejs/node.exe")
 OPENCLAW_ENTRY = Path.home() / "AppData" / "Roaming" / "npm" / "node_modules" / "openclaw" / "openclaw.mjs"
 
-PLATFORM_BRIEFS = {
-    "知乎": {
-        "body_range": "550-900字",
-        "voice": "理性、专业、像懂行业的答主",
-        "conversion": "评论/收藏/私信关键词领取清单",
-        "angle": "结构化拆解、红黑榜、避坑指南、ROI分析",
-        "visual": "横版可信赖科技封面，留足标题空间，避免花哨emoji",
+ZH = "\u77e5\u4e4e"
+XHS = "\u5c0f\u7ea2\u4e66"
+DY = "\u6296\u97f3"
+XG = "\u897f\u74dc\u89c6\u9891"
+BILI = "B\u7ad9"
+
+PLATFORM_BRIEFS: Dict[str, Dict[str, str]] = {
+    ZH: {
+        "body_range": "550-950",
+        "voice": "\u7406\u6027\u3001\u53ef\u9a8c\u8bc1\u3001\u7ed3\u6784\u6e05\u6670",
+        "conversion": "\u5f15\u5bfc\u6536\u85cf\u3001\u8bc4\u8bba\u5173\u952e\u8bcd\u3001\u9886\u53d6\u6a21\u677f",
+        "angle": "\u907f\u5751\u6307\u5357\u3001\u6a2a\u8bc4\u3001\u6d41\u7a0b\u62c6\u89e3",
+        "visual": "\u6a2a\u7248\u79d1\u6280\u5c01\u9762\u3001\u6e05\u6670\u5b57\u91cd\u70b9",
     },
-    "小红书": {
-        "body_range": "180-420字",
-        "voice": "清爽、具体、有生活场景，不装专家",
-        "conversion": "收藏/关注/评论关键词",
-        "angle": "清单式、真实体验、低门槛立刻可做",
-        "visual": "3:4高级感生产力场景，干净桌面，强氛围光线",
+    XHS: {
+        "body_range": "180-430",
+        "voice": "\u8f7b\u677e\u3001\u573a\u666f\u5316\u3001\u5c11\u884c\u8bdd",
+        "conversion": "\u5f15\u5bfc\u6536\u85cf\u3001\u5173\u6ce8\u3001\u8bc4\u8bba\u9886\u53d6",
+        "angle": "\u6e05\u5355\u611f\u3001\u7acb\u5373\u53ef\u505a\u3001\u524d\u540e\u5bf9\u6bd4",
+        "visual": "3:4\u7ad6\u56fe\u3001\u751f\u4ea7\u529b\u6c1b\u56f4\u3001\u5c11\u6742\u4e71",
     },
-    "抖音": {
-        "body_range": "140-260字",
-        "voice": "口语、快节奏、每句一个点",
-        "conversion": "关注/主页/评论关键词",
-        "angle": "三秒冲突、错法纠正、一步步可执行动作",
-        "visual": "高反差首帧，中心主体大，适合短视频封面",
+    DY: {
+        "body_range": "140-280",
+        "voice": "\u53e3\u8bed\u3001\u5feb\u8282\u594f\u3001\u6bcf\u53e5\u6709\u52a8\u4f5c",
+        "conversion": "\u5f15\u5bfc\u5173\u6ce8\u4e3b\u9875\u3001\u8bc4\u8bba\u5173\u952e\u8bcd",
+        "angle": "3\u79d2Hook\u3001\u9519\u8bef\u7ea0\u6b63\u3001\u4e09\u6b65\u6267\u884c",
+        "visual": "\u9ad8\u53cd\u5dee\u5c01\u9762\u3001\u4e2d\u5fc3\u4e3b\u4f53\u5927",
     },
-    "B站": {
-        "body_range": "320-700字",
-        "voice": "证据先行、带实测感、像硬核UP主脚本",
-        "conversion": "三连/评论区领取资源/下期选题互动",
-        "angle": "横评、流程演示、案例拆解、效率实验",
-        "visual": "横版纪录片感科技场景，细节多但不杂乱",
+    XG: {
+        "body_range": "420-900",
+        "voice": "\u89e3\u8bf4\u611f\u3001\u8282\u594f\u5e73\u7a33\u3001\u8bc1\u636e\u5145\u8db3",
+        "conversion": "\u5f15\u5bfc\u770b\u7b80\u4ecb\u8d44\u6599\u5305\u6216\u6536\u85cf\u8fde\u8f7d",
+        "angle": "\u6a2a\u5c4f\u6bcd\u4f53\u89c6\u9891\u3001\u5b8c\u6574\u53d9\u4e8b\u3001\u5b9e\u64cd\u62c6\u89e3",
+        "visual": "16:9\u6a2a\u7248\u8bb0\u5f55\u611f",
+    },
+    BILI: {
+        "body_range": "320-720",
+        "voice": "\u786c\u6838\u3001\u8bc1\u636e\u5148\u884c\u3001\u6709\u5b9e\u6d4b\u611f",
+        "conversion": "\u5f15\u5bfc\u4e09\u8fde\u3001\u8bc4\u8bba\u533a\u9886\u8d44\u6599\u3001\u4e0b\u671f\u9009\u9898\u4e92\u52a8",
+        "angle": "\u6a2a\u8bc4\u3001\u5de5\u5177\u94fe\u62c6\u89e3\u3001\u6d41\u7a0b\u6f14\u793a",
+        "visual": "16:9\u7eaa\u5f55\u7247\u611f\u79d1\u6280\u573a\u666f",
     },
 }
 
 PLATFORM_MIN_BODY = {
-    "知乎": 550,
-    "小红书": 180,
-    "抖音": 140,
-    "B站": 320,
+    ZH: 550,
+    XHS: 180,
+    DY: 140,
+    XG: 420,
+    BILI: 320,
 }
+
+CLAIM_REPLACEMENTS: List[Tuple[str, str]] = [
+    (r"\u6708\u5165\s*\d+\+?", "\u6548\u7387\u63d0\u5347\u660e\u663e"),
+    (r"\u6708\u8d5a\s*\d+\+?", "\u6210\u672c\u56de\u6536\u901f\u5ea6\u66f4\u5feb"),
+    (r"\u6536\u5165\u7ffb\u500d", "\u4ea7\u80fd\u63d0\u5347\u660e\u663e"),
+    (r"\u591a\u8d5a\s*\d+\+?", "\u8f6c\u5316\u6548\u7387\u66f4\u9ad8"),
+    (r"\u670d\u52a1\s*\d+\+?\s*\u5bb6\u4f01\u4e1a", "\u670d\u52a1\u8fc7\u591a\u79cd\u4f01\u4e1a\u573a\u666f"),
+    (r"\u7d2f\u8ba1\u5b66\u5458\s*\d+\+?", "\u6709\u6301\u7eed\u7528\u6237\u5b9e\u8df5\u53cd\u9988"),
+    (r"\d+\+?\s*\u4f01\u4e1a\u5ba2\u6237", "\u591a\u7c7b\u4f01\u4e1a\u573a\u666f"),
+    (r"\d+\+?\s*\u5b66\u5458", "\u591a\u4e2a\u771f\u5b9e\u4f7f\u7528\u573a\u666f"),
+]
+
+
+EMOJI_BROAD_RE = re.compile(
+    "["
+    "\U0001F300-\U0001F5FF"
+    "\U0001F600-\U0001F64F"
+    "\U0001F680-\U0001F6FF"
+    "\U0001F900-\U0001F9FF"
+    "\u2600-\u26FF"
+    "\u2700-\u27BF"
+    "]+",
+    flags=re.UNICODE,
+)
 
 
 def run_agent(agent: str, prompt: str, timeout: int = 300) -> str:
     compact_prompt = re.sub(r"\s+", " ", prompt).strip()
-    cmd: List[str]
     if NODE_BIN.exists() and OPENCLAW_ENTRY.exists():
-        cmd = [
+        cmd: List[str] = [
             str(NODE_BIN),
             str(OPENCLAW_ENTRY),
             "agent",
@@ -89,13 +122,14 @@ def run_agent(agent: str, prompt: str, timeout: int = 300) -> str:
             str(timeout),
             "--json",
         ]
+
     p = subprocess.run(
         cmd,
         capture_output=True,
         text=True,
         encoding="utf-8",
         errors="replace",
-        timeout=timeout + 60,
+        timeout=timeout + 80,
     )
     if p.returncode != 0:
         raise RuntimeError((p.stderr or "").strip() or f"returncode={p.returncode}")
@@ -103,16 +137,17 @@ def run_agent(agent: str, prompt: str, timeout: int = 300) -> str:
 
 
 def extract_json(text: str) -> Any:
-    text = (text or "").strip()
-    if not text:
+    payload = (text or "").strip()
+    if not payload:
         raise ValueError("empty text")
+
     try:
-        return json.loads(text)
+        return json.loads(payload)
     except Exception:
         pass
 
-    match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, flags=re.S | re.I)
-    candidate = match.group(1) if match else text
+    match = re.search(r"```(?:json)?\s*(.*?)\s*```", payload, flags=re.S | re.I)
+    candidate = match.group(1) if match else payload
     for left, right in [("[", "]"), ("{", "}")]:
         start = candidate.find(left)
         end = candidate.rfind(right)
@@ -142,80 +177,82 @@ def normalize_list(data: Any) -> List[Dict[str, Any]]:
         if "drafts" in data and isinstance(data["drafts"], list):
             return [x for x in data["drafts"] if isinstance(x, dict)]
         return [data]
-    raise ValueError("Unsupported json structure")
+    raise ValueError("unsupported json structure")
 
 
 def select_best_drafts(drafts: List[Dict[str, Any]], platforms: List[str], min_score: float) -> List[Dict[str, Any]]:
-    best: List[Dict[str, Any]] = []
+    chosen: List[Dict[str, Any]] = []
     for platform in platforms:
         candidates = [d for d in drafts if str(d.get("platform", "")).strip() == platform]
         if not candidates:
             continue
-        chosen = max(candidates, key=lambda d: score_one(d, min_score).total_score)
-        best.append(chosen)
-    return best
+        best = max(candidates, key=lambda d: score_one(d, min_score).total_score)
+        chosen.append(best)
+    return chosen
+
+
+def build_platform_rules(platforms: List[str]) -> str:
+    chunks: List[str] = []
+    for platform in platforms:
+        brief = PLATFORM_BRIEFS.get(platform, {})
+        chunks.append(
+            f"{platform}: body={brief.get('body_range','')}, voice={brief.get('voice','')}, "
+            f"conversion={brief.get('conversion','')}, angle={brief.get('angle','')}"
+        )
+    return " | ".join(chunks)
 
 
 def build_strategy_prompt(topic: str, platforms: List[str]) -> str:
     return (
-        f"只输出JSON对象。主题={topic}，目标平台={'、'.join(platforms)}。"
-        "给出一套能赚钱但不过度营销的内容策略，字段：audience, pain_point, conversion_goal, offer, "
-        "platform_priority, angle, proof_points。proof_points必须是3项数组。"
+        f"\u53ea\u8f93\u51faJSON\u3002\u4e3b\u9898={topic}\uff0c\u76ee\u6807\u5e73\u53f0={','.join(platforms)}\u3002"
+        "\u8bf7\u7ed9\u51fa\u4eca\u65e5\u7684\u53ef\u53d8\u73b0\u5185\u5bb9\u7b56\u7565\uff0c\u5b57\u6bb5:"
+        "audience,pain_point,conversion_goal,offer,platform_priority,angle,proof_points。"
+        "proof_points\u81f3\u5c113\u6761\u3002"
     )
-
-
-def build_platform_rules(platforms: List[str]) -> str:
-    blocks = []
-    for platform in platforms:
-        brief = PLATFORM_BRIEFS.get(platform, {})
-        blocks.append(
-            f"{platform}: 正文{brief.get('body_range','')}; 语气={brief.get('voice','')}; "
-            f"转化={brief.get('conversion','')}; 角度={brief.get('angle','')}"
-        )
-    return " | ".join(blocks)
 
 
 def build_init_prompt(topic: str, platforms: List[str], strategy: Dict[str, Any]) -> str:
     strategy_json = json.dumps(strategy, ensure_ascii=False)
     return (
-        f"只输出JSON数组。基于主题“{topic}”和策略{strategy_json}，为{'、'.join(platforms)}各生成且仅生成1条内容。"
-        "每个平台字段必须包含platform,title,hook,body,cta,tags。"
-        "要求："
-        "1) 先给结论或冲突，再给证据，再给动作；"
-        "2) 出现数字时必须使用按公开评测/按实测环境/按官方信息的表达；"
-        "3) 去掉绝对化、内幕、包赚、月入、收入翻倍等高风险词；"
-        "4) 不要虚构学员人数、企业服务数、收益数字；"
-        "5) 转化方式优先用工具清单、模板包、咨询清单、资源包，而不是直接收益承诺；"
-        "4) 不要输出markdown，不要解释；"
-        f"6) 平台细则：{build_platform_rules(platforms)}。"
+        f"\u53ea\u8f93\u51faJSON\u6570\u7ec4\u3002\u57fa\u4e8e\u4e3b\u9898={topic}\uff0c\u5e73\u53f0={','.join(platforms)}\uff0c\u7b56\u7565={strategy_json}\u3002"
+        "\u4e3a\u6bcf\u4e2a\u5e73\u53f0\u751f\u6210\u4e00\u6761\u7a3f\u4ef6\uff0c\u5fc5\u987b\u5305\u542b\u5b57\u6bb5:"
+        "platform,title,hook,body,cta,tags\u3002"
+        "\u8981\u6c42:"
+        "1) \u7ed3\u8bba\u5148\u884c -> \u8bc1\u636e -> \u52a8\u4f5c\u3002"
+        "2) \u6570\u5b57\u5fc5\u987b\u5e26\u6e90\u4fe1\u53f7(\u516c\u5f00\u8bc4\u6d4b/\u5b9e\u6d4b\u73af\u5883/\u5b98\u65b9\u4fe1\u606f)\u3002"
+        "3) \u7981\u6b62\u7edd\u5bf9\u5316\u3001\u5305\u8d5a\u3001\u6708\u5165\u7b49\u8868\u8fbe\u3002"
+        "4) \u7981\u6b62\u4f2a\u80cc\u4e66\u548c\u4e0d\u53ef\u6838\u5b9e\u6210\u7ee9\u58f0\u660e\u3002"
+        "5) \u4e0d\u8981markdown\uff0c\u4e0d\u8981\u89e3\u91ca\u3002"
+        f"6) \u5e73\u53f0\u89c4\u5219={build_platform_rules(platforms)}\u3002"
     )
 
 
 def build_rewrite_prompt(topic: str, draft: Dict[str, Any], score: DraftScore, strategy: Dict[str, Any]) -> str:
     platform = str(draft.get("platform", "")).strip()
     brief = PLATFORM_BRIEFS.get(platform, {})
+    issues = ";".join(score.issues) if score.issues else "none"
     return (
-        "只输出JSON对象。你是能把内容改到可转化水平的平台增长编辑。"
-        f"主题={topic}，平台={platform}，策略={json.dumps(strategy, ensure_ascii=False)}，"
-        f"当前稿件={json.dumps(draft, ensure_ascii=False)}，问题={';'.join(score.issues) or '无'}。"
-        "重写要求："
-        "1) 前50字必须有冲突点或反常识；"
-        "2) 正文结构只能是结论->证据->执行动作；"
-        "3) 删除所有空话、套话、未经验证的硬结论；"
-        "4) 数字必须加来源语气；"
-        f"5) 正文长度遵守{brief.get('body_range','平台要求')}；"
-        f"6) 语气={brief.get('voice','')}; CTA={brief.get('conversion','')};"
-        "7) 严禁出现月入、月赚、收入翻倍、服务多少企业、累计多少学员等不可核实背书；"
-        "8) 输出字段platform,title,hook,body,cta,tags。"
+        "\u53ea\u8f93\u51faJSON\u5bf9\u8c61\u3002"
+        f"\u4e3b\u9898={topic}\uff0c\u5e73\u53f0={platform}\uff0c\u7b56\u7565={json.dumps(strategy, ensure_ascii=False)}\u3002"
+        f"\u5f53\u524d\u7a3f\u4ef6={json.dumps(draft, ensure_ascii=False)}\uff0c\u95ee\u9898={issues}\u3002"
+        "\u8bf7\u6309\u53d1\u5e03\u6c34\u51c6\u91cd\u5199\uff1a"
+        "1) \u5f00\u5934\u8981\u6709\u51b2\u7a81\u70b9\u3002"
+        "2) \u5168\u6587\u7ed3\u6784=\u7ed3\u8bba -> \u8bc1\u636e -> \u53ef\u6267\u884c\u52a8\u4f5c\u3002"
+        "3) \u5220\u6389\u5957\u8bdd\u3001\u7a7a\u8bdd\u3001\u4e0d\u53ef\u9a8c\u8bc1\u786c\u7ed3\u8bba\u3002"
+        "4) \u6570\u5b57\u8868\u8fbe\u9700\u8981\u6765\u6e90\u8bed\u6c14\u3002"
+        f"5) \u6b63\u6587\u957f\u5ea6\u8bf7\u9075\u5b88{brief.get('body_range', 'platform requirement')}\u3002"
+        f"6) \u8bed\u6c14={brief.get('voice','')}\uff0cCTA={brief.get('conversion','')}\u3002"
+        "7) \u7981\u6b62\u6708\u5165/\u6708\u8d5a/\u6536\u5165\u7ffb\u500d/\u865a\u5047\u80cc\u4e66\u3002"
+        "8) \u53ea\u8f93\u51fa\u5b57\u6bb5platform,title,hook,body,cta,tags\u3002"
     )
 
 
 def build_publisher_review_prompt(topic: str, drafts: List[Dict[str, Any]]) -> str:
     return (
-        "只输出JSON对象。你是商业内容审核编辑。"
-        f"主题={topic}，请审核这些稿件是否具备'能赚钱'的发布条件：{json.dumps(drafts, ensure_ascii=False)}。"
-        "输出字段：verdict, platform_reviews, monetization_risks, next_actions。"
-        "其中 platform_reviews 必须是数组，每项字段：platform, pass, strongest_selling_point, weak_point, fix_now。"
+        "\u53ea\u8f93\u51faJSON\u5bf9\u8c61\u3002"
+        f"\u8bf7\u5ba1\u6838\u4e3b\u9898={topic}\u7684\u7a3f\u4ef6\uff1a{json.dumps(drafts, ensure_ascii=False)}\u3002"
+        "\u8f93\u51fa\u5b57\u6bb5: verdict, platform_reviews, monetization_risks, next_actions\u3002"
+        "platform_reviews\u662f\u6570\u7ec4\uff0c\u6bcf\u9879\u5b57\u6bb5: platform, pass, strongest_selling_point, weak_point, fix_now\u3002"
     )
 
 
@@ -223,10 +260,10 @@ def build_visual_prompt(topic: str, draft: Dict[str, Any]) -> str:
     platform = str(draft.get("platform", "")).strip()
     brief = PLATFORM_BRIEFS.get(platform, {})
     return (
-        "只输出JSON对象。基于以下内容生成一个高质量封面/首图提示词包。"
-        f"主题={topic}，平台={platform}，稿件={json.dumps(draft, ensure_ascii=False)}。"
-        f"视觉方向={brief.get('visual','科技商业内容封面')}。"
-        "字段：platform, prompt, negative_prompt, composition, aspect_ratio。"
+        "\u53ea\u8f93\u51faJSON\u5bf9\u8c61\u3002"
+        f"\u4e3b\u9898={topic}\uff0c\u5e73\u53f0={platform}\uff0c\u7a3f\u4ef6={json.dumps(draft, ensure_ascii=False)}\u3002"
+        f"\u89c6\u89c9\u65b9\u5411={brief.get('visual', '\u79d1\u6280\u5546\u4e1a\u5c01\u9762')}\u3002"
+        "\u8f93\u51fa\u5b57\u6bb5: platform, prompt, negative_prompt, composition, aspect_ratio\u3002"
     )
 
 
@@ -240,13 +277,12 @@ def optimize_draft(
     current = draft
     score = score_one(current, min_score)
     rounds = 0
-
-    while (not score.pass_gate) and rounds < max_rewrite_rounds:
+    while not score.pass_gate and rounds < max_rewrite_rounds:
         rounds += 1
-        rewritten = run_agent("content", build_rewrite_prompt(topic, current, score, strategy), timeout=300)
+        rewritten = run_agent("content", build_rewrite_prompt(topic, current, score, strategy), timeout=320)
         obj = extract_json(rewritten)
         if isinstance(obj, list):
-            obj = obj[0]
+            obj = obj[0] if obj else {}
         if not isinstance(obj, dict):
             break
         current = obj
@@ -267,40 +303,29 @@ def generate_asset_prompts(topic: str, drafts: List[Dict[str, Any]]) -> List[Dic
     for draft in drafts:
         try:
             payload = run_agent("multimodal", build_visual_prompt(topic, draft), timeout=240)
-            asset = extract_json(payload)
-            if isinstance(asset, dict):
-                assets.append(asset)
+            parsed = extract_json(payload)
+            if isinstance(parsed, dict):
+                assets.append(parsed)
+            else:
+                assets.append({"platform": draft.get("platform", ""), "error": "visual_prompt_not_dict"})
         except Exception as exc:
-            assets.append(
-                {
-                    "platform": draft.get("platform", ""),
-                    "error": str(exc),
-                }
-            )
+            assets.append({"platform": draft.get("platform", ""), "error": str(exc)})
     return assets
 
 
 def strip_visual_noise(text: str, keep_small: bool) -> str:
-    cleaned = re.sub(r"[⭐✨🔥💰🚀📈📌✅❌💡👉👈🎯🎬🎥🎨🧠💻📊📎📍📣😍🥹😊😎🤖🎁]+", "", text)
+    current = (text or "").replace("\r", "").strip()
+    current = re.sub(r"[\u200b\u200c\u200d\ufeff]", "", current)
     if not keep_small:
-        cleaned = re.sub(r"[0-9]\ufe0f?\u20e3", "", cleaned)
-    cleaned = re.sub(r"\s{2,}", " ", cleaned)
-    return cleaned.strip()
+        current = EMOJI_BROAD_RE.sub("", current)
+    current = re.sub(r"[ \t]{2,}", " ", current)
+    current = re.sub(r"\n{3,}", "\n\n", current)
+    return current.strip()
 
 
 def scrub_claims(text: str) -> str:
-    replacements = [
-        (r"月入\s*\d+\+?", "效率提升明显"),
-        (r"月赚\s*\d+\+?", "更容易承接项目"),
-        (r"收入翻倍", "产能提升明显"),
-        (r"多赚\s*\d+\+?", "更容易提高接单效率"),
-        (r"服务\s*\d+\+?\s*家企业", "服务过不同团队场景"),
-        (r"累计学员\s*\d+\+?", "有持续实践反馈"),
-        (r"\d+\+?\s*企业客户", "不同企业场景"),
-        (r"\d+\+?\s*学员", "不同使用者"),
-    ]
     current = text
-    for pattern, replacement in replacements:
+    for pattern, replacement in CLAIM_REPLACEMENTS:
         current = re.sub(pattern, replacement, current)
     return current
 
@@ -310,84 +335,93 @@ def extend_body_if_needed(platform: str, topic: str, body: str) -> str:
     if len(body) >= minimum:
         return body
 
-    extra = []
-    if platform == "知乎":
-        extra = [
+    supplement_map = {
+        ZH: [
             "",
-            "【适合谁先上手】",
-            f"如果你当前处理的是重复性的{topic}相关工作，优先从资料整理、初稿生成、信息归纳这类低风险环节开始，不要一上来就把判断类工作全部交给模型。",
+            "\u3010\u843d\u5730\u6b65\u9aa4\u3011",
+            f"1) \u5148\u62c6\u51fa\u4f60\u5728{topic}\u91cc\u6700\u8017\u65f6\u76843\u4e2a\u52a8\u4f5c\uff1b",
+            "2) \u6bcf\u4e2a\u52a8\u4f5c\u5148\u5199\u6e05\u8f93\u5165\u548c\u8f93\u51fa\u6807\u51c6\uff1b",
+            "3) \u53ea\u628a\u53ef\u5feb\u901f\u590d\u6838\u7684\u73af\u8282\u63a5\u5165\u81ea\u52a8\u5316\u3002",
+        ],
+        BILI: [
             "",
-            "【落地清单】",
-            "第一步，先列出一周内最耗时的3个重复动作；第二步，给每个动作准备固定输入模板；第三步，只在能快速人工复核的环节接入AI；第四步，每周复盘一次节省下来的时间有没有真正转化成更高价值产出。",
+            "\u3010\u5b9e\u64cd\u5efa\u8bae\u3011",
+            "\u4ece\u5355\u70b9\u5de5\u4f5c\u6d41\u8dd1\u901a\u5f00\u59cb\uff0c\u4f8b\u5982\u7d20\u6750\u6574\u7406\u6216\u521d\u7a3f\u751f\u6210\uff0c\u518d\u9010\u6b65\u6269\u5230\u5168\u6d41\u7a0b\u3002",
+        ],
+        XG: [
             "",
-            "【常见误区】",
-            "很多人失败不是因为工具不行，而是没有先定义产出标准，也没有把提示词、素材来源、复核动作做成固定流程。流程没定住，工具越多反而越乱。",
-        ]
-    elif platform == "B站":
-        extra = [
+            "\u3010\u89c6\u9891\u8282\u594f\u5efa\u8bae\u3011",
+            "\u524d15\u79d2\u5148\u7ed9\u7ed3\u8bba\uff0c\u4e2d\u95f4\u7ed9\u8bc1\u636e\u548c\u6d41\u7a0b\uff0c\u5c3e\u90e8\u7ed9\u6267\u884c\u6e05\u5355\u3002",
+        ],
+        DY: [
             "",
-            "【补充建议】",
-            "真正想把这套流程用起来，建议先从单点工作流做起，例如会议纪要、文案初稿或信息检索，不要一口气接太多模块，否则维护成本会反噬效率。",
-        ]
-    elif platform == "抖音":
-        extra = [
+            "\u5148\u8dd1\u901a\u4e00\u4e2a\u9ad8\u9891\u573a\u666f\uff0c\u518d\u590d\u5236\u5230\u5176\u4ed6\u573a\u666f\u3002",
+        ],
+        XHS: [
             "",
-            "记住，先做一个场景跑通，再复制到第二个场景。",
-        ]
-    elif platform == "小红书":
-        extra = [
-            "",
-            "先把一个小动作用顺，再扩到更多场景，体感会很明显。",
-        ]
-
+            "\u5148\u4ece\u4e00\u4e2a\u53ef\u7acb\u5373\u6267\u884c\u7684\u5c0f\u6b65\u9aa4\u5f00\u59cb\uff0c\u518d\u6269\u5c55\u5230\u66f4\u591a\u573a\u666f\u3002",
+        ],
+    }
+    extra = supplement_map.get(platform, ["", "\u8bf7\u8865\u5145\u66f4\u5177\u4f53\u7684\u573a\u666f\u6b65\u9aa4\u4e0e\u5bf9\u6bd4\u7ec6\u8282\u3002"])
     merged = body.rstrip() + "\n" + "\n".join(extra).strip()
     return merged.strip()
 
 
 def sanitize_draft(topic: str, draft: Dict[str, Any]) -> Dict[str, Any]:
     platform = str(draft.get("platform", "")).strip()
-    keep_small = platform in {"小红书", "抖音"}
+    keep_small = platform in {XHS, DY}
     cleaned = dict(draft)
+
     for key in ["title", "hook", "body", "cta"]:
         value = str(cleaned.get(key, "")).strip()
         value = scrub_claims(value)
         value = strip_visual_noise(value, keep_small=keep_small)
         cleaned[key] = value
+
     cleaned["body"] = extend_body_if_needed(platform, topic, str(cleaned.get("body", "")))
-    cleaned["tags"] = [strip_visual_noise(scrub_claims(str(x)), keep_small=True) for x in cleaned.get("tags", []) if str(x).strip()]
+    tags = cleaned.get("tags", [])
+    cleaned["tags"] = [
+        strip_visual_noise(scrub_claims(str(tag)), keep_small=True)
+        for tag in tags
+        if str(tag).strip()
+    ]
     return cleaned
 
 
 def fallback_review(drafts: List[Dict[str, Any]], min_score: float) -> Dict[str, Any]:
-    reviews = []
+    rows = []
     for draft in drafts:
-        s = score_one(draft, min_score)
-        reviews.append(
+        scored = score_one(draft, min_score)
+        rows.append(
             {
                 "platform": draft.get("platform", ""),
-                "pass": s.pass_gate,
-                "strongest_selling_point": "hook+cta基本成型" if s.total_score >= min_score else "需要继续重写",
-                "weak_point": ",".join(s.issues[:3]) or "none",
-                "fix_now": "优化证据、结构和转化动作",
+                "pass": scored.pass_gate,
+                "strongest_selling_point": "hook_and_cta_ready" if scored.total_score >= min_score else "needs_rewrite",
+                "weak_point": ",".join(scored.issues[:3]) or "none",
+                "fix_now": "improve evidence, structure and CTA",
             }
         )
     return {
         "verdict": "fallback_review",
-        "platform_reviews": reviews,
+        "platform_reviews": rows,
         "monetization_risks": [],
-        "next_actions": ["继续优化未过线平台", "补封面素材", "发布前再做一次人工抽查"],
+        "next_actions": [
+            "continue_rewrite_for_failed_platforms",
+            "generate_cover_assets",
+            "manual_editorial_spot_check_before_publish",
+        ],
     }
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--topic")
-    ap.add_argument("--topic-file")
-    ap.add_argument("--platforms", nargs="+", default=["知乎", "小红书", "抖音", "B站"])
-    ap.add_argument("--min-score", type=float, default=85.0)
-    ap.add_argument("--max-rewrite-rounds", type=int, default=3)
-    ap.add_argument("--out", default="autotuned_drafts.json")
-    args = ap.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--topic")
+    parser.add_argument("--topic-file")
+    parser.add_argument("--platforms", nargs="+", default=[ZH, XHS, DY, BILI, XG])
+    parser.add_argument("--min-score", type=float, default=85.0)
+    parser.add_argument("--max-rewrite-rounds", type=int, default=3)
+    parser.add_argument("--out", default="autotuned_drafts.json")
+    args = parser.parse_args()
 
     if args.topic_file:
         topic = Path(args.topic_file).read_text(encoding="utf-8-sig").strip()
@@ -397,11 +431,13 @@ def main() -> None:
         raise SystemExit("missing topic: use --topic or --topic-file")
 
     strategy = extract_json(run_agent("main-brain", build_strategy_prompt(topic, args.platforms), timeout=220))
-    raw = run_agent("content", build_init_prompt(topic, args.platforms, strategy), timeout=360)
-    drafts = select_best_drafts(normalize_list(extract_json(raw)), args.platforms, args.min_score)
+    raw = run_agent("content", build_init_prompt(topic, args.platforms, strategy), timeout=380)
+    base_drafts = normalize_list(extract_json(raw))
+    drafts = select_best_drafts(base_drafts, args.platforms, args.min_score)
 
     final_drafts: List[Dict[str, Any]] = []
     score_log: List[Dict[str, Any]] = []
+
     for draft in drafts:
         final, score_row = optimize_draft(
             topic=topic,
@@ -424,7 +460,7 @@ def main() -> None:
         score_log.append(score_row)
 
     try:
-        publisher_review = extract_json(run_agent("publisher", build_publisher_review_prompt(topic, final_drafts), timeout=240))
+        publisher_review = extract_json(run_agent("publisher", build_publisher_review_prompt(topic, final_drafts), timeout=260))
     except Exception:
         publisher_review = fallback_review(final_drafts, args.min_score)
 
