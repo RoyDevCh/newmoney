@@ -285,6 +285,11 @@ def render_one_asset(
     template = visual_templates.get(str(asset.get("platform", "")).strip(), {})
     image_strategy = str(template.get("image_strategy", "comfy_generated_ok")).strip() or "comfy_generated_ok"
     reference_queries = template.get("reference_search_queries", [])
+    material_workflow = str(template.get("material_workflow", "")).strip()
+    cover_layout_brief = str(template.get("cover_layout_brief", "")).strip()
+    source_priority = template.get("source_priority", [])
+    manual_asset_checklist = template.get("manual_asset_checklist", [])
+    material_slots = template.get("material_slots", [])
     if image_strategy == "real_reference_preferred":
         return {
             "platform": asset.get("platform", ""),
@@ -294,6 +299,11 @@ def render_one_asset(
             "skip_reason": str(template.get("image_strategy_reason", "")).strip() or "real images convert better for this topic",
             "cover_strategy": image_strategy,
             "reference_search_queries": reference_queries,
+            "material_workflow": material_workflow,
+            "cover_layout_brief": cover_layout_brief,
+            "source_priority": source_priority,
+            "manual_asset_checklist": manual_asset_checklist,
+            "material_slots": material_slots,
             "prompt_preview": str(asset.get("prompt", "")).strip(),
         }
 
@@ -342,6 +352,11 @@ def render_one_asset(
                 "engine": engine,
                 "cover_strategy": image_strategy,
                 "reference_search_queries": reference_queries,
+                "material_workflow": material_workflow,
+                "cover_layout_brief": cover_layout_brief,
+                "source_priority": source_priority,
+                "manual_asset_checklist": manual_asset_checklist,
+                "material_slots": material_slots,
                 "fallback_errors": errors,
             }
         except Exception as exc:
@@ -354,6 +369,11 @@ def render_one_asset(
         "engine": "failed",
         "cover_strategy": image_strategy,
         "reference_search_queries": reference_queries,
+        "material_workflow": material_workflow,
+        "cover_layout_brief": cover_layout_brief,
+        "source_priority": source_priority,
+        "manual_asset_checklist": manual_asset_checklist,
+        "material_slots": material_slots,
         "fallback_errors": errors,
     }
 

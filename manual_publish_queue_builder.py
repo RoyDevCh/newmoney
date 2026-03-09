@@ -61,6 +61,36 @@ def tts_map(tts_dir: Path) -> Dict[str, str]:
     return result
 
 
+def join_lines(values: Any) -> str:
+    if isinstance(values, list):
+        return "\n".join(str(x) for x in values if str(x).strip())
+    if isinstance(values, str):
+        return values
+    return ""
+
+
+def material_slots_text(slots: Any) -> str:
+    if not isinstance(slots, list) or not slots:
+        return "当前没有额外图位建议。"
+    lines: List[str] = []
+    for idx, row in enumerate(slots, start=1):
+        if not isinstance(row, dict):
+            continue
+        slot = str(row.get("slot", f"图位 {idx}")).strip()
+        purpose = str(row.get("purpose", "")).strip()
+        cue = str(row.get("cue", "")).strip()
+        search_query = str(row.get("search_query", "")).strip()
+        must_show = [str(x).strip() for x in row.get("must_show", []) if str(x).strip()]
+        lines.append(f"{idx}. {slot} | 用途：{purpose or '未标注'}")
+        if cue:
+            lines.append(f"   画面要求：{cue}")
+        if search_query:
+            lines.append(f"   搜图词：{search_query}")
+        if must_show:
+            lines.append(f"   必须出现：{'、'.join(must_show)}")
+    return "\n".join(lines) if lines else "当前没有额外图位建议。"
+
+
 def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], manifest: Dict[str, Any], tts_files: Dict[str, str]) -> List[Dict[str, Any]]:
     strategies = build_strategy_matrix()
     qmap = quality_map(quality)
@@ -97,6 +127,14 @@ def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], man
                 "cover_strategy_reason": a.get("skip_reason", vt.get("image_strategy_reason", "")),
                 "reference_search_queries": a.get("reference_search_queries", vt.get("reference_search_queries", [])),
                 "cover_generation_state": a.get("engine", ""),
+                "material_workflow": a.get("material_workflow", vt.get("material_workflow", "")),
+                "cover_layout_brief": a.get("cover_layout_brief", vt.get("cover_layout_brief", "")),
+                "source_priority": a.get("source_priority", vt.get("source_priority", [])),
+                "manual_asset_checklist": a.get("manual_asset_checklist", vt.get("manual_asset_checklist", [])),
+                "material_slots": a.get("material_slots", vt.get("material_slots", [])),
+                "source_priority_text": join_lines(a.get("source_priority", vt.get("source_priority", []))),
+                "manual_asset_checklist_text": join_lines(a.get("manual_asset_checklist", vt.get("manual_asset_checklist", []))),
+                "material_slots_text": material_slots_text(a.get("material_slots", vt.get("material_slots", []))),
                 "tts_file": tts_files.get(platform, ""),
             }
         )
@@ -136,7 +174,14 @@ def build_markdown(queue: Dict[str, Any]) -> str:
                 f"- 封面：`{item.get('cover_file', '')}`",
                 f"- 图片策略：`{item.get('cover_strategy', '')}`",
                 f"- 策略说明：{item.get('cover_strategy_reason', '')}",
+                f"- 素材工作流：`{item.get('material_workflow', '')}`",
+                f"- 图位建议：{item.get('cover_layout_brief', '')}",
+                f"- 素材来源优先级：{', '.join(item.get('source_priority', []))}",
                 f"- 参考搜图词：{', '.join(item.get('reference_search_queries', []))}",
+                "- 素材清单：",
+                item.get("material_slots_text", "当前没有额外图位建议。"),
+                "- 素材检查清单：",
+                item.get("manual_asset_checklist_text", "当前没有额外检查清单。"),
                 f"- TTS：`{item.get('tts_file', 'N/A')}`",
                 f"- 操作提示：{item.get('notes', '')}",
                 "- 手动发布动作：打开对应平台 -> 复制标题/正文/标签 -> 上传封面/视频 -> 发布后回填数据",

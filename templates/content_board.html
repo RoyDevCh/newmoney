@@ -149,6 +149,34 @@
               </section>
             </div>
 
+            <div class="content-grid">
+              <section>
+                <div class="section-head">
+                  <h3>图位建议</h3>
+                  <button class="button small copy-btn" type="button" data-copy="{{ item.material_slots_text|e }}">复制</button>
+                </div>
+                <textarea readonly>{{ item.material_slots_text }}</textarea>
+              </section>
+              <section>
+                <div class="section-head">
+                  <h3>素材检查清单</h3>
+                  <button class="button small copy-btn" type="button" data-copy="{{ item.manual_asset_checklist_text|e }}">复制</button>
+                </div>
+                <textarea readonly>{{ item.manual_asset_checklist_text }}</textarea>
+              </section>
+            </div>
+
+            <div class="content-grid">
+              <section>
+                <h3>封面布局建议</h3>
+                <textarea readonly>{{ item.cover_layout_brief or '当前没有额外布局建议。' }}</textarea>
+              </section>
+              <section>
+                <h3>素材来源优先级</h3>
+                <textarea readonly>{{ item.source_priority_text or '当前没有额外来源优先级。' }}</textarea>
+              </section>
+            </div>
+
             {% if kit %}
               <section class="publish-status-box">
                 <h3>视频稿包</h3>

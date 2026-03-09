@@ -412,6 +412,36 @@ def quality_map(quality: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     return mapped
 
 
+def join_lines(values: Any) -> str:
+    if isinstance(values, list):
+        return "\n".join(str(x) for x in values if str(x).strip())
+    if isinstance(values, str):
+        return values
+    return ""
+
+
+def format_material_slots(slots: Any) -> str:
+    if not isinstance(slots, list) or not slots:
+        return "当前没有额外图位建议。"
+    lines: List[str] = []
+    for idx, row in enumerate(slots, start=1):
+        if not isinstance(row, dict):
+            continue
+        slot = str(row.get("slot", f"图位 {idx}")).strip()
+        purpose = str(row.get("purpose", "")).strip()
+        cue = str(row.get("cue", "")).strip()
+        query = str(row.get("search_query", "")).strip()
+        must_show = [str(x).strip() for x in row.get("must_show", []) if str(x).strip()]
+        lines.append(f"{idx}. {slot} | 用途：{purpose or '未标注'}")
+        if cue:
+            lines.append(f"   画面要求：{cue}")
+        if query:
+            lines.append(f"   搜图词：{query}")
+        if must_show:
+            lines.append(f"   必须出现：{'、'.join(must_show)}")
+    return "\n".join(lines) if lines else "当前没有额外图位建议。"
+
+
 def build_pack_items(
     pack: Dict[str, Any],
     quality: Dict[str, Any],
@@ -455,6 +485,14 @@ def build_pack_items(
                 "cover_strategy": asset_row.get("cover_strategy", visual_row.get("image_strategy", "comfy_generated_ok")),
                 "cover_strategy_reason": asset_row.get("skip_reason", visual_row.get("image_strategy_reason", "")),
                 "reference_search_queries": asset_row.get("reference_search_queries", visual_row.get("reference_search_queries", [])),
+                "material_workflow": asset_row.get("material_workflow", visual_row.get("material_workflow", "")),
+                "cover_layout_brief": asset_row.get("cover_layout_brief", visual_row.get("cover_layout_brief", "")),
+                "source_priority": asset_row.get("source_priority", visual_row.get("source_priority", [])),
+                "manual_asset_checklist": asset_row.get("manual_asset_checklist", visual_row.get("manual_asset_checklist", [])),
+                "material_slots": asset_row.get("material_slots", visual_row.get("material_slots", [])),
+                "source_priority_text": join_lines(asset_row.get("source_priority", visual_row.get("source_priority", []))),
+                "manual_asset_checklist_text": join_lines(asset_row.get("manual_asset_checklist", visual_row.get("manual_asset_checklist", []))),
+                "material_slots_text": format_material_slots(asset_row.get("material_slots", visual_row.get("material_slots", []))),
                 "cover_generation_state": asset_row.get("engine", ""),
                 "tts_file": tmap.get(platform, ""),
             }
