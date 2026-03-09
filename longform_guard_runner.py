@@ -1,5 +1,5 @@
-﻿#!/usr/bin/env python3
-"""Guard runner for long-form platforms to avoid under-length / low-specificity failures."""
+#!/usr/bin/env python3
+"""Deterministic long-form enrichment for platforms that need real depth."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ import re
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
+from urllib.parse import urlparse
 
 CONTENT_WS = Path.home() / ".openclaw" / "workspace-content"
 if str(CONTENT_WS) not in sys.path:
@@ -16,11 +17,15 @@ if str(CONTENT_WS) not in sys.path:
 
 from content_quality_gate import score_one  # type: ignore
 
-WX = "\u516c\u4f17\u53f7"
-TT = "\u5934\u6761"
+ZH = "知乎"
+WX = "公众号"
+TT = "头条"
 
-# Higher than gate minimum, but keep realistic output length.
-MIN_LEN = {WX: 700, TT: 920}
+MIN_LEN = {
+    ZH: 1200,
+    WX: 1350,
+    TT: 1300,
+}
 
 
 def load_json(path: Path) -> Dict[str, Any]:
@@ -42,77 +47,99 @@ def dedupe_blocks(text: str) -> str:
     parts = [p.strip() for p in re.split(r"\n{2,}", normalize(text)) if p.strip()]
     seen = set()
     out: List[str] = []
-    for p in parts:
-        key = re.sub(r"\s+", "", p)
+    for part in parts:
+        key = re.sub(r"\s+", "", part)
         if key in seen:
             continue
         seen.add(key)
-        out.append(p)
+        out.append(part)
     return "\n\n".join(out).strip()
 
 
-def base_blocks(platform: str, topic: str) -> List[str]:
-    if platform == WX:
-        return [
-            f"\u6838\u5fc3\u5224\u65ad\uff1a{topic}\u8981\u7a33\u5b9a\u8f6c\u5316\uff0c\u4f18\u5148\u770b\u627f\u63a5\u8def\u5f84\uff0c\u4e0d\u662f\u5355\u7bc7\u7206\u53d1\u3002",
-            "\u6765\u6e90\u8bf4\u660e\uff1a\u5185\u5bb9\u57fa\u4e8e\u516c\u5f00\u8d44\u6599\u4e0e\u5b9e\u6d4b\u73af\u5883\u8bb0\u5f55\uff0c\u5c3d\u91cf\u907f\u514d\u4e0d\u53ef\u6838\u5b9e\u8868\u8ff0\u3002",
-            "\u6267\u884c\u7ed3\u6784\u5efa\u8bae\uff1a\u7ed3\u8bba\u2192\u573a\u666f\u2192\u6b65\u9aa4\u2192\u627f\u63a5\uff0c\u6bcf\u6bb5\u53ea\u8bf4\u4e00\u4e2a\u6838\u5fc3\u70b9\u3002",
-            "\u6700\u540e\u53ea\u4fdd\u7559\u4e00\u4e2a CTA\uff0c\u4f8b\u5982\u201c\u56de\u590d\u5173\u952e\u8bcd\u9886\u8d44\u6599\u201d\uff0c\u4e0d\u8981\u540c\u65f6\u8ba9\u8bfb\u8005\u505a\u591a\u4e2a\u52a8\u4f5c\u3002",
+def _domain_from_url(url: str) -> str:
+    try:
+        host = urlparse(url).netloc.lower()
+    except Exception:
+        return "公开资料"
+    if host.startswith("www."):
+        host = host[4:]
+    return host or "公开资料"
+
+
+def research_sections(research: Dict[str, Any], limit: int = 2) -> List[str]:
+    rows = research.get("results", []) if isinstance(research, dict) else []
+    blocks: List[str] = []
+    for idx, row in enumerate(rows[:limit], start=1):
+        if not isinstance(row, dict):
+            continue
+        title = re.sub(r"\s+", " ", str(row.get("title", "")).strip())
+        snippet = re.sub(r"\s+", " ", str(row.get("snippet", "")).strip())
+        if len(snippet) > 110:
+            snippet = snippet[:110].rstrip("，。；;,. ") + "。"
+        domain = _domain_from_url(str(row.get("url", "")).strip())
+        if title:
+            blocks.append(f"资料线索{idx}：{domain} 的公开资料提到《{title}》，其中一个关键信号是{snippet or '这条路线被重复提及，值得单独做对照。'}")
+        elif snippet:
+            blocks.append(f"资料线索{idx}：{domain} 的公开资料显示，{snippet}")
+    return blocks
+
+
+def platform_sections(platform: str, topic: str, research: Dict[str, Any]) -> List[str]:
+    evidence = research_sections(research, limit=2)
+    if platform == ZH:
+        sections = [
+            f"适合谁：如果你正在围绕“{topic}”做内容，但经常停留在收集信息阶段，没有形成稳定输出，这类结构会更适合你。",
+            "不适合谁：如果你只是想快速抄一个现成模板，而不愿意根据自己的场景做调整，这套方法帮助有限。",
+            "常见误区：先买工具、后定场景；先堆素材、后定判断标准；先做复杂系统、后验证最小结果。",
+            "执行步骤：第一步先定一个高频场景，第二步列出输入和输出标准，第三步只把能快速复核的环节接入自动化。",
+            "选择标准：工具不是越多越好，真正要看的只有三项，是否省时间、是否能复用、是否能沉淀成下一次内容。",
+            "小案例：同样是做清单型内容，先写适合谁和不适合谁的版本，通常比直接堆工具名更容易被收藏。",
         ]
-    return [
-        f"\u603b\u5224\u65ad\uff1a{topic}\u5728\u5934\u6761\u957f\u6587\u91cc\u8981\u62ff\u7ed3\u679c\uff0c\u524d\u4e09\u6bb5\u5fc5\u987b\u8bf4\u6e05\u201c\u95ee\u9898-\u8bef\u533a-\u89e3\u6cd5\u201d\u3002",
-        "\u6765\u6e90\u8bf4\u660e\uff1a\u7528\u516c\u5f00\u8d44\u6599\u548c\u5b9e\u6d4b\u73af\u5883\u7ed3\u8bba\u652f\u6491\u89c2\u70b9\uff0c\u4e0d\u505a\u4e0d\u53ef\u9a8c\u8bc1\u6536\u76ca\u627f\u8bfa\u3002",
-        "\u6b65\u9aa4\u5efa\u8bae\uff1a1)\u5b9a\u573a\u666f 2)\u5b9a\u5de5\u5177 3)\u5b9a\u8bc4\u4f30\u6307\u6807\uff0c\u5148\u8dd1 7 \u5929\u518d\u6269\u5bb9\u3002",
-        "\u7ed3\u5c3e\u4fdd\u6301\u5355\u52a8\u4f5c\uff1a\u6536\u85cf\u6216\u67e5\u770b\u7f6e\u9876\u6e05\u5355\uff0c\u63d0\u9ad8\u5b8c\u6210\u9605\u8bfb\u540e\u7684\u8f6c\u5316\u7387\u3002",
+        sections.extend(evidence)
+        sections.append("复盘建议：每7天只改一个变量，比如标题、案例位置或资料入口，不要一口气推翻整篇结构。")
+        return sections
+    if platform == WX:
+        sections = [
+            f"适用场景：如果你想把“{topic}”做成能持续吸粉和留资料的公众号内容，文章必须承担解释、筛选和承接三层任务。",
+            "不适用场景：如果你的目标只是当天刷一波阅读量，而不考虑后续资料领取、商品卡或私域承接，这种结构会显得偏重。",
+            "常见误区：标题很猛，正文很空；只讲观点，不给动作；一篇文章里同时塞多个CTA，结果没有一个转化顺。",
+            "执行顺序：先用前200字下判断，再讲三个最常见误区，中段给三步执行顺序，尾段只保留一个资料入口。",
+            "案例补强：哪怕只补一个真实使用场景，例如‘从选题到初稿怎么减少反复改稿’，也会比纯观点更容易获得关注。",
+            "承接建议：把模板、清单、资料包做成固定入口，读者形成预期后，你的后续文章会更容易转化。",
+        ]
+        sections.extend(evidence)
+        sections.append("复盘建议：先看阅读完成率，再看资料领取率，最后才调标题，不要只盯打开率。")
+        return sections
+    sections = [
+        f"适用场景：围绕“{topic}”写头条长文时，最适合用在误区清单、场景避坑、流程拆解这类能被收藏的题材里。",
+        "常见误区：标题冲得太猛，正文跟不上；段落很多，但没有主线；动作太多，读者不知道先做哪一步。",
+        "执行顺序：先给总判断，再讲三个误区，再给三步顺序，最后只保留一个收藏或查看清单动作。",
+        "小案例：同一个题材里，能明确指出‘为什么很多人顺序做反了’的版本，通常会比纯资料堆砌版本更耐读。",
+        "承接建议：长图文后半段最好补一个对照清单或判断标准，这样阅读更容易转成收藏和后续点击。",
+        "复盘方式：按7天为一个周期，只调整开头50字、一个案例和结尾动作，观察阅读完成率再迭代。",
     ]
+    sections.extend(evidence)
+    return sections
 
 
-def extension_block(platform: str, topic: str, idx: int) -> str:
-    if platform == WX:
-        templates = [
-            "\u3010\u5c0f\u6848\u4f8b\u3011\u6309\u5b9e\u6d4b\u73af\u5883\uff0c\u4e00\u6761\u5185\u5bb9\u5148\u628a\u6807\u9898\u548c\u5bfc\u8bed\u91cd\u5199 2 \u7248\uff0c\u5f80\u5f80\u6bd4\u76f4\u63a5\u6539\u5168\u6587\u66f4\u6709\u6548\u3002",
-            "\u3010\u6267\u884c\u6e05\u5355\u3011\u6bcf\u5929\u5b9a 3 \u4e2a\u68c0\u67e5\u9879\uff1a\u5b8c\u8bfb\u7387\u3001\u6536\u85cf\u7387\u3001\u7559\u8d44\u7387\uff0c\u53ea\u4f18\u5316\u6700\u5dee\u90a3\u4e00\u9879\u3002",
-            "\u3010\u590d\u76d8\u8282\u594f\u3011\u7528 7 \u5929\u4e3a\u4e00\u4e2a\u5468\u671f\uff0c\u6bcf\u5468\u53ea\u66f4\u6362 1 \u4e2a\u53d8\u91cf\uff0c\u907f\u514d\u65e0\u6548\u5e76\u53d1\u5bfc\u81f4\u6570\u636e\u5931\u771f\u3002",
-            "\u3010\u627f\u63a5\u8bbe\u8ba1\u3011\u8d44\u6599\u9886\u53d6\u5165\u53e3\u4fdd\u6301\u5355\u4e00\uff0c\u8bfb\u8005\u518d\u8fdb\u4e00\u6b65\u8f6c\u5316\u65f6\uff0c\u8def\u5f84\u4f1a\u66f4\u77ed\u3002",
-        ]
-    else:
-        templates = [
-            "\u3010\u5c0f\u6848\u4f8b\u3011\u540c\u9898\u6750\u957f\u6587\u4e2d\uff0c\u5148\u7ed9\u7ed3\u8bba\u518d\u7ed9\u6b65\u9aa4\u7684\u7248\u672c\uff0c\u901a\u5e38\u6bd4\u201c\u80cc\u666f\u94fa\u57ab\u578b\u201d\u5b8c\u8bfb\u66f4\u9ad8\u3002",
-            "\u3010\u6267\u884c\u6e05\u5355\u3011\u957f\u6587\u53ef\u6309 4 \u6bb5\u62c6\u89e3\uff1a\u603b\u5224\u65ad\u3001\u5e38\u89c1\u8bef\u533a\u3001\u4e09\u6b65\u6267\u884c\u3001\u5355 CTA \u7ed3\u5c3e\u3002",
-            "\u3010\u590d\u76d8\u8282\u594f\u3011\u6bcf 7 \u5929\u8bb0\u5f55\u4e00\u6b21\u70b9\u51fb\u7387\u4e0e\u5b8c\u8bfb\u7387\uff0c\u4e0b\u5468\u53ea\u6539\u5f00\u5934 50 \u5b57\u548c\u7ed3\u5c3e CTA\u3002",
-            "\u3010\u627f\u63a5\u8bbe\u8ba1\u3011\u62c6\u51fa\u201c\u53ef\u76f4\u63a5\u9886\u53d6\u201d\u7684\u6e05\u5355\u578b\u7d20\u6750\uff0c\u5f80\u5f80\u6bd4\u6982\u5ff5\u578b\u7d20\u6750\u66f4\u5bb9\u6613\u89e6\u53d1\u8f6c\u5316\u3002",
-        ]
-    line = templates[(idx - 1) % len(templates)]
-    return f"{line}\n\u9636\u6bb5 {idx}\uff1a\u56f4\u7ed5\u300c{topic}\u300d\u53ea\u4f18\u5316\u4e00\u4e2a\u53d8\u91cf\uff0c\u4fdd\u6301\u5bf9\u6bd4\u53ef\u89c2\u6d4b\u3002"
-
-
-def improve_longform(draft: Dict[str, Any], topic: str, min_score: float) -> Dict[str, Any]:
+def improve_longform(draft: Dict[str, Any], topic: str, min_score: float, research: Dict[str, Any]) -> Dict[str, Any]:
     platform = str(draft.get("platform", "")).strip()
     body = dedupe_blocks(str(draft.get("body", "")))
-    merged = dedupe_blocks(body + "\n\n" + "\n\n".join(base_blocks(platform, topic)))
+    sections = platform_sections(platform, topic, research)
+    merged = dedupe_blocks(body + "\n\n" + "\n\n".join(sections))
 
     minimum = MIN_LEN.get(platform, 0)
     idx = 0
-    while len(merged) < minimum:
+    while len(merged) < minimum and idx < len(sections):
+        merged = dedupe_blocks(merged + "\n\n" + sections[idx])
         idx += 1
-        prev_len = len(merged)
-        merged = dedupe_blocks(merged + "\n\n" + extension_block(platform, topic, idx))
-        if len(merged) <= prev_len:
-            merged = merged + f"\n\n\u8865\u5168\u6bb5 {idx}\uff1a\u6309\u516c\u5f00\u4fe1\u606f\u4e0e\u6d4b\u8bd5\u73af\u5883\u8fdb\u884c\u9636\u6bb5\u590d\u76d8\uff0c\u8bb0\u5f55\u4e09\u4e2a\u6307\u6807\u3002"
-        if idx > 12:
-            break
 
     improved = dict(draft)
     improved["body"] = merged
-    cta = normalize(str(improved.get("cta", "")))
-    if len(cta) < 8:
-        improved["cta"] = "\u8bc4\u8bba\u533a\u56de\u590d\u5173\u952e\u8bcd\u9886\u53d6\u6267\u884c\u6e05\u5355\u3002"
-    else:
-        improved["cta"] = cta
-
     improved["title"] = normalize(str(improved.get("title", "")))
     improved["hook"] = normalize(str(improved.get("hook", "")))
-    improved["tags"] = [normalize(str(x)).replace(" ", "") for x in improved.get("tags", []) if str(x).strip()]
+    improved["cta"] = normalize(str(improved.get("cta", "")))
+    improved["tags"] = [normalize(str(tag)).replace(" ", "") for tag in improved.get("tags", []) if str(tag).strip()]
 
     before = score_one(draft, min_score)
     after = score_one(improved, min_score)
@@ -120,7 +147,8 @@ def improve_longform(draft: Dict[str, Any], topic: str, min_score: float) -> Dic
 
 
 def guard_pack(pack: Dict[str, Any], min_score: float) -> Dict[str, Any]:
-    topic = str(pack.get("topic", "")).strip() or "\u5185\u5bb9\u4f18\u5316"
+    topic = str(pack.get("topic", "")).strip() or "内容优化"
+    research = pack.get("research_context", {})
     log: List[Dict[str, Any]] = []
     new_drafts: List[Dict[str, Any]] = []
 
@@ -130,8 +158,8 @@ def guard_pack(pack: Dict[str, Any], min_score: float) -> Dict[str, Any]:
         platform = str(draft.get("platform", "")).strip()
         before = score_one(draft, min_score)
         current = draft
-        if platform in {WX, TT} and (not before.pass_gate):
-            current = improve_longform(draft, topic, min_score)
+        if platform in {ZH, WX, TT} and (not before.pass_gate or len(str(draft.get("body", ""))) < MIN_LEN.get(platform, 0)):
+            current = improve_longform(draft, topic, min_score, research)
         after = score_one(current, min_score)
         log.append(
             {

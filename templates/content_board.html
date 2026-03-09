@@ -132,6 +132,23 @@
               </section>
             </div>
 
+            <div class="content-grid">
+              <section>
+                <div class="section-head">
+                  <h3>图片策略</h3>
+                  {% if item.reference_search_queries %}
+                    <button class="button small copy-btn" type="button" data-copy="{{ (item.reference_search_queries | join('\n'))|e }}">复制搜图词</button>
+                  {% endif %}
+                </div>
+                <textarea readonly>{% if item.cover_strategy == 'real_reference_preferred' %}真实图优先{% else %}ComfyUI 可生成{% endif %}
+{{ item.cover_strategy_reason }}</textarea>
+              </section>
+              <section>
+                <h3>参考搜图词</h3>
+                <textarea readonly>{% if item.reference_search_queries %}{{ item.reference_search_queries | join('\n') }}{% else %}当前没有额外搜图建议。{% endif %}</textarea>
+              </section>
+            </div>
+
             {% if kit %}
               <section class="publish-status-box">
                 <h3>视频稿包</h3>
@@ -152,6 +169,8 @@
               <button class="button small copy-btn" type="button" data-copy="{{ (item.title ~ '\n\n' ~ item.body ~ '\n\nCTA: ' ~ item.cta)|e }}">复制整稿</button>
               {% if item.cover_file %}
                 <a class="button" href="{{ url_for('media', path=item.cover_file) }}" target="_blank">打开封面</a>
+              {% elif item.cover_strategy == 'real_reference_preferred' %}
+                <span class="soft-note">本条建议用真实产品/场景图，不建议直接用 AI 封面。</span>
               {% endif %}
               {% if item.tts_file %}
                 <audio controls preload="none" src="{{ url_for('media', path=item.tts_file) }}"></audio>
@@ -199,14 +218,42 @@
   <section class="panel empty">还没有可展示的内容包。先运行一次安全生产。</section>
 {% endif %}
 <script>
+function markCopied(btn) {
+  const old = btn.dataset.label || btn.textContent;
+  btn.dataset.label = old;
+  btn.textContent = '已复制';
+  setTimeout(() => {
+    btn.textContent = btn.dataset.label || old;
+  }, 1200);
+}
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const helper = document.createElement('textarea');
+  helper.value = text;
+  helper.setAttribute('readonly', '');
+  helper.style.position = 'fixed';
+  helper.style.top = '-9999px';
+  helper.style.opacity = '0';
+  document.body.appendChild(helper);
+  helper.focus();
+  helper.select();
+  const ok = document.execCommand('copy');
+  document.body.removeChild(helper);
+  if (!ok) {
+    throw new Error('copy failed');
+  }
+}
+
 document.querySelectorAll('.copy-btn').forEach((btn) => {
   btn.addEventListener('click', async () => {
     const text = btn.dataset.copy || '';
     try {
-      await navigator.clipboard.writeText(text);
-      const old = btn.textContent;
-      btn.textContent = '已复制';
-      setTimeout(() => { btn.textContent = old; }, 1200);
+      await copyText(text);
+      markCopied(btn);
     } catch (err) {
       alert('复制失败，请手动复制。');
     }

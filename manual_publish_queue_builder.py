@@ -16,6 +16,15 @@ def load_json(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
+def load_json_optional(path_value: str) -> Dict[str, Any]:
+    if not path_value:
+        return {}
+    path = Path(path_value)
+    if not path.exists():
+        return {}
+    return load_json(path)
+
+
 def quality_map(quality: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
     rows = quality.get("results", []) or quality.get("scores", [])
     mapped: Dict[str, Dict[str, Any]] = {}
@@ -56,6 +65,7 @@ def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], man
     strategies = build_strategy_matrix()
     qmap = quality_map(quality)
     amap = asset_map(manifest)
+    vmap = pack.get("visual_templates", {}) if isinstance(pack, dict) else {}
     items: List[Dict[str, Any]] = []
     for draft in pack.get("drafts", []):
         if not isinstance(draft, dict):
@@ -64,6 +74,7 @@ def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], man
         strategy = strategies.get(platform, {})
         q = qmap.get(platform, {})
         a = amap.get(platform, {})
+        vt = vmap.get(platform, {}) if isinstance(vmap, dict) else {}
         items.append(
             {
                 "platform": platform,
@@ -82,6 +93,10 @@ def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], man
                 "manual_publish_priority": strategy.get("manual_publish_priority", 9),
                 "notes": strategy.get("notes", ""),
                 "cover_file": a.get("output_file", ""),
+                "cover_strategy": a.get("cover_strategy", vt.get("image_strategy", "comfy_generated_ok")),
+                "cover_strategy_reason": a.get("skip_reason", vt.get("image_strategy_reason", "")),
+                "reference_search_queries": a.get("reference_search_queries", vt.get("reference_search_queries", [])),
+                "cover_generation_state": a.get("engine", ""),
                 "tts_file": tts_files.get(platform, ""),
             }
         )
@@ -119,6 +134,9 @@ def build_markdown(queue: Dict[str, Any]) -> str:
                 f"- 建议发布时间段：{', '.join(item.get('publish_windows', []))}",
                 f"- 建议日发布量：{item.get('recommended_publish_per_day')}",
                 f"- 封面：`{item.get('cover_file', '')}`",
+                f"- 图片策略：`{item.get('cover_strategy', '')}`",
+                f"- 策略说明：{item.get('cover_strategy_reason', '')}",
+                f"- 参考搜图词：{', '.join(item.get('reference_search_queries', []))}",
                 f"- TTS：`{item.get('tts_file', 'N/A')}`",
                 f"- 操作提示：{item.get('notes', '')}",
                 "- 手动发布动作：打开对应平台 -> 复制标题/正文/标签 -> 上传封面/视频 -> 发布后回填数据",
@@ -153,7 +171,7 @@ def main() -> None:
 
     pack = load_json(Path(args.input_pack))
     quality = load_json(Path(args.input_quality))
-    assets = load_json(Path(args.input_assets))
+    assets = load_json_optional(args.input_assets)
     items = pick_manual_publish_items(pack, quality, assets, tts_map(Path(args.tts_dir)))
     queue = {"generated_at": args.generated_at, "source_pack": args.input_pack, "summary": queue_summary(items), "items": items}
     output_json = Path(args.output_json)

@@ -14,17 +14,18 @@ CONTENT_WS = Path.home() / ".openclaw" / "workspace-content"
 if str(CONTENT_WS) not in sys.path:
     sys.path.insert(0, str(CONTENT_WS))
 
-from content_autotune_runner import extract_json, run_agent  # type: ignore
+from content_autotune_runner import extract_json, run_agent, sanitize_draft  # type: ignore
 from content_quality_gate import score_one  # type: ignore
 
 BILI = "B\u7ad9"
 WB = "\u5fae\u535a"
 WX = "\u516c\u4f17\u53f7"
 TT = "\u5934\u6761"
+XG = "\u897f\u74dc\u89c6\u9891"
 
-TARGET_PLATFORMS = {BILI, WX, TT, WB}
-BODY_MIN = {WX: 550, TT: 800, BILI: 280, WB: 120}
-BODY_MAX = {WX: 2400, TT: 2500, BILI: 1400, WB: 420}
+TARGET_PLATFORMS = {BILI, WX, TT, WB, XG}
+BODY_MIN = {WX: 1200, TT: 1200, BILI: 520, WB: 140, XG: 650}
+BODY_MAX = {WX: 2400, TT: 2500, BILI: 1400, WB: 420, XG: 1500}
 
 
 def load_pack(path: Path) -> Dict[str, Any]:
@@ -130,6 +131,11 @@ def ensure_platform_length(platform: str, body: str) -> str:
             "B\u7ad9\u89c6\u9891\u6587\u6848\u5148\u7ed9\u7ed3\u8bba\uff0c\u518d\u7ed9\u6d4b\u8bd5\u4e0a\u4e0b\u6587\uff0c\u6700\u540e\u7ed9\u89c2\u4f17\u53ef\u76f4\u63a5\u6267\u884c\u7684\u52a8\u4f5c\u3002",
             "\u6709\u5bf9\u6bd4\u3001\u6709\u8bc1\u636e\u3001\u6709\u9002\u7528\u4eba\u7fa4\u7684\u6587\u6848\uff0c\u66f4\u5bb9\u6613\u83b7\u5f97\u9ad8\u8d28\u91cf\u8bc4\u8bba\u3002",
         ],
+        XG: [
+            "\u897f\u74dc\u89c6\u9891\u66f4\u9002\u54083\u52308\u5206\u949f\u7684\u6a2a\u5c4f\u6bcd\u4f53\u7ed3\u6784\uff0c\u5f00\u5934\u5148\u4e0b\u5224\u65ad\uff0c\u4e2d\u6bb5\u8865\u6848\u4f8b\u548c\u6b65\u9aa4\uff0c\u7ed3\u5c3e\u53ea\u7559\u4e00\u4e2a\u52a8\u4f5c\u3002",
+            "\u6309\u516c\u5f00\u8d44\u6599\u548c\u6d4b\u8bd5\u73af\u5883\u7684\u5e38\u89c1\u505a\u6cd5\u770b\uff0c\u6a2a\u5c4f\u89c6\u9891\u91cc\u6700\u597d\u540c\u65f6\u51fa\u73b0\u9002\u7528\u4eba\u7fa4\u3001\u6d4b\u8bd5\u80cc\u666f\u548c\u4e0b\u4e00\u6b65\u52a8\u4f5c\u3002",
+            "\u5982\u679c\u4f60\u62c5\u5fc3\u5185\u5bb9\u592a\u7a7a\uff0c\u5c31\u8865\u4e00\u4e2a\u5bf9\u7167\u6bb5\uff1a\u5148\u505a\u4ec0\u4e48\u3001\u540e\u505a\u4ec0\u4e48\u3001\u4e3a\u4ec0\u4e48\u8fd9\u6837\u6392\u987a\u5e8f\u3002",
+        ],
     }
     addon = fillers.get(platform, [])
     idx = 0
@@ -211,6 +217,8 @@ def deterministic_repair(topic: str, draft: Dict[str, Any], min_score: float) ->
 
 def repair_pack(pack: Dict[str, Any], min_score: float) -> Dict[str, Any]:
     topic = str(pack.get("topic", "")).strip()
+    research = pack.get("research_context", {})
+    feedback = pack.get("metrics_feedback", {})
     drafts = [d for d in pack.get("drafts", []) if isinstance(d, dict)]
     repaired_log: List[Dict[str, Any]] = []
     new_drafts: List[Dict[str, Any]] = []
@@ -254,6 +262,7 @@ def repair_pack(pack: Dict[str, Any], min_score: float) -> Dict[str, Any]:
 
         current["body"] = dedupe_paragraphs(str(current.get("body", "")))
         current["body"] = dedupe_lines_global(str(current.get("body", "")))
+        current = sanitize_draft(topic, current, research=research, feedback=feedback)
 
         after = score_one(current, min_score)
         repaired_log.append(

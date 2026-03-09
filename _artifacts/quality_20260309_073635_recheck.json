@@ -1,0 +1,147 @@
+{
+  "summary": {
+    "count": 8,
+    "avg_score": 93.25,
+    "pass_count": 8,
+    "pass_rate": 1.0,
+    "min_score": 85.0
+  },
+  "results": [
+    {
+      "platform": "知乎",
+      "title": "知识管理与个人系统搭建????????????????????????",
+      "total_score": 92.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 6.0
+      },
+      "issues": [
+        "sentences_too_long"
+      ],
+      "rewrite_prompt": "你是一名资深知乎商业内容主编。请重写下面稿件并修复这些问题：sentences_too_long。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    },
+    {
+      "platform": "小红书",
+      "title": "知识管理与个人系统搭建?????????????????",
+      "total_score": 96.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 13.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 13.0,
+        "readability": 10.0
+      },
+      "issues": [],
+      "rewrite_prompt": "你是一名资深小红书商业内容主编。请重写下面稿件并修复这些问题：无。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    },
+    {
+      "platform": "微博",
+      "title": "实测18款工具+AI知识库方案后的结论",
+      "total_score": 98.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 13.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "issues": [],
+      "rewrite_prompt": "你是一名资深微博商业内容主编。请重写下面稿件并修复这些问题：无。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    },
+    {
+      "platform": "公众号",
+      "title": "知识管理与个人系统搭建??????????????????????",
+      "total_score": 94.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 13.0,
+        "readability": 10.0
+      },
+      "issues": [],
+      "rewrite_prompt": "你是一名资深公众号商业内容主编。请重写下面稿件并修复这些问题：无。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    },
+    {
+      "platform": "头条",
+      "title": "知识管理与个人系统搭建??????????????????????",
+      "total_score": 94.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 13.0,
+        "readability": 10.0
+      },
+      "issues": [],
+      "rewrite_prompt": "你是一名资深头条商业内容主编。请重写下面稿件并修复这些问题：无。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    },
+    {
+      "platform": "抖音",
+      "title": "知识管理与个人系统搭建??????",
+      "total_score": 90.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 13.0,
+        "readability": 6.0
+      },
+      "issues": [
+        "sentences_too_long"
+      ],
+      "rewrite_prompt": "你是一名资深抖音商业内容主编。请重写下面稿件并修复这些问题：sentences_too_long。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    },
+    {
+      "platform": "西瓜视频",
+      "title": "知识管理与个人系统搭建????????????????????",
+      "total_score": 90.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 13.0,
+        "readability": 6.0
+      },
+      "issues": [
+        "sentences_too_long"
+      ],
+      "rewrite_prompt": "你是一名资深西瓜视频商业内容主编。请重写下面稿件并修复这些问题：sentences_too_long。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    },
+    {
+      "platform": "B站",
+      "title": "知识管理与个人系统搭建?????????????",
+      "total_score": 92.0,
+      "pass_gate": true,
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 6.0
+      },
+      "issues": [
+        "sentences_too_long"
+      ],
+      "rewrite_prompt": "你是一名资深B站商业内容主编。请重写下面稿件并修复这些问题：sentences_too_long。要求：1) 保留核心主题但去除不确定事实，所有具体数字必须标注来源或改为区间表达；2) 开头3秒/前50字必须有冲突或反常识；3) 每段一句核心结论，信息密度高；4) 结尾CTA明确且与平台行为一致；5) 输出JSON字段platform,title,hook,body,cta,tags。"
+    }
+  ]
+}

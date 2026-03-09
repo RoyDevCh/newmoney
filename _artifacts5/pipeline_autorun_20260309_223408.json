@@ -1,0 +1,544 @@
+{
+  "time": "20260309_223408",
+  "topic": {
+    "query": "家用清洁与智能家居避坑清单 2026",
+    "confidence": 0.0,
+    "publishable": false,
+    "reasons": [
+      "trusted_sources_lt_2",
+      "no_recent_item_72h"
+    ],
+    "source": "bing_rss",
+    "priority": 1.0,
+    "fit_platforms": [
+      "小红书",
+      "知乎",
+      "抖音",
+      "西瓜视频",
+      "头条",
+      "微博"
+    ],
+    "stable_score": 1.0
+  },
+  "matrix_strategy": {
+    "知乎": {
+      "primary_paths": [
+        "知乎好物/商品卡",
+        "工具清单资料包",
+        "咨询清单或服务线索"
+      ],
+      "best_content_formats": [
+        "选购指南",
+        "红黑榜",
+        "流程拆解",
+        "场景问答"
+      ],
+      "offer": "工具清单、对比表、避坑清单、咨询清单",
+      "cta": "评论关键词领取清单，或引导查看商品卡",
+      "proof": "结构化对比、适用人群、明确不适合谁",
+      "kpi": [
+        "收藏率",
+        "评论关键词率",
+        "商品卡点击率"
+      ],
+      "risk_controls": [
+        "避免虚假测评",
+        "避免绝对化结论",
+        "减少空泛行业判断"
+      ],
+      "monetization_stage": "高信任转化",
+      "threshold_signals": [
+        "分成口径不固定，更适合作为后台或签约口径理解。",
+        "更适合深度问答、专业科普、长文和结构化清单。"
+      ]
+    },
+    "小红书": {
+      "primary_paths": [
+        "店铺商品转化",
+        "数字产品",
+        "轻咨询或私信线索",
+        "蒲公英商单"
+      ],
+      "best_content_formats": [
+        "收藏清单",
+        "前后对比",
+        "模板展示",
+        "轻教程"
+      ],
+      "offer": "模板包、清单卡、轻咨询、低客单数字产品",
+      "cta": "收藏加评论关键词领取，优先做轻量动作",
+      "proof": "强场景图、真实使用细节、低门槛操作感",
+      "kpi": [
+        "收藏率",
+        "评论或私信关键词率",
+        "店铺点击率"
+      ],
+      "risk_controls": [
+        "避免过强专家口吻",
+        "避免硬广感",
+        "视觉审美必须过关"
+      ],
+      "monetization_stage": "视觉驱动转化",
+      "threshold_signals": [
+        "商单与店铺门槛会随平台策略变化。",
+        "优先先做收藏和私信线索，再承接更重的商业动作。"
+      ]
+    },
+    "抖音": {
+      "primary_paths": [
+        "橱窗/联盟带货",
+        "直播承接",
+        "评论关键词资料",
+        "星图商单"
+      ],
+      "best_content_formats": [
+        "错误纠正",
+        "三步解决",
+        "强对比演示",
+        "低成本试错"
+      ],
+      "offer": "商品清单、工具组合、直播承接、评论区关键词资料",
+      "cta": "主页、橱窗、评论关键词三选一，不要并发多个CTA",
+      "proof": "首屏结论、镜头内可视化动作、口播节奏",
+      "kpi": [
+        "3秒完播率",
+        "主页点击率",
+        "商品点击率",
+        "直播承接率"
+      ],
+      "risk_controls": [
+        "避免长句",
+        "避免虚构收益",
+        "避免过多空话"
+      ],
+      "monetization_stage": "短流量导购",
+      "threshold_signals": [
+        "先验证停留和主页点击，再推进更重的带货动作。"
+      ]
+    },
+    "西瓜视频": {
+      "primary_paths": [
+        "中长视频流量收益",
+        "系列内容导流",
+        "商品卡或头条体系联动",
+        "知识型资料包"
+      ],
+      "best_content_formats": [
+        "3到8分钟横屏母体视频",
+        "案例拆解",
+        "流程教程",
+        "系列合集"
+      ],
+      "offer": "完整清单、横屏系列、资料包、头条联动阅读",
+      "cta": "收藏本集并查看简介清单，承接系列下一条",
+      "proof": "横屏完整叙事、步骤演示、案例或测试环境说明",
+      "kpi": [
+        "平均观看时长",
+        "完播率",
+        "收藏率",
+        "系列追更率"
+      ],
+      "risk_controls": [
+        "避免短视频式强催促",
+        "避免空镜堆砌",
+        "封面和标题要一致"
+      ],
+      "monetization_stage": "母体内容沉淀",
+      "threshold_signals": [
+        "适合做横屏母体内容，不宜硬套固定RPM。"
+      ]
+    },
+    "B站": {
+      "primary_paths": [
+        "悬赏带货",
+        "花火商单",
+        "资源包转化",
+        "充电计划"
+      ],
+      "best_content_formats": [
+        "横评",
+        "流程演示",
+        "实测结论",
+        "资料包延展"
+      ],
+      "offer": "完整清单、资源包、工具表、评论区置顶资料",
+      "cta": "三连加评论关键词领取资料包",
+      "proof": "测试上下文、对比证据、观看时长价值感",
+      "kpi": [
+        "平均观看时长",
+        "三连率",
+        "评论关键词率"
+      ],
+      "risk_controls": [
+        "避免空洞热血腔",
+        "避免浅层listicle",
+        "封面要有强对比点"
+      ],
+      "monetization_stage": "长内容转化",
+      "threshold_signals": [
+        "先把栏目可信度做起来，再推进花火和资源包。"
+      ]
+    },
+    "微博": {
+      "primary_paths": [
+        "微任务商单",
+        "广告共享计划",
+        "单链接导流"
+      ],
+      "best_content_formats": [
+        "热点快评",
+        "单视频博文",
+        "图文清单",
+        "热搜延伸"
+      ],
+      "offer": "热点观点卡、同款清单、活动或商品导流",
+      "cta": "评论互动加单链接导购，不要多跳转",
+      "proof": "时效性、观点浓缩、明确标签",
+      "kpi": [
+        "互动率",
+        "转评比",
+        "单条链接点击率"
+      ],
+      "risk_controls": [
+        "避免同质化热点",
+        "避免多链接分散",
+        "注意广告规范"
+      ],
+      "monetization_stage": "热点快反转化",
+      "threshold_signals": [
+        "更适合快反引流，不适合一条内容里塞过多动作。"
+      ]
+    },
+    "公众号": {
+      "primary_paths": [
+        "流量主",
+        "文章内商品或服务转化",
+        "资料包或私域咨询"
+      ],
+      "best_content_formats": [
+        "周报",
+        "深度清单",
+        "行业快报",
+        "操作指南"
+      ],
+      "offer": "订阅专栏、资料包、企业咨询清单",
+      "cta": "文末引导关注系列或领取扩展资料",
+      "proof": "来源链接、时间标记、结构完整",
+      "kpi": [
+        "打开率",
+        "阅读完成率",
+        "资料领取率"
+      ],
+      "risk_controls": [
+        "避免标题党过度",
+        "避免信源不明",
+        "注意长期搜索价值"
+      ],
+      "monetization_stage": "沉淀型转化",
+      "threshold_signals": [
+        "更适合做深度内容和单一资料入口的长期沉淀。"
+      ]
+    },
+    "头条": {
+      "primary_paths": [
+        "图文流量收益",
+        "商品卡带货",
+        "专栏延展"
+      ],
+      "best_content_formats": [
+        "长图文故事",
+        "热点解读",
+        "避坑合集",
+        "信息差整理"
+      ],
+      "offer": "系列专题、工具合集、低门槛带货卡",
+      "cta": "收藏关注系列更新，或查看相关商品卡",
+      "proof": "多段转折、长文耐读性、强标题",
+      "kpi": [
+        "阅读时长",
+        "读完率",
+        "粉丝转化率"
+      ],
+      "risk_controls": [
+        "避免低质搬运感",
+        "避免无来源猎奇",
+        "避免段落过散"
+      ],
+      "monetization_stage": "规模化图文收益",
+      "threshold_signals": [
+        "长图文先拿到稳定阅读，再考虑更重的带货动作。"
+      ]
+    }
+  },
+  "readiness_strategy": {
+    "流量": [
+      "小红书",
+      "抖音",
+      "微博",
+      "头条"
+    ],
+    "商单": [],
+    "带货": [],
+    "沉淀": [
+      "知乎",
+      "西瓜视频",
+      "B站",
+      "公众号"
+    ]
+  },
+  "metrics_feedback": {
+    "available": true,
+    "platform_summary": {
+      "知乎": {
+        "posts": 1,
+        "impressions": 0.0,
+        "views": 100.0,
+        "likes": 5.0,
+        "comments": 1.0,
+        "favorites": 2.0,
+        "shares": 0.0,
+        "follows": 1.0,
+        "profile_clicks": 3.0,
+        "product_clicks": 1.0,
+        "revenue": 10.0,
+        "engagement_rate": 0.08,
+        "follow_rate": 0.01,
+        "profile_ctr": 0.03,
+        "product_ctr": 0.01
+      }
+    },
+    "suggestions": [
+      {
+        "platform": "知乎",
+        "notes": [
+          "数据正常，继续按当前节奏迭代。"
+        ]
+      }
+    ]
+  },
+  "main_brain": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "cmd",
+      "/c",
+      "C:\\Users\\Roy\\AppData\\Roaming\\npm\\openclaw.cmd",
+      "agent",
+      "--agent",
+      "main-brain",
+      "-m",
+      "基于选题“家用清洁与智能家居避坑清单 2026”，平台变现矩阵={\"知乎\": {\"primary_paths\": [\"知乎好物/商品卡\", \"工具清单资料包\", \"咨询清单或服务线索\"], \"best_content_formats\": [\"选购指南\", \"红黑榜\", \"流程拆解\", \"场景问答\"], \"offer\": \"工具清单、对比表、避坑清单、咨询清单\", \"cta\": \"评论关键词领取清单，或引导查看商品卡\", \"proof\": \"结构化对比、适用人群、明确不适合谁\", \"kpi\": [\"收藏率\", \"评论关键词率\", \"商品卡点击率\"], \"risk_controls\": [\"避免虚假测评\", \"避免绝对化结论\", \"减少空泛行业判断\"], \"monetization_stage\": \"高信任转化\", \"threshold_signals\": [\"分成口径不固定，更适合作为后台或签约口径理解。\", \"更适合深度问答、专业科普、长文和结构化清单。\"]}, \"小红书\": {\"primary_paths\": [\"店铺商品转化\", \"数字产品\", \"轻咨询或私信线索\", \"蒲公英商单\"], \"best_content_formats\": [\"收藏清单\", \"前后对比\", \"模板展示\", \"轻教程\"], \"offer\": \"模板包、清单卡、轻咨询、低客单数字产品\", \"cta\": \"收藏加评论关键词领取，优先做轻量动作\", \"proof\": \"强场景图、真实使用细节、低门槛操作感\", \"kpi\": [\"收藏率\", \"评论或私信关键词率\", \"店铺点击率\"], \"risk_controls\": [\"避免过强专家口吻\", \"避免硬广感\", \"视觉审美必须过关\"], \"monetization_stage\": \"视觉驱动转化\", \"threshold_signals\": [\"商单与店铺门槛会随平台策略变化。\", \"优先先做收藏和私信线索，再承接更重的商业动作。\"]}, \"抖音\": {\"primary_paths\": [\"橱窗/联盟带货\", \"直播承接\", \"评论关键词资料\", \"星图商单\"], \"best_content_formats\": [\"错误纠正\", \"三步解决\", \"强对比演示\", \"低成本试错\"], \"offer\": \"商品清单、工具组合、直播承接、评论区关键词资料\", \"cta\": \"主页、橱窗、评论关键词三选一，不要并发多个CTA\", \"proof\": \"首屏结论、镜头内可视化动作、口播节奏\", \"kpi\": [\"3秒完播率\", \"主页点击率\", \"商品点击率\", \"直播承接率\"], \"risk_controls\": [\"避免长句\", \"避免虚构收益\", \"避免过多空话\"], \"monetization_stage\": \"短流量导购\", \"threshold_signals\": [\"先验证停留和主页点击，再推进更重的带货动作。\"]}, \"西瓜视频\": {\"primary_paths\": [\"中长视频流量收益\", \"系列内容导流\", \"商品卡或头条体系联动\", \"知识型资料包\"], \"best_content_formats\": [\"3到8分钟横屏母体视频\", \"案例拆解\", \"流程教程\", \"系列合集\"], \"offer\": \"完整清单、横屏系列、资料包、头条联动阅读\", \"cta\": \"收藏本集并查看简介清单，承接系列下一条\", \"proof\": \"横屏完整叙事、步骤演示、案例或测试环境说明\", \"kpi\": [\"平均观看时长\", \"完播率\", \"收藏率\", \"系列追更率\"], \"risk_controls\": [\"避免短视频式强催促\", \"避免空镜堆砌\", \"封面和标题要一致\"], \"monetization_stage\": \"母体内容沉淀\", \"threshold_signals\": [\"适合做横屏母体内容，不宜硬套固定RPM。\"]}, \"B站\": {\"primary_paths\": [\"悬赏带货\", \"花火商单\", \"资源包转化\", \"充电计划\"], \"best_content_formats\": [\"横评\", \"流程演示\", \"实测结论\", \"资料包延展\"], \"offer\": \"完整清单、资源包、工具表、评论区置顶资料\", \"cta\": \"三连加评论关键词领取资料包\", \"proof\": \"测试上下文、对比证据、观看时长价值感\", \"kpi\": [\"平均观看时长\", \"三连率\", \"评论关键词率\"], \"risk_controls\": [\"避免空洞热血腔\", \"避免浅层listicle\", \"封面要有强对比点\"], \"monetization_stage\": \"长内容转化\", \"threshold_signals\": [\"先把栏目可信度做起来，再推进花火和资源包。\"]}, \"微博\": {\"primary_paths\": [\"微任务商单\", \"广告共享计划\", \"单链接导流\"], \"best_content_formats\": [\"热点快评\", \"单视频博文\", \"图文清单\", \"热搜延伸\"], \"offer\": \"热点观点卡、同款清单、活动或商品导流\", \"cta\": \"评论互动加单链接导购，不要多跳转\", \"proof\": \"时效性、观点浓缩、明确标签\", \"kpi\": [\"互动率\", \"转评比\", \"单条链接点击率\"], \"risk_controls\": [\"避免同质化热点\", \"避免多链接分散\", \"注意广告规范\"], \"monetization_stage\": \"热点快反转化\", \"threshold_signals\": [\"更适合快反引流，不适合一条内容里塞过多动作。\"]}, \"公众号\": {\"primary_paths\": [\"流量主\", \"文章内商品或服务转化\", \"资料包或私域咨询\"], \"best_content_formats\": [\"周报\", \"深度清单\", \"行业快报\", \"操作指南\"], \"offer\": \"订阅专栏、资料包、企业咨询清单\", \"cta\": \"文末引导关注系列或领取扩展资料\", \"proof\": \"来源链接、时间标记、结构完整\", \"kpi\": [\"打开率\", \"阅读完成率\", \"资料领取率\"], \"risk_controls\": [\"避免标题党过度\", \"避免信源不明\", \"注意长期搜索价值\"], \"monetization_stage\": \"沉淀型转化\", \"threshold_signals\": [\"更适合做深度内容和单一资料入口的长期沉淀。\"]}, \"头条\": {\"primary_paths\": [\"图文流量收益\", \"商品卡带货\", \"专栏延展\"], \"best_content_formats\": [\"长图文故事\", \"热点解读\", \"避坑合集\", \"信息差整理\"], \"offer\": \"系列专题、工具合集、低门槛带货卡\", \"cta\": \"收藏关注系列更新，或查看相关商品卡\", \"proof\": \"多段转折、长文耐读性、强标题\", \"kpi\": [\"阅读时长\", \"读完率\", \"粉丝转化率\"], \"risk_controls\": [\"避免低质搬运感\", \"避免无来源猎奇\", \"避免段落过散\"], \"monetization_stage\": \"规模化图文收益\", \"threshold_signals\": [\"长图文先拿到稳定阅读，再考虑更重的带货动作。\"]}}。阶段分组={\"流量\": [\"小红书\", \"抖音\", \"微博\", \"头条\"], \"商单\": [], \"带货\": [], \"沉淀\": [\"知乎\", \"西瓜视频\", \"B站\", \"公众号\"]}。近期反馈={\"available\": true, \"platform_summary\": {\"知乎\": {\"posts\": 1, \"impressions\": 0.0, \"views\": 100.0, \"likes\": 5.0, \"comments\": 1.0, \"favorites\": 2.0, \"shares\": 0.0, \"follows\": 1.0, \"profile_clicks\": 3.0, \"product_clicks\": 1.0, \"revenue\": 10.0, \"engagement_rate\": 0.08, \"follow_rate\": 0.01, \"profile_ctr\": 0.03, \"product_ctr\": 0.01}}, \"suggestions\": [{\"platform\": \"知乎\", \"notes\": [\"数据正常，继续按当前节奏迭代。\"]}]}。请给出今日发布策略，只输出JSON，字段:audience,platform_priority,conversion_goal,platform_roles,guardrails",
+      "--timeout",
+      "220"
+    ],
+    "stdout": "```json\n{\n  \"audience\": \"家庭用户/上班族/宝爸宝妈/追求生活品质的懒人、想省心省力做家务的人和智能家居爱好者\",\n  \"platform_priority\": \"小红书（种草引流）> 抖音（流量爆发）> 知乎（长尾搜索）> 西瓜视频（母体沉淀）> B站（深度沉淀）> 头条（规模化收益）> 公众号（私域沉淀）> 微博（热点快反）\",\n  \"conversion_goal\": \"评论区领避坑指南→主页/橱窗看推荐→私域沉淀\",\n  \"platform_roles\": {\n    \"小红书\": \"种草+线索：发『家用清洁/智能家居避坑清单』收藏向图文，评论领资源包\",\n    \"抖音\": \"流量入口：发『3步选对清洁神器/智能家居不被坑』强对比视频，CTA引主页\",\n    \"知乎\": \"长尾搜索：发『家用清洁/智能家居红黑榜+选购指南』对比文，CTA评论领避坑清单\",\n    \"西瓜视频\": \"母体沉淀：发『3-8分钟横屏清洁神器/智能家居横评』，CTA收藏看系列\",\n    \"B站\": \"深度沉淀：发『家用清洁/智能家居全流程横评』长教程，CTA三连领工具表\",\n    \"头条\": \"规模化收益：发『清洁/智能家居选购完整指南』长图文，靠流量主+商品卡\",\n    \"公众号\": \"私域沉淀：发『清洁/智能家居周报』系列，CTA引导加微领完整攻略\",\n    \"微博\": \"热点快反：发『清洁/智能家居热点快评+清单』，CTA单链接导流\"\n  },\n  \"guardrails\": [\n    \"避免过强专家口吻，保持真诚分享语气\",\n    \"避免硬广感，商品推荐需带真实使用场景和缺点\",\n    \"避免空洞对比，内容要有可执行的选购步骤\",\n    \"数据正常平台保持当前节奏迭代\"\n  ]\n}\n```",
+    "stderr": "",
+    "duration_sec": 29.7
+  },
+  "autotune": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\content_autotune_runner.py",
+      "--topic-file",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\topic_20260309_223408.txt",
+      "--metrics-file",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\metrics_analysis_latest.json",
+      "--min-score",
+      "85",
+      "--max-rewrite-rounds",
+      "3",
+      "--out",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_raw_20260309_223408.json"
+    ],
+    "stdout": "{\n  \"output\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\daily_pack_raw_20260309_223408.json\",\n  \"scores\": [\n    {\n      \"platform\": \"知乎\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 1\n    },\n    {\n      \"platform\": \"小红书\",\n      \"score\": 98.0,\n      \"pass\": true,\n      \"issues\": [],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 20.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 0\n    },\n    {\n      \"platform\": \"微博\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 3\n    },\n    {\n      \"platform\": \"公众号\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 1\n    },\n    {\n      \"platform\": \"头条\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 1\n    },\n    {\n      \"platform\": \"抖音\",\n      \"score\": 100.0,\n      \"pass\": true,\n      \"issues\": [],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 15.0,\n        \"specificity\": 20.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 0\n    },\n    {\n      \"platform\": \"西瓜视频\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 1\n    },\n    {\n      \"platform\": \"B站\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      },\n      \"rounds\": 1\n    }\n  ]\n}",
+    "stderr": "",
+    "duration_sec": 806.48
+  },
+  "final_refine": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace\\final_publish_refiner.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_raw_20260309_223408.json",
+      "--output",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--min-score",
+      "85"
+    ],
+    "stdout": "{\n  \"output\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\daily_pack_20260309_223408.json\",\n  \"scores\": [\n    {\n      \"platform\": \"֪��\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    },\n    {\n      \"platform\": \"С����\",\n      \"score\": 98.0,\n      \"pass\": true,\n      \"issues\": [],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 20.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    },\n    {\n      \"platform\": \"΢��\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    },\n    {\n      \"platform\": \"���ں�\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    },\n    {\n      \"platform\": \"ͷ��\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    },\n    {\n      \"platform\": \"����\",\n      \"score\": 100.0,\n      \"pass\": true,\n      \"issues\": [],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 15.0,\n        \"specificity\": 20.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    },\n    {\n      \"platform\": \"������Ƶ\",\n      \"score\": 98.0,\n      \"pass\": true,\n      \"issues\": [],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 20.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    },\n    {\n      \"platform\": \"Bվ\",\n      \"score\": 92.0,\n      \"pass\": false,\n      \"issues\": [\n        \"earnings_claim\"\n      ],\n      \"subscores\": {\n        \"completeness\": 20.0,\n        \"hook\": 13.0,\n        \"specificity\": 14.0,\n        \"platform_fit\": 20.0,\n        \"conversion\": 15.0,\n        \"readability\": 10.0\n      }\n    }\n  ]\n}",
+    "stderr": "",
+    "duration_sec": 535.52
+  },
+  "matrix_expand": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace\\matrix_pack_expander.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--output",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--min-score",
+      "85"
+    ],
+    "stdout": "{\n  \"output\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\daily_pack_20260309_223408.json\",\n  \"platforms\": [\n    \"֪��\",\n    \"С����\",\n    \"΢��\",\n    \"���ں�\",\n    \"ͷ��\",\n    \"����\",\n    \"������Ƶ\",\n    \"Bվ\"\n  ],\n  \"video_kits\": [\n    \"douyin\",\n    \"xigua\",\n    \"bilibili\"\n  ]\n}",
+    "stderr": "",
+    "duration_sec": 169.64
+  },
+  "repair": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace\\low_score_repair_runner.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--output",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--min-score",
+      "85"
+    ],
+    "stdout": "{\n  \"output\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\daily_pack_20260309_223408.json\",\n  \"repair_log\": [\n    {\n      \"platform\": \"֪��\",\n      \"before_score\": 92.0,\n      \"after_score\": 92.0,\n      \"before_pass\": false,\n      \"after_pass\": false,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"С����\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"΢��\",\n      \"before_score\": 92.0,\n      \"after_score\": 92.0,\n      \"before_pass\": false,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"���ں�\",\n      \"before_score\": 92.0,\n      \"after_score\": 96.0,\n      \"before_pass\": false,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"ͷ��\",\n      \"before_score\": 92.0,\n      \"after_score\": 98.0,\n      \"before_pass\": false,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"����\",\n      \"before_score\": 100.0,\n      \"after_score\": 100.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"������Ƶ\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"Bվ\",\n      \"before_score\": 92.0,\n      \"after_score\": 98.0,\n      \"before_pass\": false,\n      \"after_pass\": true,\n      \"changed\": true\n    }\n  ]\n}",
+    "stderr": "",
+    "duration_sec": 122.39
+  },
+  "longform_guard": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace\\longform_guard_runner.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--output",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--min-score",
+      "85"
+    ],
+    "stdout": "{\n  \"output\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\daily_pack_20260309_223408.json\",\n  \"longform_guard_log\": [\n    {\n      \"platform\": \"֪��\",\n      \"before_score\": 92.0,\n      \"after_score\": 92.0,\n      \"before_pass\": false,\n      \"after_pass\": false,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"С����\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"΢��\",\n      \"before_score\": 92.0,\n      \"after_score\": 92.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"���ں�\",\n      \"before_score\": 96.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"ͷ��\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": true\n    },\n    {\n      \"platform\": \"����\",\n      \"before_score\": 100.0,\n      \"after_score\": 100.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"������Ƶ\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"Bվ\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    }\n  ]\n}",
+    "stderr": "",
+    "duration_sec": 0.26
+  },
+  "quality_gate": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\content_quality_gate.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--output",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\quality_20260309_223408.json",
+      "--min-score",
+      "85"
+    ],
+    "stdout": "{\n  \"count\": 8,\n  \"avg_score\": 96.75,\n  \"pass_count\": 7,\n  \"pass_rate\": 0.875,\n  \"min_score\": 85.0\n}",
+    "stderr": "",
+    "duration_sec": 0.25
+  },
+  "specificity_boost": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace\\specificity_boost_runner.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408_boosted.json",
+      "--output",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408_boosted.json",
+      "--min-score",
+      "85"
+    ],
+    "stdout": "{\n  \"output\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\daily_pack_20260309_223408_boosted.json\",\n  \"specificity_boost_log\": [\n    {\n      \"platform\": \"֪��\",\n      \"before_score\": 92.0,\n      \"after_score\": 92.0,\n      \"before_pass\": false,\n      \"after_pass\": false,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"С����\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"΢��\",\n      \"before_score\": 92.0,\n      \"after_score\": 92.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"���ں�\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"ͷ��\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"����\",\n      \"before_score\": 100.0,\n      \"after_score\": 100.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"������Ƶ\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    },\n    {\n      \"platform\": \"Bվ\",\n      \"before_score\": 98.0,\n      \"after_score\": 98.0,\n      \"before_pass\": true,\n      \"after_pass\": true,\n      \"changed\": false\n    }\n  ]\n}",
+    "stderr": "",
+    "duration_sec": 0.27,
+    "promoted": true,
+    "reason": "candidate_not_worse"
+  },
+  "quality_recheck": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\content_quality_gate.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408_boosted.json",
+      "--output",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\quality_20260309_223408_recheck.json",
+      "--min-score",
+      "85"
+    ],
+    "stdout": "{\n  \"count\": 8,\n  \"avg_score\": 96.75,\n  \"pass_count\": 7,\n  \"pass_rate\": 0.875,\n  \"min_score\": 85.0\n}",
+    "stderr": "",
+    "duration_sec": 0.22
+  },
+  "tts_render": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace\\tts_render_windows.py",
+      "--input",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--output-dir",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\tts_20260309_223408"
+    ],
+    "stdout": "{\n  \"results\": [\n    {\n      \"platform\": \"douyin\",\n      \"output_file\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\tts_20260309_223408\\\\douyin_tts.wav\",\n      \"exists\": true,\n      \"size_mb\": 1.01\n    },\n    {\n      \"platform\": \"xigua\",\n      \"output_file\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\tts_20260309_223408\\\\xigua_tts.wav\",\n      \"exists\": true,\n      \"size_mb\": 3.13\n    },\n    {\n      \"platform\": \"bilibili\",\n      \"output_file\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\tts_20260309_223408\\\\bilibili_tts.wav\",\n      \"exists\": true,\n      \"size_mb\": 2.09\n    }\n  ]\n}",
+    "stderr": "",
+    "duration_sec": 2.38
+  },
+  "asset_render": {
+    "ok": true,
+    "skipped": true,
+    "reason": "skip_assets"
+  },
+  "manual_publish_queue": {
+    "ok": true,
+    "rc": 0,
+    "cmd": [
+      "py",
+      "-3",
+      "C:\\Users\\Roy\\.openclaw\\workspace\\manual_publish_queue_builder.py",
+      "--input-pack",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\daily_pack_20260309_223408.json",
+      "--input-quality",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\quality_20260309_223408_recheck.json",
+      "--input-assets",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\asset_manifest_daily_20260309_153817.json",
+      "--tts-dir",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\tts_20260309_223408",
+      "--output-json",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\manual_publish_queue_20260309_223408.json",
+      "--output-md",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\manual_publish_queue_20260309_223408.md",
+      "--latest-json",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\manual_publish_queue_latest.json",
+      "--latest-md",
+      "C:\\Users\\Roy\\.openclaw\\workspace-content\\manual_publish_queue_latest.md",
+      "--generated-at",
+      "20260309_223408"
+    ],
+    "stdout": "{\n  \"output_json\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\manual_publish_queue_20260309_223408.json\",\n  \"output_md\": \"C:\\\\Users\\\\Roy\\\\.openclaw\\\\workspace-content\\\\manual_publish_queue_20260309_223408.md\"\n}",
+    "stderr": "",
+    "duration_sec": 0.2
+  },
+  "publisher": {
+    "ok": true,
+    "skipped": true,
+    "reason": "skip_publisher"
+  }
+}

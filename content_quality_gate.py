@@ -31,15 +31,15 @@ RISK_TERMS = {
 }
 
 PLATFORM_RULES = {
-    "知乎": {"body_min": 450, "body_max": 1800, "emoji_max": 5},
-    "小红书": {"body_min": 120, "body_max": 550, "emoji_max": 35},
+    "知乎": {"body_min": 950, "body_max": 2200, "emoji_max": 5},
+    "小红书": {"body_min": 180, "body_max": 550, "emoji_max": 35},
     "抖音": {"body_min": 120, "body_max": 520, "emoji_max": 12},
-    "西瓜视频": {"body_min": 360, "body_max": 2200, "emoji_max": 8},
-    "B站": {"body_min": 280, "body_max": 1400, "emoji_max": 10},
-    "bilibili": {"body_min": 280, "body_max": 1400, "emoji_max": 10},
-    "微博": {"body_min": 120, "body_max": 420, "emoji_max": 12},
-    "公众号": {"body_min": 550, "body_max": 2600, "emoji_max": 6},
-    "头条": {"body_min": 800, "body_max": 2600, "emoji_max": 8},
+    "西瓜视频": {"body_min": 520, "body_max": 2200, "emoji_max": 8},
+    "B站": {"body_min": 420, "body_max": 1600, "emoji_max": 10},
+    "bilibili": {"body_min": 420, "body_max": 1600, "emoji_max": 10},
+    "微博": {"body_min": 130, "body_max": 420, "emoji_max": 12},
+    "公众号": {"body_min": 1100, "body_max": 3200, "emoji_max": 6},
+    "头条": {"body_min": 1100, "body_max": 3200, "emoji_max": 8},
 }
 
 MONETIZATION_BLOCKERS = {
@@ -54,6 +54,7 @@ MONETIZATION_BLOCKERS = {
     "tags_insufficient",
     "earnings_claim",
     "unverified_social_proof",
+    "longform_actionability_weak",
 }
 
 
@@ -113,15 +114,36 @@ def _has_source_signal(text: str) -> bool:
 
 
 def _has_earnings_claim(text: str) -> bool:
-    patterns = [
+    negated_patterns = [
+        r"不承诺[^\n。！？]{0,6}(收益|收入|盈利|变现|赚钱)",
+        r"无[^\n。！？]{0,6}(收益承诺|盈利承诺|变现承诺)",
+        r"不保证[^\n。！？]{0,6}(收益|收入|盈利|变现|赚钱)",
+    ]
+    if any(re.search(pattern, text) for pattern in negated_patterns):
+        return False
+
+    direct_patterns = [
         r"月入\s*\d",
         r"月赚\s*\d",
         r"日入\s*\d",
+        r"日赚\s*\d",
         r"收入翻倍",
+        r"收益翻倍",
+        r"利润翻倍",
         r"多赚\s*\d",
-        r"\d+\s*[万千百]?\+?\s*元",
+        r"躺赚",
+        r"被动收入",
     ]
-    return any(re.search(p, text) for p in patterns)
+    if any(re.search(pattern, text) for pattern in direct_patterns):
+        return True
+
+    money_pattern = r"\d+\s*[万千百]?\+?\s*元"
+    earning_contexts = [
+        r"(收益|收入|营收|盈利|利润|变现|回本|赚|多赚)",
+        money_pattern + r"[^\n。！？]{0,10}(收益|收入|营收|盈利|利润|变现|回本|赚|多赚)",
+        r"(收益|收入|营收|盈利|利润|变现|回本|赚|多赚)[^\n。！？]{0,10}" + money_pattern,
+    ]
+    return any(re.search(pattern, text) for pattern in earning_contexts)
 
 
 def _has_unverified_social_proof(text: str) -> bool:
@@ -142,6 +164,11 @@ def _incomplete_tail(text: str) -> bool:
 
 def _platform_rule(name: str) -> Dict[str, int]:
     return PLATFORM_RULES.get(name, {"body_min": 150, "body_max": 1200, "emoji_max": 12})
+
+
+def _actionability_markers(text: str) -> int:
+    markers = ["步骤", "误区", "适合谁", "不适合谁", "建议", "案例", "清单", "第一步", "第二步", "第三步"]
+    return sum(1 for marker in markers if marker in text)
 
 
 def score_one(item: Dict, min_score: float) -> DraftScore:
@@ -221,6 +248,9 @@ def score_one(item: Dict, min_score: float) -> DraftScore:
     if platform in {"西瓜视频"} and _sentence_count(body) < 8:
         pf -= 4
         issues.append("xigua_depth_weak")
+    if platform in {"知乎", "公众号", "头条"} and _actionability_markers(body) < 3:
+        pf -= 5
+        issues.append("longform_actionability_weak")
     subs["platform_fit"] = max(pf, 0.0)
 
     # 5) Conversion 15

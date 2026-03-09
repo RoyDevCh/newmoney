@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Normalize various platform export formats into the system metrics schema."""
+"""Normalize platform export files into the shared metrics schema."""
 
 from __future__ import annotations
 
 import csv
 import io
 import json
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 
 EXPECTED_COLUMNS = [
@@ -69,6 +69,7 @@ def _load_rows(filename: str, payload: bytes) -> List[Dict[str, Any]]:
             continue
     if text is None:
         text = payload.decode("utf-8-sig", errors="replace")
+
     if filename.lower().endswith(".json"):
         data = json.loads(text)
         if isinstance(data, dict):
@@ -79,6 +80,7 @@ def _load_rows(filename: str, payload: bytes) -> List[Dict[str, Any]]:
         if isinstance(data, list):
             return [row for row in data if isinstance(row, dict)]
         raise ValueError("JSON input must be a list or contain a data/rows list")
+
     reader = csv.DictReader(io.StringIO(text))
     return [dict(row) for row in reader]
 

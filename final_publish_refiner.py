@@ -14,6 +14,14 @@ if str(CONTENT_WS) not in sys.path:
     sys.path.insert(0, str(CONTENT_WS))
 
 from content_autotune_runner import (  # type: ignore
+    BILI,
+    DY,
+    TT,
+    WB,
+    WX,
+    XG,
+    XHS,
+    ZH,
     PLATFORM_BRIEFS,
     build_publisher_review_prompt,
     extract_json,
@@ -50,19 +58,109 @@ def build_final_refine_prompt(topic: str, draft: Dict[str, Any], review: Dict[st
     weak_point = review.get("weak_point", "")
     fix_now = review.get("fix_now", "")
     return (
-        "只输出 JSON 对象。你是平台主编，负责发布前最后一轮精修。"
+        "只输出JSON对象。你是平台主编，负责发布前最后一轮精修。"
         f"主题={topic}，平台={platform}，当前稿件={json.dumps(draft, ensure_ascii=False)}。"
-        f"编辑意见：weak_point={weak_point}；fix_now={fix_now}。"
-        "目标：让文案更像真人写的专业内容，而不是提示词拼装。"
+        f"编辑意见：weak_point={weak_point}，fix_now={fix_now}。"
+        "目标：让文案更像真实作者写的专业内容，而不是提示词拼装。"
         "硬要求："
-        "1) 保留转化力，但去掉模板味；"
-        "2) 少用重复的“按实测环境”“按公开评测”，改成更自然的证据表述；"
-        "3) 严禁收益承诺、虚假社会背书、伪官方语气；"
-        "4) 结论必须明确，执行动作必须具体；"
-        f"5) 语气={brief.get('voice', '')}；CTA={brief.get('conversion', '')}；"
-        f"6) 正文长度保持在 {brief.get('body_range', '平台要求')}；"
-        "7) 输出字段 platform,title,hook,body,cta,tags。"
+        "1) 保留转化力，但去掉模板味。"
+        "2) 让证据表达更自然，减少重复的固定口头禅。"
+        "3) 严禁收益承诺、虚假社会背书、伪官方语气。"
+        "4) 结论必须明确，执行动作必须具体。"
+        f"5) 语气={brief.get('voice', '')}，CTA={brief.get('conversion', '')}。"
+        f"6) 正文字数保持在{brief.get('body_range', '平台要求')}。"
+        "7) 输出字段platform,title,hook,body,cta,tags。"
     )
+
+
+def polish_xiaohongshu(draft: Dict[str, Any]) -> Dict[str, Any]:
+    current = dict(draft)
+    lines = [line.strip() for line in str(current.get("body", "")).splitlines() if line.strip()]
+    if len(lines) < 4:
+        body = [
+            str(current.get("body", "")).strip(),
+            "先别把工具堆满，先跑通一个最顺手的场景。",
+            "按公开资料和测试环境的常见做法看，先做1个入口、3个动作、1个领取口更稳。",
+        ]
+        lines = [line for line in body if line]
+    if not any("公开资料" in line or "测试环境" in line or "实测" in line or "来源" in line for line in lines):
+        lines.insert(1, "按公开资料和测试环境的常见做法看，先把一个高频动作跑顺，再扩工具组合。")
+    current["body"] = "\n".join(lines[:6])
+    hook = str(current.get("hook", "")).strip()
+    if hook and "先看结论" not in hook:
+        current["hook"] = f"先看结论：{hook}"
+    return current
+
+
+def polish_weibo(draft: Dict[str, Any]) -> Dict[str, Any]:
+    current = dict(draft)
+    body = str(current.get("body", "")).replace("；", "，").replace("。", "。 ")
+    sentences = [x.strip() for x in body.split("。") if x.strip()]
+    if len(sentences) > 4:
+        sentences = sentences[:4]
+    current["body"] = "。\n".join(sentences) + ("。" if sentences else "")
+    return current
+
+
+def polish_short_video(draft: Dict[str, Any]) -> Dict[str, Any]:
+    current = dict(draft)
+    body = str(current.get("body", "")).replace("；", "。").replace("！", "。")
+    lines = [x.strip() for x in body.split("。") if x.strip()]
+    current["body"] = "\n".join(lines[:7])
+    return current
+
+
+def polish_long_form(draft: Dict[str, Any]) -> Dict[str, Any]:
+    current = dict(draft)
+    platform = str(current.get("platform", "")).strip()
+    body = str(current.get("body", "")).strip()
+    paragraphs = [p.strip() for p in body.split("\n") if p.strip()]
+
+    if platform == ZH:
+        required = [
+            "适合谁：如果你现在最大的痛点是信息太多、落地太少，这类结构比空泛观点更有用。",
+            "不适合谁：如果你只想一次性找个万能工具，而不愿意按步骤执行，这套方法帮助有限。",
+            "常见误区：先买工具、后找场景；先堆素材、后做判断；先做复杂系统、后验证最小结果。",
+            "可执行步骤：第一步定场景，第二步定判断标准，第三步只保留一个复盘指标。",
+            "落地建议：把今天要做的动作写成清单，再决定哪些环节值得自动化。",
+        ]
+    elif platform == WX:
+        required = [
+            "适用场景：适合需要持续输出内容、需要把阅读变成资料领取和后续转化的人。",
+            "不适用场景：如果你只是想写一篇纯观点型文章，这种结构会显得太重。",
+            "常见误区：只看标题，不看承接；只给观点，不给动作；同时塞入多个CTA。",
+            "执行顺序：先写结论，再写误区，再写步骤，最后只留一个资料入口。",
+            "案例提示：哪怕只补一个真实使用场景，也比泛泛而谈更容易涨关注。",
+        ]
+    else:
+        required = [
+            "适用场景：适合做系列内容、做长图文沉淀、做清单型承接。",
+            "常见误区：标题很猛，正文很空；段落很多，结论不清；动作太多，转化太散。",
+            "执行顺序：先给总判断，再讲误区，再给步骤，最后只留一个动作。",
+            "案例提示：补一个执行前后差异点，比补十句空观点更有效。",
+        ]
+
+    merged = paragraphs[:]
+    for block in required:
+        if all(block[:8] not in paragraph for paragraph in merged):
+            merged.append(block)
+
+    current["body"] = "\n\n".join(merged)
+    return current
+
+
+def editorial_structure_pass(draft: Dict[str, Any]) -> Dict[str, Any]:
+    platform = str(draft.get("platform", "")).strip()
+    current = dict(draft)
+    if platform == XHS:
+        return polish_xiaohongshu(current)
+    if platform == WB:
+        return polish_weibo(current)
+    if platform in {DY, XG, BILI}:
+        return polish_short_video(current)
+    if platform in {ZH, WX, TT}:
+        return polish_long_form(current)
+    return current
 
 
 def rescore(drafts: List[Dict[str, Any]], min_score: float) -> List[Dict[str, Any]]:
@@ -81,43 +179,24 @@ def rescore(drafts: List[Dict[str, Any]], min_score: float) -> List[Dict[str, An
     return rows
 
 
-def polish_short_form(draft: Dict[str, Any]) -> Dict[str, Any]:
-    current = dict(draft)
-    platform = str(current.get("platform", "")).strip()
-    body = str(current.get("body", "")).strip()
-    hook = str(current.get("hook", "")).strip()
-
-    if platform == "小红书":
-        lines = [line.strip() for line in body.splitlines() if line.strip()]
-        current["body"] = "\n".join(lines)
-        if hook and "先看结论" not in hook and len(hook) < 28:
-            current["hook"] = f"先看结论：{hook}"
-    elif platform == "抖音":
-        pieces = [x.strip() for x in body.replace("！", "。").split("。") if x.strip()]
-        pieces = pieces[:6]
-        current["body"] = "。".join(pieces) + ("。" if pieces else "")
-        if hook and not hook.startswith("别再"):
-            current["hook"] = f"别再踩坑了，{hook}"
-
-    return current
-
-
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--input", required=True)
-    ap.add_argument("--output", required=True)
-    ap.add_argument("--min-score", type=float, default=85.0)
-    args = ap.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", required=True)
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--min-score", type=float, default=85.0)
+    args = parser.parse_args()
 
     pack = load_pack(Path(args.input))
     topic = str(pack.get("topic", "")).strip()
+    research = pack.get("research_context", {})
+    feedback = pack.get("metrics_feedback", {})
     drafts = [x for x in pack.get("drafts", []) if isinstance(x, dict)]
-    rmap = review_map(pack)
+    review_mapping = review_map(pack)
 
     refined: List[Dict[str, Any]] = []
     for draft in drafts:
         platform = str(draft.get("platform", "")).strip()
-        review = rmap.get(platform, {})
+        review = review_mapping.get(platform, {})
         current = draft
         if review:
             try:
@@ -127,7 +206,8 @@ def main() -> None:
                     current = obj
             except Exception:
                 current = draft
-        refined.append(sanitize_draft(topic, polish_short_form(current)))
+        current = editorial_structure_pass(current)
+        refined.append(sanitize_draft(topic, current, research=research, feedback=feedback))
 
     scores = rescore(refined, args.min_score)
     try:

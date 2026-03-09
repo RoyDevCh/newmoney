@@ -422,6 +422,7 @@ def build_pack_items(
     qmap = quality_map(quality)
     amap = map_assets(manifest)
     tmap = map_tts_files(tts_files)
+    vmap = pack.get("visual_templates", {}) if isinstance(pack, dict) else {}
     items: List[Dict[str, Any]] = []
     for draft in pack.get("drafts", []):
         if not isinstance(draft, dict):
@@ -430,6 +431,7 @@ def build_pack_items(
         strategy = strategies.get(platform, {})
         score_row = qmap.get(platform, {})
         asset_row = amap.get(platform, {})
+        visual_row = vmap.get(platform, {}) if isinstance(vmap, dict) else {}
         items.append(
             {
                 "platform": platform,
@@ -450,6 +452,10 @@ def build_pack_items(
                 "manual_publish_priority": strategy.get("manual_publish_priority", 9),
                 "notes": strategy.get("notes", ""),
                 "cover_file": asset_row.get("output_file", ""),
+                "cover_strategy": asset_row.get("cover_strategy", visual_row.get("image_strategy", "comfy_generated_ok")),
+                "cover_strategy_reason": asset_row.get("skip_reason", visual_row.get("image_strategy_reason", "")),
+                "reference_search_queries": asset_row.get("reference_search_queries", visual_row.get("reference_search_queries", [])),
+                "cover_generation_state": asset_row.get("engine", ""),
                 "tts_file": tmap.get(platform, ""),
             }
         )

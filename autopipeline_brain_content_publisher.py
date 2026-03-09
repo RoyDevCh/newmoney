@@ -49,44 +49,54 @@ TT = "\u5934\u6761"
 
 STABLE_TOPICS = [
     {
-        "query": "\u6570\u7801\u88c5\u5907\u907f\u5751\u4e0e\u9009\u8d2d\u5efa\u8bae 2026",
+        "query": "\u5bb6\u7528\u6e05\u6d01\u4e0e\u667a\u80fd\u5bb6\u5c45\u907f\u5751\u6e05\u5355 2026",
         "priority": 1.0,
+        "fit_platforms": [XHS, ZH, DY, XG, TT, WB],
+    },
+    {
+        "query": "\u6570\u7801\u88c5\u5907\u907f\u5751\u4e0e\u9009\u8d2d\u5efa\u8bae 2026",
+        "priority": 0.99,
         "fit_platforms": [ZH, DY, XG, BILI, WB, TT],
     },
     {
-        "query": "\u529e\u516c\u6548\u7387\u5de5\u5177\u6e05\u5355\u4e0e\u4fe1\u606f\u7ba1\u7406\u5de5\u4f5c\u6d41",
-        "priority": 0.99,
-        "fit_platforms": [ZH, XHS, DY, XG, BILI, WX, TT],
+        "query": "\u5ba0\u7269\u7528\u54c1\u4e0e\u884c\u4e3a\u8bad\u7ec3\u771f\u5b9e\u6210\u672c\u6e05\u5355",
+        "priority": 0.98,
+        "fit_platforms": [XHS, ZH, DY, XG, WB, TT],
+    },
+    {
+        "query": "\u7537\u751f\u73e0\u5b9d\u914d\u9970\u4e0e\u65e5\u5e38\u7a7f\u642d\u907f\u5751\u6307\u5357",
+        "priority": 0.97,
+        "fit_platforms": [XHS, WB, ZH, DY, BILI],
+    },
+    {
+        "query": "\u8fd0\u52a8\u6237\u5916\u4e0e\u5973\u6027\u529b\u91cf\u8bad\u7ec3\u88c5\u5907\u6307\u5357",
+        "priority": 0.96,
+        "fit_platforms": [XHS, WB, DY, XG, BILI, ZH],
     },
     {
         "query": "\u5bb6\u7528\u5c0f\u7535\u5668\u771f\u5b9e\u4f7f\u7528\u573a\u666f\u4e0e\u907f\u5751\u6e05\u5355",
-        "priority": 0.97,
+        "priority": 0.95,
         "fit_platforms": [ZH, XHS, DY, XG, BILI, TT],
     },
     {
-        "query": "\u5185\u5bb9\u751f\u4ea7\u63d0\u6548\u4e0e\u53d8\u73b0\u6d41\u7a0b\u62c6\u89e3",
-        "priority": 0.95,
-        "fit_platforms": [ZH, XHS, DY, XG, BILI, WX],
-    },
-    {
         "query": "\u5546\u4e1a\u6848\u4f8b\u62c6\u89e3\u4e0e\u54c1\u724c\u589e\u957f\u590d\u76d8",
-        "priority": 0.94,
+        "priority": 0.92,
         "fit_platforms": [ZH, DY, XG, BILI, WB, WX, TT],
     },
     {
-        "query": "\u77e5\u8bc6\u7ba1\u7406\u4e0e\u4e2a\u4eba\u7cfb\u7edf\u642d\u5efa",
-        "priority": 0.93,
+        "query": "\u5185\u5bb9\u751f\u4ea7\u63d0\u6548\u4e0e\u53d8\u73b0\u6d41\u7a0b\u62c6\u89e3",
+        "priority": 0.78,
         "fit_platforms": [ZH, XHS, DY, XG, BILI, WX],
     },
     {
-        "query": "\u5386\u53f2\u4e8b\u4ef6\u91cc\u7684\u5546\u4e1a\u4e0e\u8ba4\u77e5\u542f\u53d1",
-        "priority": 0.91,
-        "fit_platforms": [ZH, XG, BILI, WB, WX, TT],
+        "query": "AI\u5de5\u5177\u6e05\u5355\u4e0e\u6548\u7387\u5de5\u4f5c\u6d41",
+        "priority": 0.7,
+        "fit_platforms": [ZH, XHS, DY, XG, BILI, WB, WX, TT],
     },
     {
-        "query": "AI\u5de5\u5177\u6e05\u5355\u4e0e\u6548\u7387\u5de5\u4f5c\u6d41",
-        "priority": 0.9,
-        "fit_platforms": [ZH, XHS, DY, XG, BILI, WB, WX, TT],
+        "query": "\u77e5\u8bc6\u7ba1\u7406\u4e0e\u4e2a\u4eba\u7cfb\u7edf\u642d\u5efa",
+        "priority": 0.58,
+        "fit_platforms": [ZH, XHS, DY, XG, BILI, WX],
     },
 ]
 
@@ -176,7 +186,9 @@ def select_topic() -> Dict:
                 "priority": candidate["priority"],
                 "fit_platforms": candidate["fit_platforms"],
             }
-        item["stable_score"] = round(item["confidence"] * 0.7 + item["priority"] * 0.3, 4)
+        confidence_bonus = min(float(item["confidence"]), 0.15)
+        publishable_bonus = 0.08 if item.get("publishable") else 0.0
+        item["stable_score"] = round(item["priority"] + confidence_bonus + publishable_bonus, 4)
         if best is None or item["stable_score"] > best["stable_score"]:
             best = item
 
@@ -267,6 +279,8 @@ def main() -> None:
             str(WS_CONTENT / "content_autotune_runner.py"),
             "--topic-file",
             str(topic_file),
+            "--metrics-file",
+            str(METRICS_LATEST),
             "--min-score",
             "85",
             "--max-rewrite-rounds",

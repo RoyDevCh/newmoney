@@ -41,7 +41,7 @@ PLATFORM_STRATEGY: Dict[str, Dict[str, Any]] = {
         "primary_goal": "watch time and compound traffic",
         "post_type": "horizontal mid-length video",
         "manual_publish_priority": 1,
-        "notes": "西瓜更适合3到8分钟横屏母体视频，优先做完整信息密度，不要短平快硬塞。",
+        "notes": "西瓜更适合3到8分钟横屏母体视频，优先做完整信息密度。",
     },
     "B站": {
         "recommended_publish_per_day": 1,

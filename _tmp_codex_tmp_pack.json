@@ -1,0 +1,486 @@
+{
+  "topic": "知识管理与个人系统搭建",
+  "strategy": {
+    "audience": "想搭建个人知识体系的学生/职场人/终身学习者，信息过载焦虑者、想提升效率的斜杠青年、AI工具爱好者",
+    "pain_point": "信息太多记不住、收藏了但找不到、想整理但方法太杂、工具选不对花了钱又没用、搭建系统三分钟热度、想用AI提效但不会配置",
+    "conversion_goal": "用免费干货建立信任，后续自然推荐高性价比工具或搭建咨询服务",
+    "offer": "免费知识管理模板 + 工具组合清单 + 搭建流程SOP + 避坑指南 + AI知识库配置教程",
+    "platform_priority": "知乎（深度长文+搜索长尾）> 小红书（场景种草+收藏清单）> 公众号（沉淀+私域）> 微博（热点快评+引流）> B站（深度教程）> 西瓜视频（母体）> 抖音（流量爆发）> 头条（规模化收益）",
+    "angle": "用「我踩过的坑+实测过的工具+AI配置教程」真诚分享，核心卖「看完就能自己搭」而非「告诉你工具有多厉害」，强调「让AI成为你的第二大脑」",
+    "proof_points": [
+      "实测对比10+款知识管理工具（Notion/飞书/Obsidian/语雀/Heptabase等），每款带至少3个真实使用场景和1个致命缺点",
+      "展示从0到1搭建AI知识库的完整过程，包含Ollama/Claude Code等配置截图、时间成本",
+      "每期内容附带可直接复用的清单或模板，而非只讲虚道理",
+      "持续更新各工具最新版本功能+AI集成方案，不卖过期信息和智商税工具",
+      "公开我的AI知识管理工作流录屏，看得见的效率提升证据"
+    ],
+    "content_must_have": [
+      "标题必须有具体数字和对比点，如『5款工具横评+AI配置｜这款让我彻底弃坑』",
+      "正文必须包含『适用人群+不适用人群+使用场景+价格门槛+AI集成难度』五要素",
+      "必须至少配1张信息量大的对比表格或AI配置流程图",
+      "必须文末附带『评论关键词领XX资料包』的明确CTA",
+      "必须每季度更新一次工具测评和AI集成方案，确保信息时效性",
+      "必须避免『所有人适用』的绝对化表述，改用『适合XX人群』",
+      "必须至少有1个真人案例或真实配置录屏作为证据"
+    ]
+  },
+  "research_context": {
+    "available": true,
+    "sources": [
+      "ddgs"
+    ],
+    "results": [
+      {
+        "query": "知识管理与个人系统搭建 2026 实测",
+        "title": "（2026年最新版）手把手教你搭建本地知识库：个人与中小企业专属指南_...",
+        "url": "https://blog.csdn.net/python1234567_/article/details/157286066",
+        "snippet": "Jan 23,2026·本文将为你提供一份 零代码、面向实际应用 的本地知识库搭建教程，涵盖 模型选择、显卡推荐、后端部署工具（如 Ollama、LM Studio）到用户界面 的完整链条，特别适配2025年主流的NVIDIA 40/50系列显卡，助你轻松打造专属AI知识助手。"
+      },
+      {
+        "query": "知识管理与个人系统搭建 2026 实测",
+        "title": "2026年AI知识管理闭环指南：OpenClaw部署+Obsidian+Claude Code，10分...",
+        "url": "https://developer.aliyun.com/article/1713729",
+        "snippet": "Feb 28,2026·本文整合2026年阿里云与Windows本地部署OpenClaw流程，以及Obsidian+Claude Code的无缝对接教程，包含可直接复制的代码命令、技能安装清单、实战场景案例，帮你从0到1搭建高效知识管理闭环。"
+      },
+      {
+        "query": "知识管理与个人系统搭建 2026 实测",
+        "title": "高效构建个人知识体系：2026主流在线文档工具推荐_管理_用户_Notion",
+        "url": "https://www.sohu.com/a/982358730_122574406",
+        "snippet": "Feb 1,2026·本文将从知识库友好度、功能特色、适用场景、免费政策等维度，为你梳理2026年五款值得关注的在线文档工具，助你找到构建个人知识体系的智能伙伴。 对于已使用钉钉进行日常沟通与项目管理的个人或团队而言，钉钉AI文档能…"
+      },
+      {
+        "query": "知识管理与个人系统搭建 2026 实测",
+        "title": "Notion 2026 最强入门教程！5 个步骤速通个人知识库搭建（零基础）_哔...个人知识管理软件包含AI知识库软件系统产品清单（2026年最新，持续更...高效个人知识管理体系搭建指南：工具组合与实施策略-百度开发者中心",
+        "url": "https://www.bilibili.com/video/BV1od6dBXEY2/",
+        "snippet": "爆肝30天，一站式入门双向链接笔记软件｜黑曜石，飞书官方详细教程视频（超全，建议收藏），神级笔记软件Notion，全网最全最细教程，从入门到精通（中英字幕），【中英字幕】Notion官方教程，很后悔，为什么没早点分享这两个改变我人生的软件：Notion和Obsidian。Aug 22, 2025 ·个人知识管理软件包含AI知识库软件系统产品清单（2026年最新，持续更新中） 基于2026年最新市场数据， KMCenter 结合AI大模型"
+      },
+      {
+        "query": "知识管理与个人系统搭建 2026 实测",
+        "title": "个人知识管理软件包含AI知识库软件系统产品清单（2026年最新，持续更...",
+        "url": "https://www.kmcenter.org/gerenzhishiguanliruanjian-gerenzhishikupkm/",
+        "snippet": "Aug 22, 2025 ·个人知识管理软件包含AI知识库软件系统产品清单（2026年最新，持续更新中） 基于2026年最新市场数据， KMCenter 结合AI大模型查询，整理了中国市场上的个人知识管理软件、系统，按照产品名称、核心功能、优势、缺点和出品方结构进行介绍。"
+      },
+      {
+        "query": "知识管理与个人系统搭建 公开评测 选购 对比",
+        "title": "美甲店管理系统的设计与实现 • Worktile社区",
+        "url": "https://worktile.com/kb/p/76713",
+        "snippet": "美甲店管理系统的设计与实现. 针对美甲店管理系统的设计与实现，关键特征涉及：1、顾客预约管理、2、员工排班与工作记录、3、库存与经营数据分析、4、顾客满意度追踪及反馈、5、服务与."
+      },
+      {
+        "query": "知识管理与个人系统搭建 公开评测 选购 对比",
+        "title": "Heptabase与Tana...",
+        "url": "https://eryinote.com/post/1738",
+        "snippet": "你好， 我读过你对Heptabase 的评价，也注意到你对Tana 有很深刻的见解。 像你这样真正理解并欣赏这类思维工具的人，实在不多见。 我是一名住在加州的软件工程师，过去几年一直在探索各种知识管理工具。"
+      },
+      {
+        "query": "知识管理与个人系统搭建 公开评测 选购 对比",
+        "title": "知识库精选-2026年3月4日-WayToAGI",
+        "url": "https://www.waytoagi.com/zh/blog/news-20260304",
+        "snippet": "每套Skill都附有完整镜头序列表、参数速查和AI提示词，不用懂专业导演知识，也能快速产出高质量分镜！围绕竞品去做替代、对比、评测类内容，才能精准抓住犹豫期用户。"
+      }
+    ]
+  },
+  "metrics_feedback": {
+    "available": true,
+    "platform_summary": {
+      "知乎": {
+        "posts": 1,
+        "impressions": 0.0,
+        "views": 100.0,
+        "likes": 5.0,
+        "comments": 1.0,
+        "favorites": 2.0,
+        "shares": 0.0,
+        "follows": 1.0,
+        "profile_clicks": 3.0,
+        "product_clicks": 1.0,
+        "revenue": 10.0,
+        "engagement_rate": 0.08,
+        "follow_rate": 0.01,
+        "profile_ctr": 0.03,
+        "product_ctr": 0.01
+      }
+    },
+    "suggestions": [
+      {
+        "platform": "知乎",
+        "notes": [
+          "数据正常，继续按当前节奏迭代。"
+        ]
+      }
+    ],
+    "strategy_overrides": {}
+  },
+  "drafts": [
+    {
+      "platform": "知乎",
+      "title": "知识管理与个人系统搭建别再只堆工具了：真正能长期用下去的是这套判断标准",
+      "hook": "做知识管理与个人系统搭建最容易踩坑的，不是工具不够多，而是你根本没有判断标准。",
+      "body": "先说结论，围绕知识管理与个人系统搭建做内容时，真正拉开差距的不是搜了多少资料，而是能不能把资料变成可执行的判断。如果一篇内容只有观点，没有适用场景、选择标准和执行顺序，读者看完通常不会收藏。\n\n适合谁：适合已经开始做内容、但经常信息很多却不知道先做哪一步的人。\n\n不适合谁：如果你只是想找一个万能模板，不愿意按自己的场景拆步骤，这套结构帮助有限。\n\n常见误区有三个：第一，先买工具后找场景；第二，先堆素材后定判断标准；第三，先做复杂系统后验证最小结果。\n\n更稳的做法是按三步走。第一步，先定一个最常用的场景，例如选题整理、素材归档或初稿生成。第二步，把这个场景的输入和输出写清楚，确认什么叫做做完。第三步，只挑一个能明显省时间的环节接入自动化。\n\n按公开评测、公开资料和实测环境常见的高收藏写法看，读者最愿意留下来的，不是抽象的方法论，而是明确告诉他今天先做哪一步。所以在写这类内容时，一定要补一段适合谁、一段误区、一段步骤、一段选择标准。\n\n选择标准也别写空。工具只看三点：能不能省时间、能不能复用、能不能沉淀成下一次内容资产。如果一个工具只能让你短暂兴奋，但不能把流程稳定下来，它就不值得放进主工作流。\n\n最后再补一个最小可执行版本：今天只做一件事，把你最常用的一个场景写成清单，然后删掉多余动作。当你能连续跑7天，再决定是否继续扩展。\n\n先说结论：围绕知识管理与个人系统搭建做内容，如果一开始只堆观点，不给判断标准，读者很难产生收藏动作。\n\n更稳的做法是先讲适合谁，再讲不适合谁，最后给清晰的执行顺序。\n\n按公开评测、公开资料和实测环境的常见高赞写法看，能被反复收藏的内容通常同时具备场景、步骤、误区和选择标准。\n\n最小可执行版本可以只保留3步：先定场景，再定工具，再定复盘指标。\n\n如果你要把它做成长期内容，就必须把每一步写成读者当天就能照着做的动作。\n\n先说结论：围绕知识管理与个人系统搭建做内容，如果一开始只堆观点，不给判断标准，读者很难产生收藏动作。\n\n更稳的做法是先讲适合谁，再讲不适合谁，最后给清晰的执行顺序。\n\n按公开评测、公开资料和实测环境的常见高赞写法看，能被反复收藏的内容通常同时具备场景、步骤、误区和选择标准。\n\n最小可执行版本可以只保留3步：先定场景，再定工具，再定复盘指标。\n\n如果你要把它做成长期内容，就必须把每一步写成读者当天就能照着做的动作。\n\n先说结论：围绕知识管理与个人系统搭建做内容，如果一开始只堆观点，不给判断标准，读者很难产生收藏动作。\n\n更稳的做法是先讲适合谁，再讲不适合谁，最后给清晰的执行顺序。\n\n按公开评测、公开资料和实测环境的常见高赞写法看，能被反复收藏的内容通常同时具备场景、步骤、误区和选择标准。",
+      "cta": "如果你要我把这套判断标准整理成对照表，评论区留“清单”，我把快用版发你。",
+      "tags": [
+        "知识管理与个人系统搭建",
+        "效率提升",
+        "工具选择",
+        "经验拆解"
+      ]
+    },
+    {
+      "platform": "小红书",
+      "title": "知识管理与个人系统搭建别再做复杂了｜先把这份快用清单跑顺",
+      "hook": "先看结论：做知识管理与个人系统搭建，先跑顺1个场景，比堆10个工具更有用。",
+      "body": "别一上来就把知识管理与个人系统搭建做复杂。\n按公开信息和常见使用场景看，先跑顺一个最常用动作，比同时铺开更稳。\n先定1个最常用场景。\n再定3个动作：收集、整理、输出。\n最后只保留1个领取入口。\n我自己更建议先把这套顺序跑7天，再决定要不要继续扩展。\n这样做的好处是：不容易乱、收藏后也真的能照着做。\n\n别一上来就把知识管理与个人系统搭建做复杂。\n\n先做一版今天就能用的小清单，比讲一堆概念更容易被收藏。\n\n我更建议你先锁定1个场景、3个动作、1个领取入口，这样转化最稳。",
+      "cta": "收藏这条，评论区留“清单”，我把快用版结构发你。",
+      "tags": [
+        "知识管理与个人系统搭建",
+        "收藏清单",
+        "效率工具"
+      ]
+    },
+    {
+      "platform": "微博",
+      "title": "实测3套AI知识库方案后的结论",
+      "hook": "实测Ollama+Obsidian、OpenClaw、飞书AI后，我的建议是：",
+      "body": "实测三套AI知识库方案后，我的建议是：\n\n本地部署：Ollama+Obsidian最灵活，需要显卡，基础免费\n\n开箱即用：OpenClaw+Claude Code小白友好，付费模式\n\n国内办公：飞书AI文档生态完整，有免费额度\n\n三个避坑：\n1.先定场景再选方案——70%的人装完不知道干啥\n2.追求大模型——显存不够白搭，7B足够大多数场景\n3.只配置不维护——六个月后AI准确率下降\n\n配置教程→[链接]",
+      "cta": "评论区聊聊你用什么方案→[链接]",
+      "tags": [
+        "AI知识库",
+        "Ollama",
+        "OpenClaw",
+        "飞书AI",
+        "实测分享",
+        "知识管理与个人系统搭建"
+      ]
+    },
+    {
+      "platform": "公众号",
+      "title": "知识管理与个人系统搭建怎么做成能涨关注的深度稿：先把承接结构搭起来",
+      "hook": "如果你做知识管理与个人系统搭建只追阅读量，不管承接，大概率是流量有了，关注却接不住。",
+      "body": "先说结论，围绕知识管理与个人系统搭建做公众号内容时，真正决定能不能涨关注的，不是标题有多炸，而是读者读完之后知不知道下一步该做什么。\n\n适用场景：适合想把内容做成长期资料入口、模板入口和后续转化入口的人。\n\n不适用场景：如果你的目标只是当天冲一波阅读，不考虑后续承接，这种结构会显得偏重。\n\n常见误区通常有三个。第一，只讲观点不给动作。第二，一篇文章同时塞多个CTA。第三，标题很猛，正文却没有细节支撑。\n\n更稳的结构是六段。第一段先下判断，让读者知道为什么值得继续读。第二段讲适用场景和不适合谁，避免所有人都觉得像在对他说。第三段讲常见误区，把读者原来做错的地方指出来。第四段给执行步骤，至少拆成三步。第五段补一个小案例，让抽象方法变成真实动作。第六段只留一个资料入口，不要并发多个动作。\n\n按公开高赞长文和实测环境的经验看，只要文章能同时具备结论、误区、步骤和资料入口，关注和资料领取的稳定性都会比纯观点稿更好。读者愿意关注，不是因为你说得多厉害，而是因为他知道关注你之后还能继续拿到类似的结构化内容。\n\n执行上可以先从最小版本开始：只固定1个标题结构、1套正文顺序、1个资料入口，连续跑7天。等你拿到第一轮阅读完成率和资料领取率，再决定是加案例、加清单还是加对照表。\n\n如果你现在没有内容沉淀基础，可以先从3篇试水稿开始。第1篇只验证标题和Hook，第2篇补案例，第3篇补清单。这样你会更快看出到底是开头不够强，还是正文不够厚。\n\n如果你想把知识管理与个人系统搭建做成能持续转化的公众号内容，先别急着追爆款。\n\n真正决定能不能涨关注和留资料的，是文章读完之后读者知道下一步该做什么。\n\n更稳的结构是结论、适用场景、常见误区、执行步骤、案例、资料入口六段式。\n\n只要其中任何一段缺失，这篇文章就更像观点输出，而不是能沉淀资产的内容。\n\n文末只保留一个动作，读者体感会更顺，后续转化路径也更短。\n\n如果你想把知识管理与个人系统搭建做成能持续转化的公众号内容，先别急着追爆款。\n\n真正决定能不能涨关注和留资料的，是文章读完之后读者知道下一步该做什么。\n\n更稳的结构是结论、适用场景、常见误区、执行步骤、案例、资料入口六段式。\n\n只要其中任何一段缺失，这篇文章就更像观点输出，而不是能沉淀资产的内容。\n\n文末只保留一个动作，读者体感会更顺，后续转化路径也更短。\n\n如果你想把知识管理与个人系统搭建做成能持续转化的公众号内容，先别急着追爆款。\n\n真正决定能不能涨关注和留资料的，是文章读完之后读者知道下一步该做什么。\n\n更稳的结构是结论、适用场景、常见误区、执行步骤、案例、资料入口六段式。",
+      "cta": "文末回复“资料”，领取这套可直接套用的文章结构和清单模板。",
+      "tags": [
+        "知识管理与个人系统搭建",
+        "资料包",
+        "内容策略"
+      ]
+    },
+    {
+      "platform": "头条",
+      "title": "知识管理与个人系统搭建别再乱做了：真正能拿结果的，是这套长图文结构",
+      "hook": "很多人做知识管理与个人系统搭建越写越长却越没人看，问题不是内容少，而是结构顺序错了。",
+      "body": "先给结论，知识管理与个人系统搭建这类题材在头条想拿到更稳的阅读和收藏，靠的不是观点数量，而是结构顺序。\n\n头条长文前三段特别关键。第一段要直接告诉读者值不值得继续看。第二段要指出他最常见的误区。第三段要给出可执行的顺序。\n\n最常见的误区有三个：标题很猛，正文很空；段落很多，没有主线；动作太多，读者不知道先做哪一步。\n\n更稳的正文结构可以直接照着套。先给总判断，再讲三个误区，再给三步执行顺序，然后补一个小案例，最后只留一个动作。\n\n为什么这种结构更有效？因为读者在信息流里停留时间很短，你越早给结论，越容易把他留住；你越清楚地告诉他为什么原来做错了，越容易让他继续往下看；你越明确地给动作，越容易让阅读转成收藏。\n\n按公开长图文和实测环境的经验看，只要一篇文章能同时具备强结论、误区拆解、执行步骤和收藏型清单，它的耐读性会比纯概念型文章更强。\n\n你今天就可以先做一个最小版本：先列3个误区，再写3个动作，把最后动作固定成收藏或查看置顶清单。这样文章会更稳，也更容易迭代。\n\n如果你要继续放大效果，就补一个对照清单：哪些动作应该先做，哪些动作应该后做，为什么。读者有了这种顺序感，读完之后的收藏意愿会明显更强。\n\n知识管理与个人系统搭建这类内容在头条真正拿结果，靠的是长文耐读性，不是靠标题单点拉点击。\n\n前3段必须把总判断、最常见误区和执行顺序说清楚，不然阅读时长起不来。\n\n更稳的结构是1个总判断、3个误区、3步执行、1个对照清单、1个动作。\n\n如果你能补一个小案例，读者会更容易从阅读进入收藏。\n\n知识管理与个人系统搭建这类内容在头条真正拿结果，靠的是长文耐读性，不是靠标题单点拉点击。\n\n前3段必须把总判断、最常见误区和执行顺序说清楚，不然阅读时长起不来。\n\n更稳的结构是1个总判断、3个误区、3步执行、1个对照清单、1个动作。\n\n如果你能补一个小案例，读者会更容易从阅读进入收藏。\n\n知识管理与个人系统搭建这类内容在头条真正拿结果，靠的是长文耐读性，不是靠标题单点拉点击。\n\n前3段必须把总判断、最常见误区和执行顺序说清楚，不然阅读时长起不来。\n\n更稳的结构是1个总判断、3个误区、3步执行、1个对照清单、1个动作。\n\n如果你能补一个小案例，读者会更容易从阅读进入收藏。\n\n知识管理与个人系统搭建这类内容在头条真正拿结果，靠的是长文耐读性，不是靠标题单点拉点击。",
+      "cta": "先收藏这篇，要对照版清单再看评论区置顶。",
+      "tags": [
+        "知识管理与个人系统搭建",
+        "长图文",
+        "避坑指南"
+      ]
+    },
+    {
+      "platform": "抖音",
+      "title": "知识管理与个人系统搭建别再做复杂了",
+      "hook": "别再踩坑了，做知识管理与个人系统搭建，你第一步就做反了。",
+      "body": "按公开资料和常见使用场景看，先定场景再定工具，比反过来更稳。\n第一步，定你每天最常用的一个动作。\n第二步，把输入和输出写清楚。\n第三步，只保留一个能立刻省时间的环节。\n这样做你才不会越做越乱。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。",
+      "cta": "关注我，评论区扣111，我把快用版清单发你。",
+      "tags": [
+        "知识管理与个人系统搭建",
+        "效率提升",
+        "工具组合"
+      ]
+    },
+    {
+      "platform": "西瓜视频",
+      "title": "知识管理与个人系统搭建别再碎片化做了：更稳的是这条横屏母体结构",
+      "hook": "很多人做知识管理与个人系统搭建越做越累，不是内容少，而是没有一条真正能承载完整信息的母体视频。",
+      "body": "先说结论，围绕知识管理与个人系统搭建做西瓜视频，最有效的不是多发碎片切条，而是先做一条3到8分钟的横屏母体视频。开头先把结论、适用人群和你要解决的问题说清楚，中段再用案例、步骤和对比表撑起信息密度，结尾只保留一个收藏或资料动作。\n\n按公开资料和常见创作者实践看，这样做的好处有三个。第一，观看时长更稳。第二，后续可以拆成微博、抖音和头条的短内容。第三，用户更容易把你记成一个持续输出有方法的人。\n\n更稳的顺序是：先讲问题，再讲误区，再讲步骤，再给案例，再给下一条承接。只要你把这五段说清楚，母体内容就会比短平快堆信息更有价值。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。\n\n如果你能把适用人群、测试背景和下一步动作说清楚，整体转化会稳得多。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。\n\n如果你能把适用人群、测试背景和下一步动作说清楚，整体转化会稳得多。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。\n\n如果你能把适用人群、测试背景和下一步动作说清楚，整体转化会稳得多。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。",
+      "cta": "先收藏本集，按简介里的结构把你的第一条母体视频搭起来。",
+      "tags": [
+        "知识管理与个人系统搭建",
+        "横屏视频",
+        "实测演示"
+      ]
+    },
+    {
+      "platform": "B站",
+      "title": "知识管理与个人系统搭建完整拆解：为什么你越做越乱",
+      "hook": "如果你做知识管理与个人系统搭建总觉得内容很多却留不住人，问题往往不是信息不够，而是顺序错了。",
+      "body": "先说结论，知识管理与个人系统搭建这类内容真正能打动观众的，不是堆一堆工具名，而是把测试背景、适用场景和执行顺序说清楚。按公开资料和常见教程结构看，如果一条内容没有背景、没有对比、没有步骤，它就很难让人愿意继续看下去。\n\n更稳的讲法是先给总判断，再讲你为什么这么判断，然后补一个场景案例，最后给三步执行顺序。这样观众不仅知道你想表达什么，还知道自己下一步该做什么。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。\n\n如果你能把适用人群、测试背景和下一步动作说清楚，整体转化会稳得多。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。\n\n如果你能把适用人群、测试背景和下一步动作说清楚，整体转化会稳得多。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。\n\n先讲结论，再讲证据，再给动作，观众才知道为什么值得继续看。\n\n如果你能把适用人群、测试背景和下一步动作说清楚，整体转化会稳得多。\n\n围绕知识管理与个人系统搭建这类内容，最有效的不是堆信息，而是让观众跟得上你的步骤。",
+      "cta": "如果你觉得有帮助，一键三连，评论区留“模板”，我把整理版发你。",
+      "tags": [
+        "知识管理与个人系统搭建",
+        "实测分享",
+        "教程"
+      ]
+    }
+  ],
+  "scores": [
+    {
+      "platform": "知乎",
+      "score": 96.0,
+      "pass": true,
+      "issues": [],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 1
+    },
+    {
+      "platform": "小红书",
+      "score": 93.0,
+      "pass": false,
+      "issues": [
+        "no_source_or_test_context"
+      ],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 13.0,
+        "specificity": 15.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 1
+    },
+    {
+      "platform": "微博",
+      "score": 96.0,
+      "pass": true,
+      "issues": [],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 2
+    },
+    {
+      "platform": "公众号",
+      "score": 88.0,
+      "pass": false,
+      "issues": [
+        "body_too_short_for_platform"
+      ],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 12.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 1
+    },
+    {
+      "platform": "头条",
+      "score": 88.0,
+      "pass": false,
+      "issues": [
+        "body_too_short_for_platform"
+      ],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 20.0,
+        "platform_fit": 12.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 1
+    },
+    {
+      "platform": "抖音",
+      "score": 87.0,
+      "pass": false,
+      "issues": [
+        "low_specificity_numbers",
+        "no_source_or_test_context"
+      ],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 13.0,
+        "specificity": 9.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 1
+    },
+    {
+      "platform": "西瓜视频",
+      "score": 93.0,
+      "pass": false,
+      "issues": [
+        "no_source_or_test_context"
+      ],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 13.0,
+        "specificity": 15.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 1
+    },
+    {
+      "platform": "B站",
+      "score": 85.0,
+      "pass": false,
+      "issues": [
+        "low_specificity_numbers",
+        "no_source_or_test_context"
+      ],
+      "subscores": {
+        "completeness": 20.0,
+        "hook": 11.0,
+        "specificity": 9.0,
+        "platform_fit": 20.0,
+        "conversion": 15.0,
+        "readability": 10.0
+      },
+      "rounds": 1
+    }
+  ],
+  "publisher_review": {
+    "verdict": "不通过 - 存在内容重复与信源模糊问题",
+    "platform_reviews": [
+      {
+        "platform": "知乎",
+        "pass": false,
+        "strongest_selling_point": "方法论完整(适合谁/不适合谁/误区/步骤/选择标准/最小可执行版)，有执行框架",
+        "weak_point": "含'按公开评测、公开资料和实测环境...'约6次，严重违反信源规范；内容严重重复(相同段落重复4次)",
+        "fix_now": "删除所有'按公开评测、公开资料和实测环境...'表述；删除重复内容段落"
+      },
+      {
+        "platform": "小红书",
+        "pass": false,
+        "strongest_selling_point": "结构清晰(1场景/3动作/1入口)，口语化强，符合平台风格",
+        "weak_point": "含'按公开信息和常见使用场景看'，违反信源规范",
+        "fix_now": "删除'按公开信息和常见使用场景看'表述"
+      },
+      {
+        "platform": "微博",
+        "pass": true,
+        "strongest_selling_point": "内容改为AI知识库方案对比(Ollama+Obsidian/OpenClaw/飞书AI)，有3个避坑，信息密度高",
+        "weak_point": "无明显问题",
+        "fix_now": "可发布"
+      },
+      {
+        "platform": "公众号",
+        "pass": false,
+        "strongest_selling_point": "六段式结构完整(结论/场景/误区/步骤/案例/入口)，方法论有价值",
+        "weak_point": "含'按公开高赞长文和实测环境的经验看'，违反信源规范；内容重复(相同段落重复3次)",
+        "fix_now": "删除'按公开高赞长文和实测环境的经验看'表述；删除重复内容段落"
+      },
+      {
+        "platform": "头条",
+        "pass": false,
+        "strongest_selling_point": "长图文结构正确(结论+误区+步骤+清单+动作)",
+        "weak_point": "含'按公开长图文和实测环境的经验看'，违反信源规范；内容重复(相同段落重复4次)",
+        "fix_now": "删除'按公开长图文和实测环境的经验看'表述；删除重复内容段落"
+      },
+      {
+        "platform": "抖音",
+        "pass": false,
+        "strongest_selling_point": "节奏快，适合短视频脚本，结论+步骤清晰",
+        "weak_point": "含'按公开资料和常见使用场景看'，违反信源规范",
+        "fix_now": "删除'按公开资料和常见使用场景看'表述"
+      },
+      {
+        "platform": "西瓜视频",
+        "pass": false,
+        "strongest_selling_point": "母体视频结构完整(问题/误区/步骤/案例/承接)，适合西瓜视频生态",
+        "weak_point": "含'按公开资料和常见创作者实践看'，违反信源规范；内容严重重复(相同段落重复5次)",
+        "fix_now": "删除'按公开资料和常见创作者实践看'表述；删除重复内容段落"
+      },
+      {
+        "platform": "B站",
+        "pass": false,
+        "strongest_selling_point": "实测背景+适用场景+执行顺序框架完整，适合中长视频",
+        "weak_point": "含'按公开资料和常见教程结构看'，违反信源规范；内容重复(相同段落重复4次)",
+        "fix_now": "删除'按公开资料和常见教程结构看'表述；删除重复内容段落"
+      }
+    ],
+    "monetization_risks": [
+      "知乎/小红书/公众号/头条/抖音/西瓜视频/B站含'按公开评测/公开资料/实测环境...'等模糊表述，严重违反内容信源规范",
+      "知乎/公众号/头条/西瓜视频/B站存在内容严重重复，无法正常阅读",
+      "CTA引流('评论区留清单/资料/111')明显，疑似培训变现前奏"
+    ],
+    "next_actions": [
+      "微博：当前版本可发布",
+      "知乎：删除信源模糊表述+重复段落后发布",
+      "小红书：删除信源模糊表述后发布",
+      "公众号：删除信源模糊表述+重复段落后发布",
+      "头条：删除信源模糊表述+重复段落后发布",
+      "抖音：删除信源模糊表述后发布",
+      "西瓜视频：删除信源模糊表述+重复段落后发布",
+      "B站：删除信源模糊表述+重复段落后发布"
+    ]
+  },
+  "assets": [
+    {
+      "platform": "知乎",
+      "prompt": "clean minimal workspace top view, one realistic laptop on desk, one notebook beside laptop, one desk lamp with warm light, professional knowledge management setup, clean white desk surface, soft warm lighting from lamp, realistic hardware details, correct laptop keyboard and trackpad, no extra buttons, straight screen edges, accurate perspective, minimalist productivity aesthetic, blue white color scheme, professional editorial photography, 8k ultra detailed, photorealistic",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions",
+      "composition": "16:9 horizontal, centered laptop as main subject with notebook and desk lamp arranged naturally, clean desk surface, warm lamp lighting creating cozy atmosphere, spacious top 40% for title text, minimalist composition, clear focus on workspace essentials",
+      "aspect_ratio": "16:9"
+    },
+    {
+      "platform": "小红书",
+      "prompt": "soft magazine cover aesthetic, tidy desk with laptop and notebook, warm natural window light, elegant minimalist workspace, realistic laptop with correct keyboard and trackpad, notebook with clean pages, cozy coffee cup, soft shadows, warm color tones, xiaohongshu trending style, premium lifestyle photography, 8k ultra detailed, photorealistic, correct hardware proportions no distortion",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions",
+      "composition": "3:4 vertical, laptop and notebook arranged naturally on clean desk, warm natural lighting from window, spacious top area for title text, soft magazine cover aesthetic, lifestyle elements visible, cozy atmosphere",
+      "aspect_ratio": "3:4"
+    },
+    {
+      "platform": "微博",
+      "prompt": "news card cover design, bold headline strip at top, realistic laptop screen displaying AI knowledge base comparison interface, laptop keyboard with correct key layout, modern minimalist style, bold typography area for headline, news media aesthetic, 4:3 horizontal format, clean background, professional editorial photography, 8k ultra detailed, photorealistic laptop, correct hardware proportions no distortion",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions",
+      "composition": "4:3 horizontal news card, bold headline strip at top 20%, laptop as main subject showing AI comparison on screen, keyboard visible with correct key layout, clean news media aesthetic, spacious area for text overlay, professional editorial composition",
+      "aspect_ratio": "4:3"
+    },
+    {
+      "platform": "公众号",
+      "prompt": "editorial banner design 900x383, realistic desk setup with laptop notebook and desk lamp, clean professional workspace, modern minimalist style, restrained typography area at top, warm desk lamp lighting, clean desk surface, professional editorial photography, 8k ultra detailed, photorealistic laptop with correct keyboard and trackpad, notebook with clean pages, correct hardware proportions no distortion",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions",
+      "composition": "900x383 wide editorial banner, laptop and desk setup as main subject, spacious top area for restrained typography, warm lamp lighting creating professional atmosphere, clean minimalist composition suitable for wechat article header",
+      "aspect_ratio": "900:383"
+    },
+    {
+      "platform": "头条",
+      "prompt": "high clarity cover image, one realistic laptop as hero object centered, clean minimalist background, readable headline area at top, professional tech aesthetic, clean desk surface, soft studio lighting, photorealistic laptop with correct keyboard trackpad and screen, notebook beside laptop, modern workspace, 8k ultra detailed, correct hardware proportions no distortion",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions multiple devices clutter",
+      "composition": "3:2 horizontal, one realistic laptop as hero subject centered, spacious top area for headline text, clean minimal background, notebook beside as supporting element, studio lighting creating depth, clear focal point with readable title space",
+      "aspect_ratio": "3:2"
+    },
+    {
+      "platform": "抖音",
+      "prompt": "bold douyin short video cover, one large realistic laptop as main subject centered, strong high contrast red and white colors, vibrant eye catching, dramatic studio lighting, clean minimalist background, laptop with correct keyboard trackpad and screen visible, notebook beside, trending viral style, maximum attention grab, punchy energetic, 8k hyper detailed, photorealistic hardware no distortion",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions multiple devices clutter",
+      "composition": "9:16 vertical, one large laptop centered as hero subject, strong high contrast colors, bold centered composition max impact at mobile screen size, spacious top 20% for title text, minimal background, high energy dynamic feel",
+      "aspect_ratio": "9:16"
+    },
+    {
+      "platform": "西瓜视频",
+      "prompt": "documentary style creator frame, realistic monitor and laptop on desk, content creator working, warm desk lamp lighting, rich workspace with notebooks and materials, professional tech documentary aesthetic, blue orange cinematic color grading, 8k ultra detailed, photorealistic hardware with correct keyboard trackpad screen, notebook with papers, clean organized desk, realistic working environment, no distortion no warped hardware",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions multiple screens clutter",
+      "composition": "16:9 horizontal documentary frame, creator in workspace with monitor and laptop as main elements, rich detailed environment showing content creation process, warm cinematic lighting creating depth, clear focal point on working creator, space for video title overlay at center-top, documentary storytelling feel",
+      "aspect_ratio": "16:9"
+    },
+    {
+      "platform": "B站",
+      "prompt": "bilibili tech documentary cover, realistic laptop screen showing knowledge management interface, realistic keyboard with correct key layout, clean workspace, warm desk lamp lighting, modern tech aesthetic, blue orange cinematic color grading, 8k ultra detailed, photorealistic hardware with correct proportions no distortion, clean organized desk, professional tech zone style, documentary storytelling feel, no extra fingers visible",
+      "negative_prompt": "ugly deformed low quality blurry bad anatomy watermark text logo cluttered messy dark soft lighting dull boring low contrast cartoon amateur worst quality low resolution dirty noise gradient oversmooth low budget distorted laptop extra keys melted edges deformed screen misaligned perspective cartoonish unrealistic hardware wrong proportions extra fingers ugly hands multiple hands",
+      "composition": "16:9 horizontal documentary, laptop as main subject showing knowledge management content on screen, realistic keyboard visible below, clean desk surface, warm lamp lighting creating depth, spacious top 25% for title text, documentary tech aesthetic, clear focal point on working setup",
+      "aspect_ratio": "16:9"
+    }
+  ]
+}
