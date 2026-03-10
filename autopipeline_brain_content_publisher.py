@@ -27,8 +27,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from content_novelty_policy import build_global_novelty_context, load_novelty_state, record_generated_pack
 from news_guard import check_topic
 from platform_monetization_mapper import build_full_platform_matrix, build_readiness_summary
+from platform_direction_policy import build_platform_direction_context
+from vertical_content_policy import pick_next_topic, record_selected_topic
 
 ROOT = Path.home() / ".openclaw"
 WS = ROOT / "workspace"
@@ -46,60 +49,6 @@ BILI = "B\u7ad9"
 WB = "\u5fae\u535a"
 WX = "\u516c\u4f17\u53f7"
 TT = "\u5934\u6761"
-
-STABLE_TOPICS = [
-    {
-        "query": "\u5bb6\u7528\u6e05\u6d01\u4e0e\u667a\u80fd\u5bb6\u5c45\u907f\u5751\u6e05\u5355 2026",
-        "priority": 1.0,
-        "fit_platforms": [XHS, ZH, DY, XG, TT, WB],
-    },
-    {
-        "query": "\u6570\u7801\u88c5\u5907\u907f\u5751\u4e0e\u9009\u8d2d\u5efa\u8bae 2026",
-        "priority": 0.99,
-        "fit_platforms": [ZH, DY, XG, BILI, WB, TT],
-    },
-    {
-        "query": "\u5ba0\u7269\u7528\u54c1\u4e0e\u884c\u4e3a\u8bad\u7ec3\u771f\u5b9e\u6210\u672c\u6e05\u5355",
-        "priority": 0.98,
-        "fit_platforms": [XHS, ZH, DY, XG, WB, TT],
-    },
-    {
-        "query": "\u7537\u751f\u73e0\u5b9d\u914d\u9970\u4e0e\u65e5\u5e38\u7a7f\u642d\u907f\u5751\u6307\u5357",
-        "priority": 0.97,
-        "fit_platforms": [XHS, WB, ZH, DY, BILI],
-    },
-    {
-        "query": "\u8fd0\u52a8\u6237\u5916\u4e0e\u5973\u6027\u529b\u91cf\u8bad\u7ec3\u88c5\u5907\u6307\u5357",
-        "priority": 0.96,
-        "fit_platforms": [XHS, WB, DY, XG, BILI, ZH],
-    },
-    {
-        "query": "\u5bb6\u7528\u5c0f\u7535\u5668\u771f\u5b9e\u4f7f\u7528\u573a\u666f\u4e0e\u907f\u5751\u6e05\u5355",
-        "priority": 0.95,
-        "fit_platforms": [ZH, XHS, DY, XG, BILI, TT],
-    },
-    {
-        "query": "\u5546\u4e1a\u6848\u4f8b\u62c6\u89e3\u4e0e\u54c1\u724c\u589e\u957f\u590d\u76d8",
-        "priority": 0.92,
-        "fit_platforms": [ZH, DY, XG, BILI, WB, WX, TT],
-    },
-    {
-        "query": "\u5185\u5bb9\u751f\u4ea7\u63d0\u6548\u4e0e\u53d8\u73b0\u6d41\u7a0b\u62c6\u89e3",
-        "priority": 0.78,
-        "fit_platforms": [ZH, XHS, DY, XG, BILI, WX],
-    },
-    {
-        "query": "AI\u5de5\u5177\u6e05\u5355\u4e0e\u6548\u7387\u5de5\u4f5c\u6d41",
-        "priority": 0.7,
-        "fit_platforms": [ZH, XHS, DY, XG, BILI, WB, WX, TT],
-    },
-    {
-        "query": "\u77e5\u8bc6\u7ba1\u7406\u4e0e\u4e2a\u4eba\u7cfb\u7edf\u642d\u5efa",
-        "priority": 0.58,
-        "fit_platforms": [ZH, XHS, DY, XG, BILI, WX],
-    },
-]
-
 
 def run_cmd(cmd: List[str], timeout: int = 600) -> Dict:
     started = time.time()
@@ -162,45 +111,43 @@ def better_quality(candidate: Dict, baseline: Dict) -> bool:
 
 
 def select_topic() -> Dict:
-    best: Optional[Dict] = None
-    for candidate in STABLE_TOPICS:
-        q = candidate["query"]
-        try:
-            response = check_topic("http://127.0.0.1:8080", q)
-            item = {
-                "query": q,
-                "confidence": response.confidence,
-                "publishable": response.is_publishable,
-                "reasons": response.reasons,
-                "source": response.source,
-                "priority": candidate["priority"],
-                "fit_platforms": candidate["fit_platforms"],
-            }
-        except Exception as exc:
-            item = {
-                "query": q,
-                "confidence": 0.0,
-                "publishable": False,
-                "reasons": [str(exc)],
-                "source": "none",
-                "priority": candidate["priority"],
-                "fit_platforms": candidate["fit_platforms"],
-            }
-        confidence_bonus = min(float(item["confidence"]), 0.15)
-        publishable_bonus = 0.08 if item.get("publishable") else 0.0
-        item["stable_score"] = round(item["priority"] + confidence_bonus + publishable_bonus, 4)
-        if best is None or item["stable_score"] > best["stable_score"]:
-            best = item
-
-    return best or {
-        "query": "\u5185\u5bb9\u751f\u4ea7\u63d0\u6548\u4e0e\u53d8\u73b0",
+    base = pick_next_topic()
+    q = str(base.get("query", "")).strip()
+    try:
+        response = check_topic("http://127.0.0.1:8080", q)
+        item = {
+            **base,
+            "confidence": response.confidence,
+            "publishable": response.is_publishable,
+            "reasons": response.reasons,
+            "source": response.source,
+        }
+    except Exception as exc:
+        item = {
+            **base,
+            "confidence": 0.0,
+            "publishable": False,
+            "reasons": [str(exc)],
+            "source": "none",
+        }
+    confidence_bonus = min(float(item.get("confidence", 0.0)), 0.15)
+    publishable_bonus = 0.08 if item.get("publishable") else 0.0
+    rotation_score = float(item.get("rotation_score", float(item.get("priority", 0.8))))
+    item["stable_score"] = round(rotation_score + confidence_bonus + publishable_bonus, 4)
+    return item or {
+        "query": "\u667a\u80fd\u5bb6\u5c45\u4e0e\u6570\u7801\u6d88\u8d39\u907f\u5751\u6307\u5357",
         "confidence": 0.0,
         "publishable": False,
         "reasons": ["fallback"],
         "source": "fallback",
         "priority": 0.8,
-        "fit_platforms": [ZH, XHS, DY, BILI],
+        "rotation_score": 0.8,
         "stable_score": 0.8,
+        "fit_platforms": [ZH, XHS, DY, BILI, XG],
+        "lane": "\u79d1\u6280\u6d88\u8d39",
+        "sublane": "\u667a\u80fd\u5bb6\u5c45",
+        "product_family": "\u6cdb\u79d1\u6280\u9009\u8d2d",
+        "video_derivatives": [BILI, XG],
     }
 
 
@@ -229,6 +176,9 @@ def main() -> None:
     report: Dict[str, Dict] = {
         "time": now,
         "topic": {},
+        "topic_policy": {},
+        "platform_direction": {},
+        "novelty_context": {},
         "matrix_strategy": {},
         "readiness_strategy": {},
         "metrics_feedback": {},
@@ -250,10 +200,26 @@ def main() -> None:
     topic_info = select_topic()
     topic = topic_info["query"]
     report["topic"] = topic_info
+    report["topic_policy"] = {
+        "primary_vertical": topic_info.get("primary_vertical", ""),
+        "primary_audience": topic_info.get("primary_audience", ""),
+        "lane": topic_info.get("lane", ""),
+        "sublane": topic_info.get("sublane", ""),
+        "product_family": topic_info.get("product_family", ""),
+        "video_derivatives": topic_info.get("video_derivatives", []),
+        "rotation_reasons": topic_info.get("rotation_reasons", []),
+        "cross_format_plan": topic_info.get("cross_format_plan", {}),
+    }
+    record_selected_topic(topic_info, now)
 
     matrix = build_full_platform_matrix()
     readiness = build_readiness_summary(list(matrix.keys()))
+    platform_direction = build_platform_direction_context(list(matrix.keys()))
+    novelty_state = load_novelty_state()
+    novelty_context = build_global_novelty_context(novelty_state)
     metrics_feedback = load_metrics_context(METRICS_LATEST)
+    report["platform_direction"] = platform_direction
+    report["novelty_context"] = novelty_context
     report["matrix_strategy"] = matrix
     report["readiness_strategy"] = readiness
     report["metrics_feedback"] = metrics_feedback
@@ -262,6 +228,9 @@ def main() -> None:
         f"\u57fa\u4e8e\u9009\u9898\u201c{topic}\u201d\uff0c\u5e73\u53f0\u53d8\u73b0\u77e9\u9635={json.dumps(matrix, ensure_ascii=False)}\u3002"
         f"\u9636\u6bb5\u5206\u7ec4={json.dumps(readiness, ensure_ascii=False)}\u3002"
         f"\u8fd1\u671f\u53cd\u9988={json.dumps(metrics_feedback, ensure_ascii=False)}\u3002"
+        f"\u8d5b\u9053\u89c4\u5219={json.dumps(report['topic_policy'], ensure_ascii=False)}\u3002"
+        f"\u5e73\u53f0\u65b9\u5411={json.dumps(platform_direction, ensure_ascii=False)}\u3002"
+        f"\u53bb\u91cd\u4e0e\u51b7\u5374={json.dumps(novelty_context, ensure_ascii=False)}\u3002"
         "\u8bf7\u7ed9\u51fa\u4eca\u65e5\u53d1\u5e03\u7b56\u7565\uff0c\u53ea\u8f93\u51faJSON\uff0c\u5b57\u6bb5:"
         "audience,platform_priority,conversion_goal,platform_roles,guardrails"
     )
@@ -499,6 +468,12 @@ def main() -> None:
             "\u8fd4\u56de\u6267\u884c\u72b6\u6001\u3001URL\u6216\u622a\u56fe\u8def\u5f84\u3001\u5931\u8d25\u539f\u56e0\u3002"
         )
         report["publisher"] = run_agent("publisher", pub_msg, 600)
+
+    try:
+        payload = load_json(out_file)
+        record_generated_pack(payload, now, topic_info=topic_info, state=novelty_state)
+    except Exception as exc:
+        report["novelty_context"]["record_error"] = str(exc)
 
     rpt = REPORT_DIR / f"pipeline_autorun_{now}.json"
     rpt.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -13,6 +13,8 @@ from typing import Any, Dict, List, Tuple
 
 import requests
 
+from real_image_reference_builder import build_real_image_reference_bundle
+
 
 SDXL_CHECKPOINT = "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
 FLUX_UNET = "flux1-schnell.safetensors"
@@ -281,6 +283,7 @@ def render_one_asset(
     visual_templates: Dict[str, Any],
     args: argparse.Namespace,
     inventory: Dict[str, Any],
+    research_context: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     template = visual_templates.get(str(asset.get("platform", "")).strip(), {})
     image_strategy = str(template.get("image_strategy", "comfy_generated_ok")).strip() or "comfy_generated_ok"
@@ -291,6 +294,14 @@ def render_one_asset(
     manual_asset_checklist = template.get("manual_asset_checklist", [])
     material_slots = template.get("material_slots", [])
     if image_strategy == "real_reference_preferred":
+        reference_bundle = build_real_image_reference_bundle(
+            topic=str(template.get("topic", "")).strip() or str(asset.get("topic", "")).strip(),
+            platform=str(asset.get("platform", "")).strip(),
+            reference_queries=reference_queries,
+            source_priority=source_priority,
+            material_slots=material_slots,
+            research_context=research_context or {},
+        )
         return {
             "platform": asset.get("platform", ""),
             "exists": False,
@@ -304,6 +315,13 @@ def render_one_asset(
             "source_priority": source_priority,
             "manual_asset_checklist": manual_asset_checklist,
             "material_slots": material_slots,
+            "real_image_policy": reference_bundle.get("image_policy", {}),
+            "real_image_entrypoints": reference_bundle.get("search_entrypoints", []),
+            "real_image_candidates": reference_bundle.get("page_preview_candidates", []),
+            "real_image_rejected_candidates": reference_bundle.get("rejected_candidates", []),
+            "real_image_slot_plan": reference_bundle.get("slot_plan", []),
+            "real_image_provider_mode": reference_bundle.get("provider_mode", ""),
+            "real_image_errors": reference_bundle.get("errors", []),
             "prompt_preview": str(asset.get("prompt", "")).strip(),
         }
 
@@ -357,6 +375,11 @@ def render_one_asset(
                 "source_priority": source_priority,
                 "manual_asset_checklist": manual_asset_checklist,
                 "material_slots": material_slots,
+                "real_image_entrypoints": [],
+                "real_image_candidates": [],
+                "real_image_slot_plan": [],
+                "real_image_provider_mode": "",
+                "real_image_errors": [],
                 "fallback_errors": errors,
             }
         except Exception as exc:
@@ -374,6 +397,11 @@ def render_one_asset(
         "source_priority": source_priority,
         "manual_asset_checklist": manual_asset_checklist,
         "material_slots": material_slots,
+        "real_image_entrypoints": [],
+        "real_image_candidates": [],
+        "real_image_slot_plan": [],
+        "real_image_provider_mode": "",
+        "real_image_errors": [],
         "fallback_errors": errors,
     }
 
@@ -399,7 +427,8 @@ def main() -> None:
             raise SystemExit("ComfyUI failed to start.")
 
     inventory = detect_model_inventory()
-    results = [render_one_asset(asset, visual_templates, args, inventory) for asset in assets]
+    research_context = pack.get("research_context", {}) if isinstance(pack, dict) else {}
+    results = [render_one_asset(asset, visual_templates, args, inventory, research_context=research_context) for asset in assets]
 
     payload = {
         "source_pack": args.input,

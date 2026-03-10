@@ -1,0 +1,782 @@
+--- PAGE 1 ---
+VoxYZ（voxyz.space）自动化深度调查报告
+（撰写日期：2026-03-10，Asia/Taipei；研究范围：仅基于公开可访问页面、公开文档与公开代码仓库；不假
+设任何私有 API 可用。）
+执行摘要
+VoxYZ（voxyz.space）对外呈现为一个“由 5 个 AI 代理运营的公司”，并将其背后的“角色分工 + 代码 + 指南”打
+包销售，让用户在约 30 分钟内搭建自己的 AI 代理团队；其“Live Stage / Office / Radar”强调全流程可观测、
+决策可追溯与持续运行。网站主页直接描述“5 AI Agents. One Company.”以及“Every decision is visible on a
+live dashboard.”并将核心产品线分为开源的 Ship Faster、模板 Templates 与付费 Starter/Pro/咨询等。 
+从自动化系统视角看，你的网站已经具备三个非常稀缺的资产：一是“公开可观测面”（Stage、Office）把运行
+状态、交接、产物、甚至上下文窗口预算直接暴露出来；二是产品本身强调“可恢复、可审核、可审批的工作
+流”（Ship Faster 的 runs/ 结构与 approval gates）；三是核心第三方链路（Stripe 支付、GitHub 私库交付、
+Resend 邮件、Supabase 数据库/认证、Vercel 部署）已在隐私政策中明示。 
+本报告的结论是：如果你的目标是“提升自动化系统的稳定性、可扩展性与可被外部工具（RPA/CI）可靠集
+成”，优先级最高的改造并不是再加更多 UI，而是把现有的“公开可观测面”升级为“稳定的机器接口（事件流 +
+可查询 API + 明确的鉴权与限流）”，并将支付/交付链路（Stripe→验证→GitHub 邀请→邮件通知）做成可重
+放、可审计、可告警的闭环。 
+站点定位、目标用户与关键功能
+站点目的与商业包装
+VoxYZ  的对外叙事是“5  个代理在做真实工作”，包含研究需求、策略辩论、内容撰写、产品交付，并把“完成这
+套系统所需的角色、代码和指南”打包，让用户复制同样的组织形态。主页明确把 판매（What  We  Sell）定义
+为“完整系统 behind  this  AI  company”，并区分免费开源组件（Ship  Faster、Templates）与付费 Starter/
+Pro/咨询。 
+“About”页进一步强化“无假职位（No  Fake  Jobs）”“公开构建（Built  in  Public）”“24/7  持续运行（Always
+Running）”，并展示代理之间关系矩阵与最近“关系变化”的解释文本，属于“把内部行为当作产品卖点”的典型模
+式。 
+目标用户画像（以可自动化为中心）
+从主页与 Ship Faster 仓库的描述综合判断，核心目标用户主要是：
+1）使用 AI 编码/代理工具的开发者与独立构建者（Ship Faster 明确提到 Claude Code、Cursor、OpenCode
+等，以及“skills  是主要接口”）；2）希望“可复现、可审计、可恢复”的团队操作者；3）缺乏编码背景但希望“复
+制一套可运行的代理组织”的购买者（主页评价区有“no coding skills”“2 hours setup”等反馈）。 
+对自动化系统而言，这意味着：用户会强烈依赖“确定性输出、状态可见、失败可恢复”，并且非常在意“交付/安
+装/运行”的自动化程度（尤其是 Starter 所承诺的“30 分钟上手、无编码”）。 
+1
+2
+3
+1
+4
+5
+6
+1
+
+--- PAGE 2 ---
+关键功能面清单（网站呈现层）
+网站功能可以分为四类：
+第一类是“销售与交付入口”：Vault（付费页）提供 Starter/Pro  的功能列表，并出现“Already  purchased?
+Enter  your  purchase  email  to  get  your  project  access.”用于售后取回访问权限；条款页明确交付形式
+为“private GitHub repositories”，并写到“checkout success page 输入 GitHub username，然后通常 1 小时
+内邀请进入私库”。 
+第二类是“公开可观测面”：Stage（实时 feed）展示代理、各自所用模型、角色、最新对话/状态，以
+及“listening  for  activity...”式的实时轮播；Office  则更像运营驾驶舱，包含 Signals、Infra、Shipped、War
+Rooms、Shipping  Log、Accuracy  Leaderboard、以及“VPS  Context  Doctor（public  workspace
+snapshot）”等。 
+第三类是“内容与增长”：Insights  列表与文章页持续发布运营/自治经验（如“24  Hours  Running  VoxYZ
+Autonomously”）。 
+第四类是“需求与产品漏斗”：Demand Radar 在主页与 Office 中频繁出现（主页“Explore Full Radar”，Office
+有 Open Radar、Radar 相关 war room 与 backlog 记录），但 Radar 页面本身对抓取器呈现为空（0 行内
+容），暗示其可能高度依赖客户端渲染/鉴权/或反爬策略。 
+站点地图与核心用户流
+站点地图（可自动化视角）
+下表为基于公开导航与实际可访问路径整理的 sitemap（含关键自动化机会点）。 
+路径 主要目的 关键内容/组件（面向自动化） 自动化机会点
+/ Landing
++ 转化
+产品分层（Ship Faster/Templates/
+Starter/Pro）、Stage/Radar 引导、订
+阅入口
+为订阅/CTA 建立可测试的稳
+定选择器与事件埋点；提供
+机器可读的“产品/价格/库存
+位”API（目前显示“Loading
+launch spots...”）
+/about 品牌叙事
++ 信任 代理 HQ/关系矩阵/Recent Shifts
+将“关系变化/讨论结论”输出
+为事件流，供外部分析与回
+放 
+/vault
+付费转化
++ 售后入
+口
+Starter/Pro 功能清单；“Already
+purchased?”（purchase email）
+支付后交付闭环自动化（验
+证→邀请→通知）；提供“订
+单状态查询”API 
+/stage 实时可观
+测
+Live Feed：代理模型/角色/最新消息/
+mission 进度
+将 Stage feed 标准化为
+SSE/WebSocket + JSON
+schema；支持过滤与分页 
+7
+8
+9
+10
+11
+1
+4
+7
+12
+2
+
+--- PAGE 3 ---
+路径 主要目的 关键内容/组件（面向自动化） 自动化机会点
+/office 运营驾驶
+舱
+Signals/Infra/Shipped、War Rooms、
+Shipping Log、Accuracy、VPS Context
+Doctor（token budget、workspace
+files、skills discovered）
+把 Office 的“运维数据模
+型”抽象为 API：shipped
+items、war rooms、
+context snapshot、skills
+inventory 
+/radar 需求漏斗 对抓取器返回空内容
+明确 Radar 的访问策略（公
+开/半公开/需登录），并提
+供只读 API 或导出 
+/insights
+& /
+insights/*
+内容增长 运营经验文章与标签
+提供 RSS/Atom、结构化数
+据、文章 API；为自动化发
+布/分发预留接口 
+/terms/
+privacy 合规/信任 Operator、交付方式、数据收集与第三
+方
+将“数据类别/用途/第三方”映
+射到内部数据清单与自动化
+DSR（数据主体请求）流程 
+核心用户流（Mermaid）
+访客到订阅
+flowchart TD
+  A[访问 /] --> B{意图}
+  B -->|了解系统| C[查看 About]
+  B -->|看真实运行| D[进入 Stage]
+  B -->|看运营面板| E[进入 Office]
+  B -->|看需求漏斗| F[进入 Radar]
+  B -->|直接购买| G[进入 Vault]
+  C --> H[回到 /]
+  D --> H
+  E --> H
+  F --> H
+  H --> I[填写订阅邮箱]
+  I --> J[触发邮件服务发送确认/更新]
+该流中“订阅”是最适合自动化 AB 测试与可观测埋点的入口（转化率、来源归因、按钮点击→请求成功→邮件送
+达）。隐私政策明确你会收集订阅邮箱并使用 Resend 发送邮件、Vercel 可能用于 analytics；这意味着你可以
+把“订阅链路”做成端到端可度量的自动化测试用例。 
+购买到交付（Stripe → GitHub 私库邀请）
+flowchart TD
+  A[访问 /vault] --> B[选择 Starter/Pro]
+13
+14
+15
+16
+17
+3
+
+--- PAGE 4 ---
+  B --> C[跳转支付处理器 Stripe]
+  C --> D[支付成功页]
+  D --> E[用户输入 GitHub username]
+  E --> F[后端验证订单 + 记录交付状态]
+  F --> G[GitHub API: 邀请加入私有仓库]
+  G --> H[Resend: 发送交付/入库通知邮件]
+  H --> I[用户接受 GitHub 邀请并访问私库内容]
+条款页将“输入 GitHub  username  +  1  小时内邀请”写得非常明确，这其实已经是一个可自动化“交付 SLA”承
+诺；因此建议把它产品化：为该链路建立可观测事件（payment_verified、github_invite_sent、
+invite_accepted、email_delivered、delivery_sla_miss）并自动告警。 
+已购买用户取回访问（purchase email）
+flowchart TD
+  A[访问 /vault] --> B[Already purchased? 输入 purchase email]
+  B --> C[后端：根据 Stripe 元数据验证购买]
+  C --> D{是否匹配订单}
+  D -->|否| E[提示联系支持邮箱]
+  D -->|是| F[生成一次性取回链接/要求补充 GitHub username]
+  F --> G[重发 GitHub 邀请/重发邮件]
+Vault 明确存在“purchase email”入口，隐私政策也明确会收集购买元数据与 GitHub username 用于交付。这
+里最容易出现“边界情况”（重复购买、邮箱拼写错误、GitHub 用户名变更、邀请过期），建议将其做成“自助修
+复”流程而非人工邮箱支持。 
+自动化接口与可扩展面
+已确认的外部依赖与“事实接口”
+你的隐私政策列出核心第三方：Stripe（支付）、GitHub（仓库邀请交付）、Supabase（数据库与认证）、
+Resend（邮件）、Vercel（托管与 analytics）、Telegram（买家社群）。这些第三方本身都具备成熟自动化
+接口（Webhook/API/SDK），即便你没有公开“VoxYZ  API”，也已经天然存在一条“可自动化的业务控制面”。
+此外，Office 页面直接暴露了更接近“内部事件系统”的线索：
+-  Shipping  Log  中的每个产物带有 “Deploy”  链接，指向 *.vercel.app，说明交付/演示应用部署在
+Vercel，并且“从 signal 到 shipped”的时间戳与置信度被结构化展示。 
+- “VPS Context Doctor”宣称是“Public snapshot of the live VPS OpenClaw workspaces”，并展示 token
+budget、workspace  files、installed  skills，以及“Published  from  the  live  VPS  observer  into
+ops_agent_events.”——这几乎等同于你在公开页面承认存在一个（至少内部）事件表/事件流。 
+这两点非常关键：它们意味着你已经拥有“事件源（agent  runtime/VPS  observer）→ 存储（可能是
+Supabase）→ 展示（Office/Stage）”的链路，只差把它“稳定化、文档化、对外可控地开放”。 
+16
+18
+19
+13
+20
+21
+4
+
+--- PAGE 5 ---
+公开页面中可见的“自动化表面”
+Stage  页面展示“Live  Feed  /  Tasks  /  Social  /  Dashboard”，并以分钟级/秒级节奏滚动；每个代理旁边显示
+model 与 role（例如 Nexus: Claude Opus 4.6 Coordinator；Scout: GPT-5.2 Codex Research 等）。这类 UI
+通常背后至少需要一个 polling 或推送机制，但页面未直接公开接口。 
+Office  页面包含更丰富的结构化实体：Signals、Shipped  items、War  Rooms、Timesheets、Handoffs、
+Accuracy  Leaderboard、以及“workspace  snapshot（tokens/free/budget/files/skills）”。即使你不打算公
+开写接口，也强烈建议公开只读接口（或导出）来支持外部自动化（例如：自动生成周报/战情室摘要/版本发布
+说明）。 
+Radar  页面在本次抓取中返回空内容（0  行），这会直接阻断搜索引擎与 RPA/无头浏览器的“低成本读取”，也
+让外部自动化难以稳定对接。你需要决定：Radar  是否应当公开只读数据（例如匿名可看摘要、登录可看细
+节），并提供可机器读取的“分页 API / 导出”作为替代。 
+关联开源仓库中可借鉴的 API 设计
+你网站的核心开源产品 Ship Faster 强调“runs 写盘可恢复”“完整日志与证据”“副作用前审批 gate”，这为“自动
+化系统的可审计性”提供了非常直接的最佳实践范式。 
+另有一个名为 “VoxYZ  -  Audio  Communication  Layer  for  Agent  Orchestration”  的公开仓库（不保证与
+voxyz.space 生产系统一致）给出了清晰的 REST+WebSocket API 形态：POST /api/route（意图识别与
+路由）、POST /api/tts、POST /api/notify，以及 WebSocket  实时消息。若你未来要把 Stage/
+Office 的“事件”对外开放，这种“REST 触发 + WS 推送”的组合是可复用蓝图。 
+API/Hook 清单（已发现 + 推断）
+说明：下表将接口分为“明确可证据支持（Observed）”与“由公开政策/页面行为推断（Inferred）”，推断项用
+于规划自动化改造，不应当被当作已存在的真实 endpoint。
+类型 名称/入口 形态 用途 证据与备注
+Observed /stage Web 页面（实
+时 feed）
+展示代理运
+行状态与消
+息滚动
+页面显示实时轮播与代理
+消息，属于事件消费端。 
+Observed /office Web 页面（运
+营仪表盘）
+shipped/
+war room/
+上下文快照
+等运营数据
+明示 “Published … into
+ops_agent_events”、展示
+token budget 与
+workspace files。 
+Observed *.vercel.app（Deploy
+链接） 外部部署链接
+shipped 项
+目的演示部
+署
+Shipping Log 中直接出现
+Deploy 到 
+vercel.app。 
+ObservedStripe（支付）
+第三方支付平
+台（API/
+Webhook 能
+力由 Stripe 提
+供）
+支付、订单
+元数据
+隐私政策声明使用 Stripe
+且收集 purchase
+metadata；条款描述购买
+与交付流程。 
+12
+13
+14
+22
+23
+12
+13
+13
+19
+5
+
+--- PAGE 6 ---
+类型 名称/入口 形态 用途 证据与备注
+ObservedGitHub（交付私库邀请）第三方平台
+（API）
+邀请用户进
+入私有仓库
+条款明确“Products are
+delivered as private
+GitHub repositories…
+invite”。 
+ObservedResend（邮件）
+第三方邮件平
+台（API/
+Webhook）
+交易/营销
+邮件
+隐私政策列为
+transactional/marketing
+emails。 
+ObservedSupabase（DB/Auth）
+第三方 BaaS
+（DB/Auth/
+API）
+数据存储与
+认证
+隐私政策明确列为
+database and
+authentication。 
+ObservedOpenClaw
+（docs.openclaw.ai）
+自托管
+Gateway
+（CLI + Web
+Control UI）
+多渠道消息
+入口、会
+话/路由/节
+点
+文档描述“self-hosted
+gateway… multi-
+channel… web control
+UI… config”。 
+Inferred “launch spots”库存位接口可能是
+/api/*
+返回
+Starter/Pro
+的“launch
+spots”/名
+额
+主页与 Vault 出现
+“Loading launch
+spots...”但未公开接口。 
+Inferred 购买验证与交付编排接口
+可能是
+/api/
+purchase/
+verify、/
+api/
+delivery/
+*
+Stripe 订单
+验证、触发
+GitHub
+invite、邮
+件通知
+根据条款（成功页输入
+GitHub username）与隐
+私政策（purchase
+metadata + GitHub
+username）推断存在服
+务端逻辑。 
+Inferred Stage/Office 数据接口 SSE/WS/REST
+事件流、历
+史查询、导
+出
+UI 数据足够结构化，且办
+公室提到
+ops_agent_events。 
+技术栈与架构推断
+前端与托管/CDN
+隐私政策明确网站托管在 Vercel，并可能使用 Vercel analytics。与之呼应的是 Office 的 Shipping Log 给出多
+个 *.vercel.app 的部署链接，证明至少 shipped demo apps 使用 Vercel 作为发布平台。 
+Ship Faster 的公开仓库同时给出“默认栈假设：Next.js + TypeScript + Supabase + Stripe + Vercel”，这与隐私
+政策中的 Supabase/Stripe/Vercel 列表高度一致，因此可合理推断 voxyz.space 的主站与至少一部分仪表盘也
+很可能在 Next.js 生态内实现（但本次未通过源码/headers 直接验证）。 
+24
+25
+25
+26
+27
+16
+28
+29
+30
+6
+
+--- PAGE 7 ---
+数据层、认证与邮件
+隐私政策明确：Supabase 用于数据库与认证、Resend 用于邮件、Stripe 用于支付。对自动化系统而言，这几
+乎天然等同于：
+- 身份/会话：Supabase Auth（cookie/local storage 会话也在隐私政策中出现）；
+- 交易事实：Stripe（订单、支付状态）；
+- 交付控制面：GitHub repo 邀请；
+- 通知：Resend 邮件。 
+“代理运行时”与可观测链路
+Office  页面“VPS  Context  Doctor”是最接近“内部运行时架构剖面”的证据：它声称自己在展示 “live  VPS
+OpenClaw workspaces”，并公开 token budget、workspace files、installed skills；同时提到从 “live VPS
+observer”  发布到 “ops_agent_events”。这说明你可能存在一个常驻 VPS/服务器上的代理运行时与观察者/采
+集器组件。 
+OpenClaw  文档描述其作为“self-hosted  gateway”，提供多渠道入口（WhatsApp/Telegram/Discord/
+iMessage  等）、会话和路由单一真相源（single  source  of  truth），并提供 Web  Control  UI、配置文件、
+allowlist 等安全控制；这很符合“代理组织的运营入口”与“移动端随时触达”的定位。 
+综合上述公开信息，可以给出一个“高概率”架构推断：Vercel/Next.js  承载展示层与部分 API  glue；Supabase
+作为数据存储与认证；Stripe/GitHub/Resend 构成交付闭环；VPS 上运行代理与 OpenClaw gateway，并持续
+产出事件写入数据层，再由 Office/Stage  消费展示。该推断的直接证据在于：Office  明示 VPS  snapshot  与
+ops_agent_events、隐私政策列出 Supabase/Vercel、条款列出 GitHub 私库交付。 
+架构图（Mermaid）
+flowchart LR
+  subgraph Users[外部用户]
+    U1[访客/订阅者]
+    U2[购买者]
+    U3[买家社群 Telegram]
+  end
+  subgraph Web[Vercel 托管的 Web 层]
+    W1[voxyz.space / Next.js 推断]
+    W2[Stage UI]
+    W3[Office UI]
+    W4[Vault / 交付入口]
+  end
+  subgraph Data[数据与身份]
+    S1[Supabase DB]
+    S2[Supabase Auth]
+  end
+  subgraph Commerce[支付与交付]
+    P1[Stripe]
+    G1[GitHub 私有仓库邀请]
+19
+20
+26
+31
+7
+
+--- PAGE 8 ---
+    M1[Resend 邮件]
+  end
+  subgraph Runtime[VPS/代理运行时]
+    R1[Agent Runtime (5 agents)]
+    R2[Observer/Collector]
+    R3[OpenClaw Gateway]
+  end
+  U1 --> W1
+  U2 --> W4
+  W2 --> W1
+  W3 --> W1
+  W4 --> P1
+  P1 --> W4
+  W4 --> G1
+  W4 --> M1
+  W1 <--> S2
+  W1 <--> S1
+  R1 --> R2 --> S1
+  R3 <--> R1
+  U3 <--> R3
+  M1 --> U2
+  G1 --> U2
+（注：Web 层“Next.js”是依据 Ship Faster 的默认栈假设与 Vercel/Supabase/Stripe 的一致性推断；可作为你
+内部自动化系统重构/文档化时的“验证假设清单”。 ）
+安全与隐私态势
+隐私政策与数据边界
+隐私政策明确采集项包括：订阅/购买邮箱、Stripe 订单元数据（不存储完整卡号）、GitHub username（用于
+私库邀请交付）、Telegram  identity（加入买家群时展示给群成员）、以及不含个人标识符的 analytics
+events（page views、button clicks、feature usage）。同时声明使用 cookies 与 local storage 用于认证会
+话和偏好设置。 
+这份清单对自动化系统的含义是：你应当把“订单交付自动化”和“数据最小化”绑定在一起做事件审计。例如：当
+用户请求删除数据（DSR）时，哪些记录在 Supabase、哪些在 Stripe/GitHub/Resend，应当可以一键生成处
+理清单；政策中也承诺可通过邮件请求访问/更正/删除并“48 小时响应”。 
+32
+25
+25
+8
+
+--- PAGE 9 ---
+认证与授权（公开信息能确认的部分）
+隐私政策写明 Supabase  用于 authentication；但在公开页面层面（/stage、/office）未呈现传统登录入口。
+对外自动化时要特别警惕两类风险：
+-  “半公开数据”被当作公开数据：Office  已展示非常多运行时内部信息（workspace  files、skills  inventory、
+token budget），这可能对安全与商业机密有影响；需要明确哪些字段应当脱敏/聚合。 
+- “邮箱即身份”的交付路径：Vault 提供 purchase email 取回访问；条款中也允许没有 GitHub 账号时联系支持
+走替代交付。这类流程要强化防枚举与速率限制，否则容易被撞库或批量猜测购买邮箱。 
+常见漏洞面与建议（以“自动化流程”优先）
+由于本次研究未直接获得站点 headers/CSP 配置与速率限制细节（未发现可引用的公开扫描结果），以下建议
+采取“对你当前链路最高风险点”的优先顺序：
+1）支付与交付链路（Stripe→GitHub  invite→邮件）要做幂等与可重放：条款定义了交付时效与方式，意味着
+你需要能处理 webhook  重试、邀请失败、邮件投递失败等情况，并保证不会重复邀请/重复发信造成混乱。
+2）“purchase  email”入口必须具备防枚举：建议在 UI  上统一返回模糊提示（例如“若存在订单我们会发送邮
+件”），服务端对同一 IP/同一邮箱前缀做速率限制，并记录审计日志。该建议直接来自 Vault  的“Already
+purchased?”设计与隐私政策的邮箱收集声明。 
+3）公开运营面信息分级：Office 已公开 workspace 文件名、token 预算、skills 列表数量等；应建立 “public
+snapshot schema” 与“可公开字段白名单”，避免未来误把敏感字段（API keys、内部 URL、未发布产品细节）
+暴露。 
+性能、可访问性与 SEO 对自动化的影响
+性能指标现状与可测性缺口
+用户请求的指标（TTFB、FCP、LCP、JS bundle size）需要 Lighthouse/CrUX 或等效测量源。本次公开研究中
+未能获取到可直接引用的 voxyz.space  PageSpeed/Lighthouse  报告输出，因此无法在“可引用证据”的标准下
+给出具体数值。你可以把这视为一个改造机会：将性能测量纳入 CI/CD  与运营自动化本身，使其输出成为你站
+点公开/内部仪表盘的一部分。 
+Google  官方文档给出 PageSpeed  Insights  API（ runPagespeed）的请求参数（url、
+strategy=mobile/desktop、category 等），可用于程序化拉取 FCP/LCP/TBT/CLS/TTFB  等审计结
+果；第三方说明文也展示了该 API endpoint 的实际 URL 格式。 
+建议你把以下“自动化性能探针”作为最小实现（可每日跑一次，写入 Supabase，再由 Office/新页面展示）：
+# 示例：用 PageSpeed Insights API（无 key 可能会受到配额限制，建议配置 key）
+# 参考：Google runPagespeed 方法文档
+curl"https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://
+www.voxyz.space/&strategy=mobile&category=performance&category=seo"
+（API 的参数能力与可返回字段由 Google 文档定义。 ）
+21
+7
+16
+33
+13
+34
+34
+35
+9
+
+--- PAGE 10 ---
+影响自动化的可访问性/爬虫与 RPA 可靠性问题
+最明确的问题来自 /radar：对抓取器返回空内容（0 行），这会导致三类自动化失败：
+- SEO：搜索引擎很难获取内容主体；
+- RPA/无头浏览器：即使能渲染，也会因为缺少稳定的 DOM 结构/SSR 输出而不稳定；
+- 外部集成：无法通过简单 HTTP GET 获取摘要/列表，只能靠 UI 自动化或内部接口。 
+相对而言，Stage 与 Office 在文本层可被抓取到大量结构化信息，说明它们至少在当前形态下对“非 JS 环境”更
+友好（或有 SSR 输出）。这为你将其进一步产品化为“机器事件接口”奠定基础。 
+自动化改造路线图与竞品对标
+优先级改造清单（含工作量与风险评估）
+下表聚焦“让你的自动化系统更容易被集成、更稳定、更可审计”，并以现有公开证据为锚点（Stage/Office/
+Ship Faster/Terms/Privacy/OpenClaw）。 
+优
+先
+级
+改造项 直接收益（自动
+化导向）
+预
+估
+工
+作
+量
+风
+险 证据锚点
+P0
+把 Stage/Office 的“事件”抽象为
+统一事件模型
+（agent_event/
+ship_event/
+war_room_event），并提供
+只读 API（分页 + 过滤 + 时间范
+围）
+外部系统不再依
+赖 UI 抓取；支持
+回放、审计、生
+成周报
+大 中
+Office 提到 
+ops_agent_events；
+Stage 为实时 feed。 
+P0
+为支付→交付闭环建立幂等编排
+（Stripe webhook→验证
+→GitHub 邀请→Resend 通知→
+状态落库）+ SLA 告警
+减少人工支持；
+交付可观测；失
+败自动重试
+中 中
+条款定义交付方式与时效；
+隐私列出 Stripe/GitHub/
+Resend。 
+P0
+“Already purchased”入口防枚举
+与限流（IP/邮箱维度）+ 一次性
+取回链接
+降低撞库与信息
+泄露风险；提升
+自助修复能力
+小 低
+Vault 提供 purchase email
+入口；隐私声明收集邮箱与
+购买元数据。 
+P1
+Radar 提供只读导出（匿名摘要
++ 登录细节），或至少提供“公开
+摘要 API / RSS”
+解决 radar 页面
+不可抓取问题；
+提高 SEO 与外部
+集成能力
+中 中
+/radar 返回空内容；主
+页/office 强依赖 radar 叙
+事。 
+P1
+性能自动化：接入 PageSpeed
+Insights API 每日跑分 + 性能预
+算（TTFB/LCP/JS weight）
+用数据驱动优
+化；避免回归；
+可对外展示“工程
+可信度”
+中 低
+Google 提供 runPagespeed
+API；适合接入 CI/定时任
+务。 
+14
+8
+36
+28
+16
+33
+37
+34
+10
+
+--- PAGE 11 ---
+优
+先
+级
+改造项 直接收益（自动
+化导向）
+预
+估
+工
+作
+量
+风
+险 证据锚点
+P1
+公开“公共快照字段白名单”与脱
+敏策略（Office 的 VPS Context
+Doctor）
+防止未来误暴露
+敏感字段；可控
+开放
+中 中
+Office 已暴露 token
+budget、files、skills 等。 
+P2
+将 OpenClaw 作为“外部控制
+面”产品化：为特定事件（ship/
+war-room/alert）提供消息推送
+与双向指令（带审批 gate）
+让运营与支持自
+动化进入消息渠
+道（Telegram/
+Discord 等）；
+形成闭环操作面
+大 中
+OpenClaw 支持多渠道 +
+Web UI + 配置与 allowlist。
+P2
+发布公开的“集成文档”：事件
+Schema、Webhook 订阅、示例
+（Zapier/n8n/Make/自建）
+降低集成成本；
+扩大生态 中 低
+你已具备清晰的第三方链路
+与可观测面，但缺乏机器接
+口文档。 
+P3
+为 Ship Faster/模板做“可自动升
+级”机制（版本通告、迁移脚本、
+变更日志）
+降低用户升级摩
+擦；减少支持成
+本
+中 低
+Ship Faster 是文件拷贝式
+skills 包，适合自动更新分
+发。 
+P3
+建立“公开状态页/事件回放”用于
+信任建设（类似 Stage 但更稳
+定）
+企业客户更易采
+信；支持售后与
+法律/合规沟通
+中 中 主页强调“真实运行、可见决
+策”。 
+竞品与最佳实践对标
+你的网站/产品更像“可复制的代理组织操作系统 + 可观测运营层”，而不仅是一个多代理框架。对标竞品应选“多
+代理编排与可部署性”方向的框架。
+CrewAI 的官方仓库强调其多代理自动化能力与“Crews / Flows”双结构，主张“Standalone Framework（独立
+于 LangChain）”“High Performance”“Flexible customization”。这类框架的优势在于：把“多代理协作”抽象为
+开发者可复用的编排单元。 
+LangGraph 的官方文档则强调“把 agent 包装为图节点”并可部署到 LangGraph Platform，从而获得“水平扩展
+基础设施、任务队列、短期持久化与长期记忆支持”；且明确提到可部署 AutoGen、CrewAI  等其他框架定义的
+代理。它的最佳实践是：把复杂系统拆成图节点/边，并对状态与记忆做第一等抽象。 
+下表给出 2–4 个对标对象与可借鉴点（限于本次可引用来源的覆盖范围）。
+服务/框架 定位 强项（自动化） 可观测/安全模
+式 对 VoxYZ 的启示
+VoxYZ（你）
+“代理公
+司”可复制
+系统 + 公
+开运营面
+板
+Stage/Office 把运行
+状态、交接、产物可
+视化；Ship Faster
+强调 runs 写盘可恢
+复与审批 gate
+Office 暴露上下
+文预算与工作流
+信息，可做事件
+源
+把现有 UI 升级为稳定 API
+与事件流，形成可集成平台 
+13
+38
+29
+22
+39
+40
+41
+42
+11
+
+--- PAGE 12 ---
+服务/框架 定位 强项（自动化） 可观测/安全模
+式 对 VoxYZ 的启示
+CrewAI 多代理自
+动化框架
+Crews/Flows 平衡自
+治与流程控制；强调
+高性能与可定制 
+仓库包含
+telemetry/对比
+章节（提示对可
+观测的重视） 
+借鉴其“编排原语”思想：把
+你现在的 War Room/Ship/
+Signal 变成可复用工作流模
+块
+LangGraph
+（含
+Platform）
+图驱动
+agent/多
+agent 应
+用 + 部署
+平台
+提供任务队列、持久
+化、短期/长期记
+忆；可部署其他框架
+平台化强调“可
+扩展生产用途” 
+把你的 ops_agent_events/
+war room/shipping log 定
+义为图/状态机，落实“可重
+放”与“可扩展”
+AutoGen（通
+过 LangGraph
+集成文档侧
+写）
+多 agent
+对话式协
+作
+LangGraph 文档写
+明可为 AutoGen 增
+强“持久化、流式、
+短期/长期记忆”等能
+力 
+倾向以编排补
+足“过程”能力 
+对外输出时要同时提供“对话
+事件”与“过程事件”（你的
+War Room 就是过程事件）
+面向 RPA / 无头浏览器 / CI 的集成点设计
+你当前的公开可观测面非常适合被自动化系统消费，但要让 RPA/无头浏览器“长期稳定”，建议你针对 Stage/
+Office 做三件事：
+一是为页面关键元素加入稳定的 data-testid 或语义化标识（而不是依赖文案与布局）；因为 Office 的信
+息密度高、变动频繁（Shipping Log、War Rooms、Live Stage 等），纯 CSS selector 极易碎。 
+二是为核心实体提供“机器输出优先”的只读端点：例如 /api/public/shipping?since=...、/api/
+public/agents/status、/api/public/war-rooms。这样 CI（Playwright）只需验证“UI  与 API  一
+致”，而不是把 UI 当唯一数据源。Office 本身已经把这些实体结构化呈现出来，属于“差一步变 API”。 
+三是把性能/SEO/可访问性也纳入 CI：利用 Google 的 runPagespeed API 做每日/每次部署的性能预算门
+禁；这是最典型的“自动化系统自我监控”。 
+最终判断：你下一阶段的“自动化系统”应当长什么样
+从公开证据看，VoxYZ  已经把“代理公司如何运转”做成了可观察的产品体验（Stage/Office），并把“如何可靠
+地产出/审批/恢复”沉淀到 Ship Faster 的方法论与资产结构里。 
+下一阶段若要显著提升自动化能力，最划算的路径是：
+把 UI 背后的隐式数据模型（signals、missions、handoffs、war rooms、shipped、context snapshot）抽
+成稳定 schema + 只读 API + 可订阅事件流；再把支付/交付链路和性能/可靠性监控纳入同一事件系统，使“业
+务自动化”与“系统自动化”共享同一套审计与告警。条款与隐私政策给出的交付链路与第三方栈，已经为这种平
+台化落地提供了完备拼图。 
+40
+40
+41
+43
+44
+44
+28
+13
+34
+45
+46
+12

@@ -168,6 +168,42 @@
 
             <div class="content-grid">
               <section>
+                <div class="section-head">
+                  <h3>真实图直达入口</h3>
+                  <button class="button small copy-btn" type="button" data-copy="{{ item.real_image_entrypoints_text|e }}">复制</button>
+                </div>
+                <textarea readonly>{{ item.real_image_entrypoints_text }}</textarea>
+                {% if item.real_image_entrypoints %}
+                  <div class="resource-row">
+                    {% for ref in item.real_image_entrypoints[:4] %}
+                      <a class="button small" href="{{ ref.url }}" target="_blank">{{ ref.label }}</a>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </section>
+              <section>
+                <div class="section-head">
+                  <h3>自动抽取的页面预览图候选</h3>
+                  <button class="button small copy-btn" type="button" data-copy="{{ item.real_image_candidates_text|e }}">复制</button>
+                </div>
+                <textarea readonly>{{ item.real_image_candidates_text }}</textarea>
+                {% if item.real_image_candidates %}
+                  <div class="resource-row">
+                    {% for ref in item.real_image_candidates[:3] %}
+                      {% if ref.page_url %}
+                        <a class="button small" href="{{ ref.page_url }}" target="_blank">打开页面 {{ loop.index }}</a>
+                      {% endif %}
+                      {% if ref.image_url %}
+                        <a class="button small" href="{{ ref.image_url }}" target="_blank">打开图片 {{ loop.index }}</a>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </section>
+            </div>
+
+            <div class="content-grid">
+              <section>
                 <h3>封面布局建议</h3>
                 <textarea readonly>{{ item.cover_layout_brief or '当前没有额外布局建议。' }}</textarea>
               </section>

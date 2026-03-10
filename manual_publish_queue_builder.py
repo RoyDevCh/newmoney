@@ -91,6 +91,42 @@ def material_slots_text(slots: Any) -> str:
     return "\n".join(lines) if lines else "当前没有额外图位建议。"
 
 
+def reference_links_text(rows: Any) -> str:
+    if not isinstance(rows, list) or not rows:
+        return "当前没有直达入口。"
+    lines: List[str] = []
+    for idx, row in enumerate(rows[:8], start=1):
+        if not isinstance(row, dict):
+            continue
+        label = str(row.get("label", f"入口 {idx}")).strip()
+        query = str(row.get("query", "")).strip()
+        url = str(row.get("url", "")).strip()
+        lines.append(f"{idx}. {label} | 查询：{query}")
+        if url:
+            lines.append(f"   {url}")
+    return "\n".join(lines) if lines else "当前没有直达入口。"
+
+
+def reference_candidates_text(rows: Any) -> str:
+    if not isinstance(rows, list) or not rows:
+        return "当前没有自动抽到的页面预览图候选。"
+    lines: List[str] = []
+    for idx, row in enumerate(rows[:8], start=1):
+        if not isinstance(row, dict):
+            continue
+        title = str(row.get("page_title", "")).strip() or "未命名页面"
+        domain = str(row.get("source_domain", "")).strip()
+        page_url = str(row.get("page_url", "")).strip()
+        image_url = str(row.get("image_url", "")).strip()
+        score = str(row.get("score", "")).strip()
+        lines.append(f"{idx}. {title} | {domain} | score={score}")
+        if page_url:
+            lines.append(f"   页面：{page_url}")
+        if image_url:
+            lines.append(f"   图片：{image_url}")
+    return "\n".join(lines) if lines else "当前没有自动抽到的页面预览图候选。"
+
+
 def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], manifest: Dict[str, Any], tts_files: Dict[str, str]) -> List[Dict[str, Any]]:
     strategies = build_strategy_matrix()
     qmap = quality_map(quality)
@@ -135,6 +171,13 @@ def pick_manual_publish_items(pack: Dict[str, Any], quality: Dict[str, Any], man
                 "source_priority_text": join_lines(a.get("source_priority", vt.get("source_priority", []))),
                 "manual_asset_checklist_text": join_lines(a.get("manual_asset_checklist", vt.get("manual_asset_checklist", []))),
                 "material_slots_text": material_slots_text(a.get("material_slots", vt.get("material_slots", []))),
+                "real_image_entrypoints": a.get("real_image_entrypoints", []),
+                "real_image_candidates": a.get("real_image_candidates", []),
+                "real_image_slot_plan": a.get("real_image_slot_plan", []),
+                "real_image_provider_mode": a.get("real_image_provider_mode", ""),
+                "real_image_errors": a.get("real_image_errors", []),
+                "real_image_entrypoints_text": reference_links_text(a.get("real_image_entrypoints", [])),
+                "real_image_candidates_text": reference_candidates_text(a.get("real_image_candidates", [])),
                 "tts_file": tts_files.get(platform, ""),
             }
         )
@@ -178,8 +221,13 @@ def build_markdown(queue: Dict[str, Any]) -> str:
                 f"- 图位建议：{item.get('cover_layout_brief', '')}",
                 f"- 素材来源优先级：{', '.join(item.get('source_priority', []))}",
                 f"- 参考搜图词：{', '.join(item.get('reference_search_queries', []))}",
+                f"- 真实图抓取模式：{item.get('real_image_provider_mode', '')}",
                 "- 素材清单：",
                 item.get("material_slots_text", "当前没有额外图位建议。"),
+                "- 真实图直达入口：",
+                item.get("real_image_entrypoints_text", "当前没有直达入口。"),
+                "- 自动抽取的页面预览图候选：",
+                item.get("real_image_candidates_text", "当前没有自动抽到的页面预览图候选。"),
                 "- 素材检查清单：",
                 item.get("manual_asset_checklist_text", "当前没有额外检查清单。"),
                 f"- TTS：`{item.get('tts_file', 'N/A')}`",

@@ -55,7 +55,39 @@ MONETIZATION_BLOCKERS = {
     "earnings_claim",
     "unverified_social_proof",
     "longform_actionability_weak",
+    "single_product_evidence_weak",
+    "marketing_hype_heavy",
+    "single_product_comparison_weak",
+    "single_product_matrix_missing",
 }
+
+EVIDENCE_KEYS = [
+    "官方",
+    "产品页",
+    "规格页",
+    "参数表",
+    "发布会",
+    "媒体上手",
+    "公开评测",
+    "拆解",
+    "跑分",
+    "实拍",
+    "首批反馈",
+    "长期反馈",
+    "来源",
+]
+
+HYPE_KEYS = [
+    "吊打",
+    "封神",
+    "无脑冲",
+    "闭眼买",
+    "炸裂",
+    "颠覆",
+    "秒杀",
+    "遥遥领先",
+    "全面碾压",
+]
 
 
 @dataclass
@@ -109,8 +141,31 @@ def _sentence_count(text: str) -> int:
 
 
 def _has_source_signal(text: str) -> bool:
-    keys = ["来源", "实测", "测试环境", "官方", "链接", "benchmark", "review"]
+    keys = ["来源", "实测", "测试环境", "官方", "链接", "benchmark", "review", "公开评测", "媒体上手", "产品页", "拆解"]
     return any(k in text for k in keys)
+
+
+def _evidence_signal_count(text: str) -> int:
+    return sum(1 for key in EVIDENCE_KEYS if key in text)
+
+
+def _hype_signal_count(text: str) -> int:
+    return sum(1 for key in HYPE_KEYS if key in text)
+
+
+def _looks_like_single_product(title: str, hook: str, body: str) -> bool:
+    text = "\n".join([title, hook, body])
+    keys = ["值不值得买", "评测", "上手", "首批反馈", "发布会", "单品", "系列", "这一代", "现在买还是等等"]
+    return any(key in text for key in keys)
+
+
+def _has_comparison_signal(text: str) -> bool:
+    keys = ["上一代", "上代", "前代", "同品类", "同价位", "横向对比", "对比", "相比", "SE", "Ultra", "上一款"]
+    return any(key in text for key in keys)
+
+
+def _has_matrix_signal(text: str) -> bool:
+    return "|" in text and "---" in text
 
 
 def _has_earnings_claim(text: str) -> bool:
@@ -226,6 +281,21 @@ def score_one(item: Dict, min_score: float) -> DraftScore:
     if _has_unverified_social_proof(body):
         spec -= 4
         issues.append("unverified_social_proof")
+    if _looks_like_single_product(title, hook, body):
+        evidence_count = _evidence_signal_count(body)
+        hype_count = _hype_signal_count(title + "\n" + hook + "\n" + body)
+        if evidence_count < 3:
+            spec -= 5
+            issues.append("single_product_evidence_weak")
+        if hype_count > max(1, evidence_count):
+            spec -= 4
+            issues.append("marketing_hype_heavy")
+        if not _has_comparison_signal(body):
+            spec -= 4
+            issues.append("single_product_comparison_weak")
+        if not _has_matrix_signal(body):
+            spec -= 4
+            issues.append("single_product_matrix_missing")
     subs["specificity"] = max(spec, 0.0)
 
     # 4) Platform fit 20

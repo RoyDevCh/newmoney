@@ -442,6 +442,42 @@ def format_material_slots(slots: Any) -> str:
     return "\n".join(lines) if lines else "当前没有额外图位建议。"
 
 
+def format_reference_links(rows: Any) -> str:
+    if not isinstance(rows, list) or not rows:
+        return "当前没有直达入口。"
+    lines: List[str] = []
+    for idx, row in enumerate(rows[:8], start=1):
+        if not isinstance(row, dict):
+            continue
+        label = str(row.get("label", f"入口 {idx}")).strip()
+        query = str(row.get("query", "")).strip()
+        url = str(row.get("url", "")).strip()
+        lines.append(f"{idx}. {label} | 查询：{query}")
+        if url:
+            lines.append(f"   {url}")
+    return "\n".join(lines) if lines else "当前没有直达入口。"
+
+
+def format_reference_candidates(rows: Any) -> str:
+    if not isinstance(rows, list) or not rows:
+        return "当前没有自动抽到的页面预览图候选。"
+    lines: List[str] = []
+    for idx, row in enumerate(rows[:8], start=1):
+        if not isinstance(row, dict):
+            continue
+        title = str(row.get("page_title", "")).strip() or "未命名页面"
+        domain = str(row.get("source_domain", "")).strip()
+        page_url = str(row.get("page_url", "")).strip()
+        image_url = str(row.get("image_url", "")).strip()
+        score = str(row.get("score", "")).strip()
+        lines.append(f"{idx}. {title} | {domain} | score={score}")
+        if page_url:
+            lines.append(f"   页面：{page_url}")
+        if image_url:
+            lines.append(f"   图片：{image_url}")
+    return "\n".join(lines) if lines else "当前没有自动抽到的页面预览图候选。"
+
+
 def build_pack_items(
     pack: Dict[str, Any],
     quality: Dict[str, Any],
@@ -493,6 +529,13 @@ def build_pack_items(
                 "source_priority_text": join_lines(asset_row.get("source_priority", visual_row.get("source_priority", []))),
                 "manual_asset_checklist_text": join_lines(asset_row.get("manual_asset_checklist", visual_row.get("manual_asset_checklist", []))),
                 "material_slots_text": format_material_slots(asset_row.get("material_slots", visual_row.get("material_slots", []))),
+                "real_image_entrypoints": asset_row.get("real_image_entrypoints", []),
+                "real_image_candidates": asset_row.get("real_image_candidates", []),
+                "real_image_slot_plan": asset_row.get("real_image_slot_plan", []),
+                "real_image_provider_mode": asset_row.get("real_image_provider_mode", ""),
+                "real_image_errors": asset_row.get("real_image_errors", []),
+                "real_image_entrypoints_text": format_reference_links(asset_row.get("real_image_entrypoints", [])),
+                "real_image_candidates_text": format_reference_candidates(asset_row.get("real_image_candidates", [])),
                 "cover_generation_state": asset_row.get("engine", ""),
                 "tts_file": tmap.get(platform, ""),
             }

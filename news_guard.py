@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """News freshness and credibility guard with fallback search sources."""
 
 from __future__ import annotations
@@ -11,6 +11,8 @@ from urllib.parse import parse_qs, quote_plus, unquote, urlparse
 import xml.etree.ElementTree as ET
 
 import requests
+
+from local_search_client import search_bing_rss, search_local_searxng
 
 
 TRUSTED_DOMAINS = {
@@ -87,14 +89,35 @@ def _parse_time(value: str):
 
 
 def fetch_news_searxng(searxng_url: str, query: str, limit: int = 12) -> List[Dict]:
-    resp = requests.get(
-        f"{searxng_url.rstrip('/')}/search",
-        params={"q": query, "format": "json", "categories": "news", "language": "zh", "limit": limit},
-        timeout=20,
-    )
-    resp.raise_for_status()
-    data = resp.json()
-    return data.get("results", [])
+    try:
+        primary = search_local_searxng(
+            query,
+            categories="news",
+            language="zh-CN",
+            limit=limit,
+            time_range="day",
+            base_url=searxng_url.rstrip('/'),
+            timeout_sec=20,
+        )
+        rows = primary.get("results", [])
+        if rows:
+            return rows
+        fallback = search_local_searxng(
+            query,
+            categories="general",
+            language="zh-CN",
+            limit=limit,
+            time_range="month",
+            base_url=searxng_url.rstrip('/'),
+            timeout_sec=20,
+        )
+        rows = fallback.get("results", [])
+        if rows:
+            return rows
+    except Exception:
+        pass
+    fallback_bing = search_bing_rss(query, limit=limit)
+    return fallback_bing.get("results", [])
 
 
 def fetch_news_bing_rss(query: str, limit: int = 12) -> List[Dict]:

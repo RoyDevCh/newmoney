@@ -1,0 +1,293 @@
+{
+  "topic": "Apple Watch Series 11 ?????",
+  "platform": "??",
+  "provider_mode": "page_preview_and_search_entrypoints",
+  "image_policy": {
+    "watermark_removal_allowed": false,
+    "selection_rule": "Only use accepted candidates that are usable without watermark removal."
+  },
+  "preferred_domains": [],
+  "search_entrypoints": [
+    {
+      "label": "Bing 图片",
+      "query": "Apple Watch Series 11 ?????",
+      "url": "https://www.bing.com/images/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "京东搜索",
+      "query": "Apple Watch Series 11 ?????",
+      "url": "https://search.jd.com/Search?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "淘宝搜索",
+      "query": "Apple Watch Series 11 ?????",
+      "url": "https://s.taobao.com/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "B站搜索",
+      "query": "Apple Watch Series 11 ?????",
+      "url": "https://search.bilibili.com/all?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "小红书搜索",
+      "query": "Apple Watch Series 11 ?????",
+      "url": "https://www.xiaohongshu.com/search_result?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "知乎搜索",
+      "query": "Apple Watch Series 11 ?????",
+      "url": "https://www.zhihu.com/search?type=content&q=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "Bing 图片",
+      "query": "Apple Watch Series 11 ???",
+      "url": "https://www.bing.com/images/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "京东搜索",
+      "query": "Apple Watch Series 11 ???",
+      "url": "https://search.jd.com/Search?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "淘宝搜索",
+      "query": "Apple Watch Series 11 ???",
+      "url": "https://s.taobao.com/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "B站搜索",
+      "query": "Apple Watch Series 11 ???",
+      "url": "https://search.bilibili.com/all?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "小红书搜索",
+      "query": "Apple Watch Series 11 ???",
+      "url": "https://www.xiaohongshu.com/search_result?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    },
+    {
+      "label": "知乎搜索",
+      "query": "Apple Watch Series 11 ???",
+      "url": "https://www.zhihu.com/search?type=content&q=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+      "source_priority": "??????? / ??????? / ??????"
+    }
+  ],
+  "page_preview_candidates": [
+    {
+      "page_url": "https://www.apple.com/newsroom/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/",
+      "page_title": "Apple debuts Apple Watch Series 11, featuring groundbreaking health insights - Apple",
+      "image_url": "https://www.apple.com/newsroom/images/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/tile/Apple-Watch-Series-11-hero-250909-lp.jpg.og.jpg?202602251844",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/newsroom/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/",
+      "page_title": "Apple debuts Apple Watch Series 11, featuring groundbreaking health insights - Apple",
+      "image_url": "https://www.apple.com/newsroom/images/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/article/Apple-Watch-Series-11-hero-250909_big.jpg.large.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/newsroom/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/",
+      "page_title": "Apple debuts Apple Watch Series 11, featuring groundbreaking health insights - Apple",
+      "image_url": "https://www.apple.com/newsroom/images/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/article/Apple-Watch-Series-11-health-features-250909_inline.jpg.large.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/newsroom/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/",
+      "page_title": "Apple debuts Apple Watch Series 11, featuring groundbreaking health insights - Apple",
+      "image_url": "https://www.apple.com/newsroom/images/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/article/Apple-Watch-Series-11-display-250909_big.jpg.large.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/newsroom/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/",
+      "page_title": "Apple debuts Apple Watch Series 11, featuring groundbreaking health insights - Apple",
+      "image_url": "https://www.apple.com/newsroom/images/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/article/Apple-Watch-Series-11-thin-design-250909_big.jpg.large.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/newsroom/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/",
+      "page_title": "Apple debuts Apple Watch Series 11, featuring groundbreaking health insights - Apple",
+      "image_url": "https://www.apple.com/newsroom/images/2025/09/apple-debuts-apple-watch-series-11-featuring-groundbreaking-health-insights/article/Apple-Watch-Series-11-back-250909_big.jpg.large.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/apple-watch-series-11/",
+      "page_title": "Apple Watch Series 11 - Apple",
+      "image_url": "https://www.apple.com/v/apple-watch-series-11/c/images/meta/apple-watch-series-11__cim89z1i9spe_og.png?202602261520",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/apple-watch-series-11/",
+      "page_title": "Apple Watch Series 11 - Apple",
+      "image_url": "https://www.apple.com/v/apple-watch-series-11/c/images/overview/welcome/hero__d4bput78wzu6_xlarge.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/apple-watch-series-11/",
+      "page_title": "Apple Watch Series 11 - Apple",
+      "image_url": "https://www.apple.com/v/apple-watch-series-11/c/images/overview/welcome/hero_startframe__fslo8k8lane6_xlarge.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    },
+    {
+      "page_url": "https://www.apple.com/apple-watch-series-11/",
+      "page_title": "Apple Watch Series 11 - Apple",
+      "image_url": "https://www.apple.com/v/apple-watch-series-11/c/images/overview/highlights/highlights_hypertension_endframe__bbpmzln3nniq_large.jpg",
+      "source_domain": "www.apple.com",
+      "score": 15,
+      "watermark_risk_score": 0,
+      "watermark_risk_reasons": [],
+      "accepted": true,
+      "usage_policy": "usable_without_watermark_removal"
+    }
+  ],
+  "rejected_candidates": [],
+  "slot_plan": [
+    {
+      "slot": "????",
+      "purpose": "????",
+      "search_query": "Apple Watch Series 11 ?????",
+      "search_links": [
+        {
+          "label": "Bing 图片",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://www.bing.com/images/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "京东搜索",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://search.jd.com/Search?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "淘宝搜索",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://s.taobao.com/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "B站搜索",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://search.bilibili.com/all?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        }
+      ]
+    },
+    {
+      "slot": "?????",
+      "purpose": "????",
+      "search_query": "Apple Watch Series 11 ?????",
+      "search_links": [
+        {
+          "label": "Bing 图片",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://www.bing.com/images/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "京东搜索",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://search.jd.com/Search?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "淘宝搜索",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://s.taobao.com/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "B站搜索",
+          "query": "Apple Watch Series 11 ?????",
+          "url": "https://search.bilibili.com/all?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        }
+      ]
+    },
+    {
+      "slot": "???",
+      "purpose": "?????????",
+      "search_query": "Apple Watch Series 11 ???",
+      "search_links": [
+        {
+          "label": "Bing 图片",
+          "query": "Apple Watch Series 11 ???",
+          "url": "https://www.bing.com/images/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "京东搜索",
+          "query": "Apple Watch Series 11 ???",
+          "url": "https://search.jd.com/Search?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "淘宝搜索",
+          "query": "Apple Watch Series 11 ???",
+          "url": "https://s.taobao.com/search?q=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        },
+        {
+          "label": "B站搜索",
+          "query": "Apple Watch Series 11 ???",
+          "url": "https://search.bilibili.com/all?keyword=Apple%20Watch%20Series%2011%20%3F%3F%3F",
+          "source_priority": "??????? / ??????? / ??????"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
